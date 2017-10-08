@@ -10,6 +10,12 @@
 
 #-------------------------------- References --------------------------------#
 
+/reference:..\..\RanitasData\bin\Release\RanitasData.dll
 
 #---------------------------------- Content ---------------------------------#
+
+#begin Pond.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:Pond.xml
 

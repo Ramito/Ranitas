@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ranitas", "Ranitas\Ranitas.csproj", "{33138142-52A2-422D-BA72-41543FDD58E8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RanitasData", "RanitasData\RanitasData.csproj", "{F9977623-C4A3-4179-9027-B05B7CD2C37E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{33138142-52A2-422D-BA72-41543FDD58E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33138142-52A2-422D-BA72-41543FDD58E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{33138142-52A2-422D-BA72-41543FDD58E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9977623-C4A3-4179-9027-B05B7CD2C37E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9977623-C4A3-4179-9027-B05B7CD2C37E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9977623-C4A3-4179-9027-B05B7CD2C37E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9977623-C4A3-4179-9027-B05B7CD2C37E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

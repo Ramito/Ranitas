@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<XnaContent xmlns:Data="Ranitas.Data">
+  <Asset Type="Data:PondData">
+    <Width>800</Width>
+    <Height>600</Height>
+    <Lillies>
+      <Item>
+        <LillyPad>
+          <Width>150</Width>
+          <Height>10</Height>
+        </LillyPad>
+        <HorizontalPosition>150</HorizontalPosition>
+      </Item>
+      <Item>
+        <LillyPad>
+          <Width>150</Width>
+          <Height>10</Height>
+        </LillyPad>
+        <HorizontalPosition>400</HorizontalPosition>
+      </Item>
+      <Item>
+        <LillyPad>
+          <Width>150</Width>
+          <Height>10</Height>
+        </LillyPad>
+        <HorizontalPosition>650</HorizontalPosition>
+      </Item>
+    </Lillies>
+    <WaterLevel>200</WaterLevel>
+  </Asset>
+</XnaContent>
