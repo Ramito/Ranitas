@@ -11,6 +11,7 @@
 #-------------------------------- References --------------------------------#
 
 /reference:..\..\RanitasData\bin\Release\RanitasData.dll
+/reference:..\..\RanitasData\bin\Debug\RanitasData.dll
 
 #---------------------------------- Content ---------------------------------#
 
@@ -18,4 +19,9 @@
 /importer:XmlImporter
 /processor:PassThroughProcessor
 /build:Pond.xml
+
+#begin Frog.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:Frog.xml
 

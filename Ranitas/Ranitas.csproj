@@ -43,7 +43,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Game1.cs" />
-    <Compile Include="Pond\LillyPadSimState.cs" />
+    <Compile Include="Pond\LilyPadSimState.cs" />
     <Compile Include="Pond\PondSimState.cs" />
     <Compile Include="Pond\PondRenderer.cs" />
     <Compile Include="Program.cs" />
@@ -115,7 +115,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\LillyPad.xml" />
     <Content Include="Content\Pond.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

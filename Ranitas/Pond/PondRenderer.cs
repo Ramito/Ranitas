@@ -36,19 +36,19 @@ namespace Ranitas.Pond
 
         public void RenderPond(PondSimState pond, GraphicsDevice device)
         {
-            foreach (var lilly in pond.Lillies)
+            foreach (var lily in pond.Lilies)
             {
-                SetVertices(mVertexBufferData, lilly);
+                SetVertices(mVertexBufferData, lily);
                 mVertexBuffer.SetData(mVertexBufferData);
                 device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
             }
         }
 
-        private static void SetVertices(VertexPositionColor[] vertices, LillyPadSimState lilly)
+        private static void SetVertices(VertexPositionColor[] vertices, LilyPadSimState lily)
         {
-            float halfWidth = lilly.Width * 0.5f;
-            float halfHeight = lilly.Height * 0.5f;
-            Vector3 position = new Vector3(lilly.Position, 0f);
+            float halfWidth = lily.Width * 0.5f;
+            float halfHeight = lily.Height * 0.5f;
+            Vector3 position = new Vector3(lily.Position, 0f);
             vertices[0].Position = new Vector3(halfWidth, halfHeight, 0f) + position;
             vertices[1].Position = new Vector3(halfWidth, -halfHeight, 0f) + position;
             vertices[2].Position = new Vector3(-halfWidth, halfHeight, 0f) + position;

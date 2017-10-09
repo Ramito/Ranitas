@@ -10,20 +10,20 @@ namespace Ranitas.Pond
         public float Height;
         public float WaterLevel;
 
-        public readonly List<LillyPadSimState> Lillies;
+        public readonly List<LilyPadSimState> Lilies;
 
         public PondSimState(PondData data)
         {
             Width = data.Width;
             Height = data.Height;
             WaterLevel = data.WaterLevel;
-            if (data.Lillies != null)
+            if (data.Lilies != null)
             {
-                Lillies = new List<LillyPadSimState>(data.Lillies.Length);
-                foreach (var lillyData in data.Lillies)
+                Lilies = new List<LilyPadSimState>(data.Lilies.Length);
+                foreach (var lilyData in data.Lilies)
                 {
-                    LillyPadSimState lillyState = new LillyPadSimState(lillyData.LillyPad, new Vector2(lillyData.HorizontalPosition, data.WaterLevel));
-                    Lillies.Add(lillyState);
+                    LilyPadSimState lilyState = new LilyPadSimState(lilyData.LilyPad, new Vector2(lilyData.HorizontalPosition, data.WaterLevel));
+                    Lilies.Add(lilyState);
                 }
             }
         }

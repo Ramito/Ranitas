@@ -3,29 +3,29 @@
   <Asset Type="Data:PondData">
     <Width>800</Width>
     <Height>600</Height>
-    <Lillies>
+    <Lilies>
       <Item>
-        <LillyPad>
+        <LilyPad>
           <Width>150</Width>
           <Height>10</Height>
-        </LillyPad>
+        </LilyPad>
         <HorizontalPosition>150</HorizontalPosition>
       </Item>
       <Item>
-        <LillyPad>
+        <LilyPad>
           <Width>150</Width>
           <Height>10</Height>
-        </LillyPad>
+        </LilyPad>
         <HorizontalPosition>400</HorizontalPosition>
       </Item>
       <Item>
-        <LillyPad>
+        <LilyPad>
           <Width>150</Width>
           <Height>10</Height>
-        </LillyPad>
+        </LilyPad>
         <HorizontalPosition>650</HorizontalPosition>
       </Item>
-    </Lillies>
+    </Lilies>
     <WaterLevel>200</WaterLevel>
   </Asset>
 </XnaContent>

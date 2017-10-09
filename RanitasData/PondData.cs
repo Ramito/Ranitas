@@ -7,18 +7,19 @@ namespace Ranitas.Data
         public float Width;
         public float Height;
 
-        public LilliPadLocation[] Lillies;
+        public LiliPadLocation[] Lilies;
+        public float[] FrogSpawns;
 
         public float WaterLevel;
     }
 
-    public struct LilliPadLocation
+    public struct LiliPadLocation
     {
-        public LillyPadData LillyPad;
+        public LilyPadData LilyPad;
         public float HorizontalPosition;
     }
 
-    public sealed class LillyPadData
+    public sealed class LilyPadData
     {
         public float Width;
         public float Height;
