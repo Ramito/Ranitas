@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<XnaContent xmlns:Data="Ranitas.Data">
+  <Asset Type="Data:FrogData">
+    <Width>20</Width>
+    <Height>20</Height>
+  </Asset>
+</XnaContent>

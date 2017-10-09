@@ -26,6 +26,10 @@
         <HorizontalPosition>650</HorizontalPosition>
       </Item>
     </Lilies>
+    <FrogSpawns>
+      150
+      650
+    </FrogSpawns>
     <WaterLevel>200</WaterLevel>
   </Asset>
 </XnaContent>
