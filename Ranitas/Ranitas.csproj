@@ -42,6 +42,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Core\FixedTimeStepDynamics.cs" />
     <Compile Include="Frog\FrogRenderer.cs" />
     <Compile Include="Frog\FrogSimState.cs" />
     <Compile Include="Game1.cs" />
