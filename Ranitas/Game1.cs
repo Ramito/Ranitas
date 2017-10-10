@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using Ranitas.Data;
 using Ranitas.Frog;
 using Ranitas.Pond;
+using Ranitas.Sim;
 using System.Collections.Generic;
 
 namespace Ranitas
@@ -20,6 +21,8 @@ namespace Ranitas
         PondRenderer mPondRenderer;
         List<FrogSimState> mFrogs;
         FrogRenderer mFrogRenderer;
+
+        RanitasSim mSim;
         
         public Game1()
         {
@@ -40,7 +43,6 @@ namespace Ranitas
             RasterizerState rs = new RasterizerState();
             rs.CullMode = CullMode.None;
             mGraphics.GraphicsDevice.RasterizerState = rs;
-
             base.Initialize();
         }
 
@@ -56,6 +58,8 @@ namespace Ranitas
             {
                 mFrogs.Add(mPond.SpawnFrog(frogData, pondData, i));
             }
+            System.Diagnostics.Debug.Assert(IsFixedTimeStep);
+            mSim = new RanitasSim(mPond, mFrogs, (float)TargetElapsedTime.TotalSeconds);
 
             mPondRenderer = new PondRenderer();
             mPondRenderer.Setup(mGraphics.GraphicsDevice, pondData);
@@ -76,6 +80,7 @@ namespace Ranitas
                 Exit();
             }
 
+            mSim.Update();
             // TODO: Add your update logic here
 
             base.Update(gameTime);

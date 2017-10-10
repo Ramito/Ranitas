@@ -9,6 +9,8 @@ namespace Ranitas.Pond
         public float Height;
         public Vector2 Position;    //Center of mass
 
+        public Vector2 Velocity { get { return Vector2.Zero; } }
+
         public LilyPadSimState(LilyPadData data, Vector2 position)
         {
             Width = data.Width;
