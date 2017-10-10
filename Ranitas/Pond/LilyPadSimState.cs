@@ -15,5 +15,15 @@ namespace Ranitas.Pond
             Height = data.Height;
             Position = position;
         }
+
+        public float MinX()
+        {
+            return Position.X - Width * 0.5f;
+        }
+
+        public float MaxX()
+        {
+            return Position.X + Width * 0.5f;
+        }
     }
 }

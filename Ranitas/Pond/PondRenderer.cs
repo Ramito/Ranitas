@@ -20,10 +20,11 @@ namespace Ranitas.Pond
         {
             float ponWidth = pondData.Width;
             float ponHeight = pondData.Height;
+            float aspectRatio = device.Adapter.CurrentDisplayMode.AspectRatio;
             mEffect = new BasicEffect(device);
             mEffect.VertexColorEnabled = true;
             mEffect.World = Matrix.CreateTranslation(-ponWidth * 0.5f, -ponHeight * 0.5f, 0f);
-            mEffect.View = Matrix.CreateOrthographic(ponWidth, ponHeight, -100, 100);
+            mEffect.View = Matrix.CreateOrthographic(aspectRatio * ponHeight, ponHeight, -100, 100);
             mEffect.CurrentTechnique.Passes[0].Apply();
         }
 

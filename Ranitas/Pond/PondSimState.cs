@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Ranitas.Data;
+using Ranitas.Frog;
 using System.Collections.Generic;
 
 namespace Ranitas.Pond
@@ -26,6 +27,33 @@ namespace Ranitas.Pond
                     Lilies.Add(lilyState);
                 }
             }
+        }
+
+        public FrogSimState SpawnFrog(FrogData frogData, PondData pondData, int spawnIndex)
+        {
+            spawnIndex %= pondData.FrogSpawns.Length;
+            FrogSimState frogSimState = new FrogSimState(frogData);
+            float spawnX = pondData.FrogSpawns[spawnIndex];
+            float spawnY = FindSpawnY(spawnX);
+            frogSimState.FeetPosition = new Vector2(spawnX, spawnY);
+            return frogSimState;
+        }
+
+        private float FindSpawnY(float forX)
+        {
+            float topY = WaterLevel;
+            foreach (var lily in Lilies)
+            {
+                if ((lily.MinX() <= forX) && (forX <= lily.MaxX()))
+                {
+                    float topYCandidate = (lily.Height * 0.5f) + lily.Position.Y;
+                    if (topY < topYCandidate)
+                    {
+                        topY = topYCandidate;
+                    }
+                }
+            }
+            return topY;
         }
     }
 }
