@@ -29,12 +29,12 @@ namespace Ranitas.Pond
             }
         }
 
-        public FrogSimState SpawnFrog(FrogData frogData, PondData pondData, int spawnIndex)
+        public FrogSimState SpawnFrog(FrogData frogData, float[] frogSpawns, int spawnIndex)
         {
-            spawnIndex %= pondData.FrogSpawns.Length;
+            spawnIndex %= frogSpawns.Length;
             FrogSimState frogSimState = new FrogSimState(frogData);
-            float spawnX = pondData.FrogSpawns[spawnIndex];
-            float spawnY = FindSpawnY(spawnX);
+            float spawnX = frogSpawns[spawnIndex];
+            float spawnY = FindSpawnY(spawnX) + 500;
             frogSimState.FeetPosition = new Vector2(spawnX, spawnY);
             return frogSimState;
         }

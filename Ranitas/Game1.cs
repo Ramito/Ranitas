@@ -15,14 +15,21 @@ namespace Ranitas
     /// </summary>
     public class Game1 : Game
     {
-        GraphicsDeviceManager mGraphics;
+        private static readonly int[] sSuportedPlayers = new[] { 0, 1, 2, 3 };
 
-        PondSimState mPond;
-        PondRenderer mPondRenderer;
-        List<FrogSimState> mFrogs;
-        FrogRenderer mFrogRenderer;
+        private GraphicsDeviceManager mGraphics;
 
-        RanitasSim mSim;
+        private FrogData mFrogPrototype;
+        private float[] mFrogSpawns;
+
+        private PondSimState mPond;
+        private PondRenderer mPondRenderer;
+        private List<FrogSimState> mFrogs;
+        private FrogRenderer mFrogRenderer;
+
+        private RanitasSim mSim;
+
+        private FrogInput[] mRegisteredPlayers = new FrogInput[sSuportedPlayers.Length];
         
         public Game1()
         {
@@ -48,16 +55,13 @@ namespace Ranitas
 
         protected override void LoadContent()
         {
+            mFrogPrototype = Content.Load<FrogData>("Frog");
             PondData pondData = Content.Load<PondData>("Pond");
-            FrogData frogData = Content.Load<FrogData>("Frog");
+            mFrogSpawns = pondData.FrogSpawns;
 
             mPond = new PondSimState(pondData);
-            int frogSpawns = pondData.FrogSpawns.Length;
-            mFrogs = new List<FrogSimState>(frogSpawns);
-            for (int i = 0; i < frogSpawns; ++i)
-            {
-                mFrogs.Add(mPond.SpawnFrog(frogData, pondData, i));
-            }
+            mFrogs = new List<FrogSimState>(sSuportedPlayers.Length);
+
             System.Diagnostics.Debug.Assert(IsFixedTimeStep);
             mSim = new RanitasSim(mPond, mFrogs, (float)TargetElapsedTime.TotalSeconds);
 
@@ -75,9 +79,25 @@ namespace Ranitas
 
         protected override void Update(GameTime gameTime)
         {
-            if ((GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed) || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            foreach (var playerIndex in sSuportedPlayers)
             {
-                Exit();
+                if (mRegisteredPlayers[playerIndex] == null)
+                {
+                    if (GamePad.GetState(playerIndex).Buttons.Start == ButtonState.Pressed)
+                    {
+                        FrogSimState frog = mPond.SpawnFrog(mFrogPrototype, mFrogSpawns, playerIndex);
+                        mFrogs.Add(frog);
+                        mRegisteredPlayers[playerIndex] = new FrogInput(playerIndex, frog);
+                    }
+                }
+                else
+                {
+                    mRegisteredPlayers[playerIndex].Update();
+                }
+                if ((GamePad.GetState(playerIndex).Buttons.Back == ButtonState.Pressed) || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                {
+                    Exit();
+                }
             }
 
             mSim.Update();

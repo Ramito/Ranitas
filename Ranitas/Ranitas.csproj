@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="Core\FixedTimeStepDynamics.cs" />
     <Compile Include="Core\Rect.cs" />
+    <Compile Include="Frog\FrogInput.cs" />
     <Compile Include="Frog\FrogRenderer.cs" />
     <Compile Include="Frog\FrogSimState.cs" />
     <Compile Include="Game1.cs" />
