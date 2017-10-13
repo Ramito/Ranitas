@@ -6,21 +6,21 @@
     <Lilies>
       <Item>
         <LilyPad>
-          <Width>150</Width>
+          <Width>250</Width>
           <Height>10</Height>
         </LilyPad>
         <HorizontalPosition>150</HorizontalPosition>
       </Item>
       <Item>
         <LilyPad>
-          <Width>150</Width>
+          <Width>50</Width>
           <Height>10</Height>
         </LilyPad>
         <HorizontalPosition>400</HorizontalPosition>
       </Item>
       <Item>
         <LilyPad>
-          <Width>150</Width>
+          <Width>250</Width>
           <Height>10</Height>
         </LilyPad>
         <HorizontalPosition>650</HorizontalPosition>
