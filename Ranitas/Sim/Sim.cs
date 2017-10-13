@@ -139,15 +139,36 @@ namespace Ranitas.Sim
 
         private void UpdateSwimingFrogDynamics(FrogSimState frog)
         {
-            Vector2 bouyancy = ComputeBouyancyAcceleration(frog);
+            Vector2 buouyancy = ComputeBuouyancyAcceleration(frog);
             Vector2 swimAcceleration = UpdateFrogSwimAndGetAcceleration(frog);
-            Vector2 totalAcceperation = bouyancy + swimAcceleration;
-            frog.Position += mDynamics.FrameLinearDragPositionDelta(frog.Velocity, frog.Prototype.WaterDrag, totalAcceperation);
-            frog.Velocity = mDynamics.FrameLinearDragVelocity(frog.Velocity, frog.Prototype.WaterDrag, totalAcceperation);
+            Vector2 totalAcceperation = buouyancy + swimAcceleration;
+            if ((frog.Velocity.Y > 0f) && (frog.Position.Y + (0.5f * frog.Height)) > mPondState.WaterLevel)
+            {
+                //No vertical drag!
+                Vector2 verticalVelocity = new Vector2(0f, frog.Velocity.Y);
+                Vector2 verticalAcceleration = new Vector2(0f, totalAcceperation.Y);
+                frog.Position += mDynamics.FramePositionDelta(verticalAcceleration, verticalVelocity);
+                Vector2 totalVerticalVelocity = verticalVelocity + mDynamics.FrameVelocityDelta(verticalAcceleration);
+
+                Vector2 horizontalVelocity = new Vector2(frog.Velocity.X, 0f);
+                Vector2 horizontalAcceleration = new Vector2(totalAcceperation.X, 0f);
+                UpdateFrogDragDynamics(frog, horizontalVelocity, horizontalAcceleration);
+                frog.Velocity += totalVerticalVelocity;
+            }
+            else
+            {
+                UpdateFrogDragDynamics(frog, frog.Velocity, totalAcceperation);
+            }
             if (frog.FeetPosition.Y >= mPondState.WaterLevel)
             {
                 frog.State = FrogState.Airborne;
             }
+        }
+
+        private void UpdateFrogDragDynamics(FrogSimState frog, Vector2 updateVelocity, Vector2 accelerationVector)
+        {
+            frog.Position += mDynamics.FrameLinearDragPositionDelta(updateVelocity, frog.Prototype.WaterDrag, accelerationVector);
+            frog.Velocity = mDynamics.FrameLinearDragVelocity(updateVelocity, frog.Prototype.WaterDrag, accelerationVector);
         }
 
         private Vector2 UpdateFrogSwimAndGetAcceleration(FrogSimState frog)
@@ -160,31 +181,26 @@ namespace Ranitas.Sim
                     newPhase = frog.Prototype.SwimKickDuration;
                 }
                 frog.SwimKickPhase = newPhase;
-                return Vector2.Zero;
             }
             else if (frog.SwimDirection != Vector2.Zero)
             {
                 if (frog.SwimKickPhase > 0f)
                 {
                     frog.SwimKickPhase = Math.Max(0f, frog.SwimKickPhase - mDynamics.FixedTimeStep);
+                    float accelerationModule = frog.Prototype.SwimKickVelocity * frog.Prototype.WaterDrag;
+                    Vector2 acceleration = frog.SwimDirection;
+                    acceleration.Normalize();
+                    return accelerationModule * acceleration;
                 }
-                else
-                {
-                    frog.SwimKickPhase = -frog.Prototype.SwimKickRecharge;
-                }
-                float accelerationModule = frog.Prototype.SwimKickVelocity * frog.Prototype.WaterDrag;
-                Vector2 acceleration = frog.SwimDirection;
-                acceleration.Normalize();
-                return accelerationModule * acceleration;
             }
-            else
+            else if (frog.SwimKickPhase != frog.Prototype.SwimKickDuration)
             {
-                frog.SwimKickPhase = Math.Min(frog.Prototype.SwimKickDuration, frog.SwimKickPhase + mDynamics.FixedTimeStep);
-                return Vector2.Zero;
+                frog.SwimKickPhase = -frog.Prototype.SwimKickRecharge;
             }
+            return Vector2.Zero;
         }
 
-        private Vector2 ComputeBouyancyAcceleration(FrogSimState frog)
+        private Vector2 ComputeBuouyancyAcceleration(FrogSimState frog)
         {
             Rect frogRect = new Rect(frog.Position, frog.Width, frog.Height);
             float volumePercentage = (mPondState.WaterLevel - frogRect.MinY) / (frog.Height);

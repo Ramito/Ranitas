@@ -17,7 +17,7 @@ namespace Ranitas.Frog
         public void Update(Vector2 controlDirection, bool jumpButtonState)
         {
             float controlModule = controlDirection.LengthSquared();
-            if (controlModule < 0.25f)
+            if (controlModule < 0.1f)
             {
                 controlDirection = Vector2.Zero;
             }
