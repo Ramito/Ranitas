@@ -1,30 +1,60 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
 
 namespace Ranitas.Core
 {
     public class FixedTimeStepDynamics
     {
-        private readonly float mFixedTimeStep;
-        private readonly float mHalfFixedTimeStepSquared;
-        private readonly float mOneOverFixedTimeStep;
+        public readonly float FixedTimeStep;
+        public readonly float HalfFixedTimeStepSquared;
+        public readonly float OneOverFixedTimeStep;
 
         public FixedTimeStepDynamics(float fixedTimeStep)
         {
-            mFixedTimeStep = fixedTimeStep;
-            mHalfFixedTimeStepSquared = (fixedTimeStep * fixedTimeStep) * 0.5f;
-            mOneOverFixedTimeStep = 1f / mFixedTimeStep;
+            FixedTimeStep = fixedTimeStep;
+            HalfFixedTimeStepSquared = (fixedTimeStep * fixedTimeStep) * 0.5f;
+            OneOverFixedTimeStep = 1f / FixedTimeStep;
         }
 
-        public Vector2 ComputeFrameVelocityChange(Vector2 frameAcceleration)
+        public Vector2 FrameVelocityDelta(Vector2 frameAcceleration)
         {
-            return mFixedTimeStep * frameAcceleration;
+            return FixedTimeStep * frameAcceleration;
         }
 
-        public Vector2 ComputeFramePositionChange(Vector2 frameAcceleration, Vector2 frameVelocity)
+        public Vector2 FramePositionDelta(Vector2 frameAcceleration, Vector2 frameVelocity)
         {
-            Vector2 velocityContribution = mFixedTimeStep * frameVelocity;
-            Vector2 accelerationContribution = mHalfFixedTimeStepSquared * frameAcceleration;
+            Vector2 velocityContribution = FixedTimeStep * frameVelocity;
+            Vector2 accelerationContribution = HalfFixedTimeStepSquared * frameAcceleration;
             return velocityContribution + accelerationContribution;
+        }
+
+        public float LinearDragTerminalVelocity(float dragCoefficient, float acceleration)
+        {
+            return acceleration / dragCoefficient;
+        }
+
+        public Vector2 FrameLinearDragVelocity(Vector2 frameVelocity, float dragCoefficient, Vector2 acceleration)
+        {
+            if (dragCoefficient == 0f)  //TODO: "Small" checks!
+            {
+                return frameVelocity;
+            }
+            float dragFactor = (float)Math.Exp(-dragCoefficient * FixedTimeStep);
+            float accelerationModule = acceleration.Length();
+            Vector2 terminalVelocity = (1f / dragCoefficient) * acceleration;
+            return (frameVelocity - terminalVelocity) * dragFactor + terminalVelocity;
+        }
+
+        public Vector2 FrameLinearDragPositionDelta(Vector2 frameVelocity, float dragCoefficient, Vector2 acceleration)
+        {
+            if (dragCoefficient == 0f)  //TODO: "Small" checks!
+            {
+                return frameVelocity * FixedTimeStep;
+            }
+            float dragFactor = (float)Math.Exp(-dragCoefficient * FixedTimeStep);
+            float accelerationModule = acceleration.Length();
+            Vector2 terminalVelocity = (1f / dragCoefficient) * acceleration;
+            return (terminalVelocity * FixedTimeStep) + ((frameVelocity - terminalVelocity) / dragCoefficient) * (1f - dragFactor);
         }
     }
 }
