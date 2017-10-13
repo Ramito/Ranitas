@@ -87,12 +87,24 @@ namespace Ranitas
                     {
                         FrogSimState frog = mPond.SpawnFrog(mFrogPrototype, mFrogSpawns, playerIndex);
                         mFrogs.Add(frog);
-                        mRegisteredPlayers[playerIndex] = new FrogInput(playerIndex, frog);
+                        mRegisteredPlayers[playerIndex] = new FrogInput(frog);
                     }
                 }
                 else
                 {
-                    mRegisteredPlayers[playerIndex].Update();
+                    bool jumpButton = (GamePad.GetState(playerIndex).Buttons.A == ButtonState.Pressed);
+                    Vector2 controller = GamePad.GetState(playerIndex).ThumbSticks.Left;
+                    FrogInput frogInput = mRegisteredPlayers[playerIndex];
+                    bool previousState = frogInput.JumpButtonState;
+                    frogInput.Update(controller, jumpButton);
+                    if (previousState != frogInput.JumpButtonState)
+                    {
+                        GamePad.SetVibration(playerIndex, 1f, 1f);
+                    }
+                    else
+                    {
+                        GamePad.SetVibration(playerIndex, 0f, 0f);
+                    }
                 }
                 if ((GamePad.GetState(playerIndex).Buttons.Back == ButtonState.Pressed) || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 {

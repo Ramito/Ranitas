@@ -5,54 +5,48 @@ namespace Ranitas.Frog
 {
     public sealed class FrogInput
     {
-        public readonly int PlayerIndex;
-        public readonly FrogSimState Frog;
-        public FrogActionState ActionState = FrogActionState.Idle;
+        public readonly FrogSimState BoundFrog;
+        public Vector2 ControlDirection { get; private set; }
+        public bool JumpButtonState { get; private set; }
 
-        public FrogInput(int playerIndex, FrogSimState frog)
+        public FrogInput(FrogSimState boundFrog)
         {
-            PlayerIndex = playerIndex;
-            Frog = frog;
+            BoundFrog = boundFrog;
         }
 
-        public void Update()
+        public void Update(Vector2 controlDirection, bool jumpButtonState)
         {
-            if (ActionState == FrogActionState.Jumping)
+            float controlModule = controlDirection.LengthSquared();
+            if (controlModule < 0.25f)
             {
-                Frog.Velocity = new Vector2(10, 700);
-                ActionState = FrogActionState.Idle;
+                controlDirection = Vector2.Zero;
             }
-            else
+            ControlDirection = controlDirection;
+            if (jumpButtonState != JumpButtonState)
             {
-                //TODO: Process gamepad input one layer above!
-                bool jumpButtonDown = (GamePad.GetState(PlayerIndex).Buttons.A == ButtonState.Pressed);
-                JumpButtonPressed(jumpButtonDown);
-            }
-        }
-
-        public void JumpButtonPressed(bool pressed)
-        {
-            if (pressed)
-            {
-                if (ActionState == FrogActionState.Idle)
+                if (jumpButtonState)
                 {
-                    ActionState = FrogActionState.PreparingJump;
+                    if ((BoundFrog.State == FrogSimState.FrogState.Grounded) && !BoundFrog.JumpSignaled)
+                    {
+                        BoundFrog.PreparingJump = true;
+                        BoundFrog.TimePreparingJump = 0f;
+                    }
+                }
+                else
+                {
+                    BoundFrog.PreparingJump = false;
+                    BoundFrog.JumpSignaled = true;
+                    BoundFrog.SignaledJumpDirection = ControlDirection;
+                }
+                JumpButtonState = jumpButtonState;
+            }
+            if (BoundFrog.State == FrogSimState.FrogState.Swimming)
+            {
+                if ((BoundFrog.SwimKickPhase >= BoundFrog.Prototype.SwimKickDuration) || (ControlDirection == Vector2.Zero))
+                {
+                    BoundFrog.SwimDirection = ControlDirection;
                 }
             }
-            else
-            {
-                if (ActionState == FrogActionState.PreparingJump)
-                {
-                    ActionState = FrogActionState.Jumping;
-                }
-            }
-        }
-
-        public enum FrogActionState
-        {
-            Idle,
-            PreparingJump,
-            Jumping,
         }
     }
 }
