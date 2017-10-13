@@ -6,10 +6,10 @@
     <JumpVelocity>790</JumpVelocity>
     <JumpPrepareTime>0.5</JumpPrepareTime>
     <JumpSquish>0.72</JumpSquish>
-    <WaterDrag>6.75</WaterDrag>
-    <FrogDensity>0.95</FrogDensity>
-    <SwimKickDuration>0.5</SwimKickDuration>
-    <SwimKickRecharge>0.5</SwimKickRecharge>
-    <SwimKickVelocity>300</SwimKickVelocity>
+    <WaterDrag>3.85</WaterDrag>
+    <FrogDensity>0.885</FrogDensity>
+    <SwimKickDuration>0.2</SwimKickDuration>
+    <SwimKickRecharge>0.225</SwimKickRecharge>
+    <SwimKickVelocity>600</SwimKickVelocity>
   </Asset>
 </XnaContent>

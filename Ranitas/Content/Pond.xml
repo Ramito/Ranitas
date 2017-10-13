@@ -1,34 +1,34 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <XnaContent xmlns:Data="Ranitas.Data">
   <Asset Type="Data:PondData">
-    <Width>800</Width>
-    <Height>600</Height>
+    <Width>900</Width>
+    <Height>700</Height>
     <Lilies>
       <Item>
         <LilyPad>
           <Width>250</Width>
           <Height>10</Height>
         </LilyPad>
-        <HorizontalPosition>150</HorizontalPosition>
+        <HorizontalPosition>75</HorizontalPosition>
       </Item>
       <Item>
         <LilyPad>
-          <Width>50</Width>
+          <Width>35</Width>
           <Height>10</Height>
         </LilyPad>
-        <HorizontalPosition>400</HorizontalPosition>
+        <HorizontalPosition>450</HorizontalPosition>
       </Item>
       <Item>
         <LilyPad>
           <Width>250</Width>
           <Height>10</Height>
         </LilyPad>
-        <HorizontalPosition>650</HorizontalPosition>
+        <HorizontalPosition>825</HorizontalPosition>
       </Item>
     </Lilies>
     <FrogSpawns>
-      150
-      650
+      50
+      850
     </FrogSpawns>
     <WaterLevel>200</WaterLevel>
   </Asset>
