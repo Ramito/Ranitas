@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Ranitas.Core;
 using Ranitas.Data;
 
 namespace Ranitas.Pond
@@ -10,6 +11,8 @@ namespace Ranitas.Pond
         public Vector2 Position;    //Center of mass
 
         public Vector2 Velocity { get { return Vector2.Zero; } }
+
+        public Rect Rect { get { return new Rect(Position, Width, Height); } }
 
         public LilyPadSimState(LilyPadData data, Vector2 position)
         {

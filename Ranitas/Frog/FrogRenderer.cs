@@ -1,5 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Ranitas.Core;
+using Ranitas.Frog.Sim;
 
 namespace Ranitas.Frog
 {
@@ -16,20 +18,17 @@ namespace Ranitas.Frog
 
         public void RenderFrog(FrogSimState frog, GraphicsDevice device)
         {
-            SetVertices(mVertexBufferData, frog);
+            SetVertices(mVertexBufferData, frog.RigidBodyState.Rect);
             mVertexBuffer.SetData(mVertexBufferData);
             device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
         }
 
-        private static void SetVertices(VertexPositionColor[] vertices, FrogSimState frog)
+        private static void SetVertices(VertexPositionColor[] vertices, Rect frogRect)
         {
-            float halfWidth = frog.Width * 0.5f;
-            float halfHeight = frog.Height * 0.5f;
-            Vector3 position = new Vector3(frog.Position, 0f);
-            vertices[0].Position = new Vector3(halfWidth, halfHeight, 0f) + position;
-            vertices[1].Position = new Vector3(halfWidth, -halfHeight, 0f) + position;
-            vertices[2].Position = new Vector3(-halfWidth, halfHeight, 0f) + position;
-            vertices[3].Position = new Vector3(-halfWidth, -halfHeight, 0f) + position;
+            vertices[0].Position = new Vector3(frogRect.MaxCorner, 0f);
+            vertices[1].Position = new Vector3(frogRect.MaxMinCorner, 0f);
+            vertices[2].Position = new Vector3(frogRect.MinMaxCorner, 0f);
+            vertices[3].Position = new Vector3(frogRect.MinCorner, 0f);
 
             Color color = Color.GreenYellow;
             vertices[0].Color = color;

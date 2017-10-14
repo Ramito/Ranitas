@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Ranitas.Data;
-using Ranitas.Frog;
+using Ranitas.Frog.Sim;
 using System.Collections.Generic;
 
 namespace Ranitas.Pond
@@ -35,7 +35,7 @@ namespace Ranitas.Pond
             FrogSimState frogSimState = new FrogSimState(frogData);
             float spawnX = frogSpawns[spawnIndex];
             float spawnY = FindSpawnY(spawnX) + 500;
-            frogSimState.FeetPosition = new Vector2(spawnX, spawnY);
+            frogSimState.RigidBodyState.FeetPosition = new Vector2(spawnX, spawnY);
             return frogSimState;
         }
 

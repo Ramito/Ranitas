@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 
 using Ranitas.Data;
 using Ranitas.Frog;
+using Ranitas.Frog.Sim;
 using Ranitas.Pond;
 using Ranitas.Sim;
 using System.Collections.Generic;
