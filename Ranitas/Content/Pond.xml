@@ -30,6 +30,6 @@
       50
       850
     </FrogSpawns>
-    <WaterLevel>200</WaterLevel>
+    <WaterLevel>300</WaterLevel>
   </Asset>
 </XnaContent>

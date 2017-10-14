@@ -121,7 +121,7 @@ namespace Ranitas
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.DimGray);
             mPondRenderer.RenderPond(mPond, mGraphics.GraphicsDevice);
             foreach (var frog in mFrogs)
             {
