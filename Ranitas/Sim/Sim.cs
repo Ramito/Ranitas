@@ -128,7 +128,7 @@ namespace Ranitas.Sim
             frog.Velocity = frog.Velocity + mDynamics.FrameVelocityDelta(kGravity);
             if (frog.FeetPosition.Y < mPondState.WaterLevel)
             {
-                frog.SwimKickPhase = -frog.Prototype.SwimKickRecharge;
+                frog.SwimKickPhase = 0f;
                 frog.State = FrogState.Swimming;
             }
             else
