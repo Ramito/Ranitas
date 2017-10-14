@@ -7,6 +7,12 @@ namespace Ranitas.Core
         public readonly Vector2 MinCorner;
         public readonly Vector2 MaxCorner;
 
+        public float Width { get { return MaxX - MinX; } }
+        public float Height { get { return MaxY - MinY; } }
+
+        public Vector2 MinMaxCorner { get { return new Vector2(MinX, MaxY); } }
+        public Vector2 MaxMinCorner { get { return new Vector2(MaxX, MinY); } }
+
         public float MaxX { get { return MaxCorner.X; } }
         public float MaxY { get { return MaxCorner.Y; } }
         public float MinX { get { return MinCorner.X; } }
