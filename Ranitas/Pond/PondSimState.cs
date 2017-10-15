@@ -7,6 +7,8 @@ namespace Ranitas.Pond
 {
     public sealed class PondSimState
     {
+        public readonly static Vector2 kGravity = new Vector2(0f, -980f);    //TODO: Data drive!
+
         public float Width;
         public float Height;
         public float WaterLevel;

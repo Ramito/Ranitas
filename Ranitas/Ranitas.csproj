@@ -46,6 +46,7 @@
     <Compile Include="Core\Rect.cs" />
     <Compile Include="Frog\FrogInput.cs" />
     <Compile Include="Frog\FrogRenderer.cs" />
+    <Compile Include="Frog\Sim\FrogSim.cs" />
     <Compile Include="Frog\Sim\FrogSimState.cs" />
     <Compile Include="Frog\Sim\RigidBodyState.cs" />
     <Compile Include="Game1.cs" />
