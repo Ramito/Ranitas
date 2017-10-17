@@ -30,6 +30,7 @@ namespace Ranitas.Frog
                     {
                         BoundFrog.PreparingJump = true;
                         BoundFrog.TimePreparingJump = 0f;
+                        JumpButtonState = jumpButtonState;
                     }
                 }
                 else
@@ -37,8 +38,8 @@ namespace Ranitas.Frog
                     BoundFrog.PreparingJump = false;
                     BoundFrog.JumpSignaled = true;
                     BoundFrog.SignaledJumpDirection = ControlDirection;
+                    JumpButtonState = jumpButtonState;
                 }
-                JumpButtonState = jumpButtonState;
             }
             if (BoundFrog.State == FrogSimState.FrogState.Swimming)
             {
