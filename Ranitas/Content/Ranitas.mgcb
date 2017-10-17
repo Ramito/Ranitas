@@ -25,3 +25,8 @@
 /processor:PassThroughProcessor
 /build:Frog.xml
 
+#begin Fly.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:Fly.xml
+

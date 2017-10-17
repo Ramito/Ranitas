@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FlyData.cs" />
     <Compile Include="FrogData.cs" />
     <Compile Include="PondData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
