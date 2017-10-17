@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using Ranitas.Data;
 using Ranitas.Frog;
 using Ranitas.Frog.Sim;
+using Ranitas.Insects;
 using Ranitas.Pond;
 using Ranitas.Sim;
 using System.Collections.Generic;
@@ -25,8 +26,10 @@ namespace Ranitas
 
         private PondSimState mPond;
         private PondRenderer mPondRenderer;
+
         private List<FrogSimState> mFrogs;
         private FrogRenderer mFrogRenderer;
+        private FlyRenderer mFlyRenderer;
 
         private RanitasSim mSim;
 
@@ -58,19 +61,23 @@ namespace Ranitas
         {
             mFrogPrototype = Content.Load<FrogData>("Frog");
             PondData pondData = Content.Load<PondData>("Pond");
+            FlyData flyData = Content.Load<FlyData>("Fly");
             mFrogSpawns = pondData.FrogSpawns;
 
             mPond = new PondSimState(pondData);
             mFrogs = new List<FrogSimState>(sSuportedPlayers.Length);
 
             System.Diagnostics.Debug.Assert(IsFixedTimeStep);
-            mSim = new RanitasSim(mPond, mFrogs, (float)TargetElapsedTime.TotalSeconds);
+            mSim = new RanitasSim(flyData, mPond, mFrogs, (float)TargetElapsedTime.TotalSeconds);
 
             mPondRenderer = new PondRenderer();
             mPondRenderer.Setup(mGraphics.GraphicsDevice, pondData);
 
             mFrogRenderer = new FrogRenderer();
             mFrogRenderer.Setup(mGraphics.GraphicsDevice);
+
+            mFlyRenderer = new FlyRenderer(mSim.FlySim);
+            mFlyRenderer.Setup(mGraphics.GraphicsDevice);
         }
 
         protected override void UnloadContent()
@@ -127,6 +134,7 @@ namespace Ranitas
             {
                 mFrogRenderer.RenderFrog(frog, mGraphics.GraphicsDevice);
             }
+            mFlyRenderer.Render(mGraphics.GraphicsDevice);
             base.Draw(gameTime);
         }
     }

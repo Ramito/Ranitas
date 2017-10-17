@@ -44,12 +44,16 @@
   <ItemGroup>
     <Compile Include="Core\FixedTimeStepDynamics.cs" />
     <Compile Include="Core\Rect.cs" />
+    <Compile Include="Core\Render\RectRenderer.cs" />
     <Compile Include="Frog\FrogInput.cs" />
     <Compile Include="Frog\FrogRenderer.cs" />
     <Compile Include="Frog\Sim\FrogSim.cs" />
     <Compile Include="Frog\Sim\FrogSimState.cs" />
     <Compile Include="Frog\Sim\RigidBodyState.cs" />
     <Compile Include="Game1.cs" />
+    <Compile Include="Insects\FlyRenderer.cs" />
+    <Compile Include="Insects\FlySim.cs" />
+    <Compile Include="Insects\FlySimState.cs" />
     <Compile Include="Pond\LilyPadSimState.cs" />
     <Compile Include="Pond\PondSimState.cs" />
     <Compile Include="Pond\PondRenderer.cs" />
@@ -123,6 +127,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\Fly.xml" />
     <Content Include="Content\Frog.xml" />
     <Content Include="Content\Pond.xml" />
   </ItemGroup>
