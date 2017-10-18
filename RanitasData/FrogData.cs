@@ -15,5 +15,12 @@
         public float SwimKickDuration;
         public float SwimKickRecharge;
         public float SwimKickVelocity;
+
+        public float ToungueLength;
+        public float ToungueThickness;
+        public float ToungueExtendTime;
+        public float ToungueFullyExtendedTime;
+        public float ToungueRetractTime;
+        public float ToungueRefreshTime;
     }
 }

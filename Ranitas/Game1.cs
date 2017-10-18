@@ -70,6 +70,8 @@ namespace Ranitas
             System.Diagnostics.Debug.Assert(IsFixedTimeStep);
             mSim = new RanitasSim(flyData, mPond, mFrogs, (float)TargetElapsedTime.TotalSeconds);
 
+            FrogToungue.Initialize((float)TargetElapsedTime.TotalSeconds, 4);
+
             mPondRenderer = new PondRenderer();
             mPondRenderer.Setup(mGraphics.GraphicsDevice, pondData);
 
@@ -101,10 +103,11 @@ namespace Ranitas
                 else
                 {
                     bool jumpButton = (GamePad.GetState(playerIndex).Buttons.A == ButtonState.Pressed);
+                    bool toungueButton = (GamePad.GetState(playerIndex).Buttons.X == ButtonState.Pressed);
                     Vector2 controller = GamePad.GetState(playerIndex).ThumbSticks.Left;
                     FrogInput frogInput = mRegisteredPlayers[playerIndex];
                     bool previousState = frogInput.JumpButtonState;
-                    frogInput.Update(controller, jumpButton);
+                    frogInput.Update(controller, jumpButton, toungueButton);
                     if (previousState != frogInput.JumpButtonState)
                     {
                         GamePad.SetVibration(playerIndex, 1f, 1f);

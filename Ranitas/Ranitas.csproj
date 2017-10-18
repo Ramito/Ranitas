@@ -49,6 +49,7 @@
     <Compile Include="Frog\FrogRenderer.cs" />
     <Compile Include="Frog\Sim\FrogSim.cs" />
     <Compile Include="Frog\Sim\FrogSimState.cs" />
+    <Compile Include="Frog\Sim\FrogToungue.cs" />
     <Compile Include="Frog\Sim\RigidBodyState.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Insects\FlyRenderer.cs" />

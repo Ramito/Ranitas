@@ -8,13 +8,14 @@ namespace Ranitas.Frog
         public readonly FrogSimState BoundFrog;
         public Vector2 ControlDirection { get; private set; }
         public bool JumpButtonState { get; private set; }
+        public bool ToungueButtonState { get; private set; }
 
         public FrogInput(FrogSimState boundFrog)
         {
             BoundFrog = boundFrog;
         }
 
-        public void Update(Vector2 controlDirection, bool jumpButtonState)
+        public void Update(Vector2 controlDirection, bool jumpButtonState, bool toungueButtonState)
         {
             float controlModule = controlDirection.LengthSquared();
             if (controlModule < 0.1f)
@@ -47,6 +48,12 @@ namespace Ranitas.Frog
                 {
                     BoundFrog.SwimDirection = ControlDirection;
                 }
+            }
+
+            if (ToungueButtonState != toungueButtonState)
+            {
+                BoundFrog.Toungue.ExtendSignal = toungueButtonState;
+                ToungueButtonState = toungueButtonState;
             }
         }
     }

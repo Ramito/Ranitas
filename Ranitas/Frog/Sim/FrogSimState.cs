@@ -35,6 +35,8 @@ namespace Ranitas.Frog.Sim
             }
         }
 
+        public readonly FrogToungue Toungue;
+
         public FrogSimState(FrogData data)
         {
             Prototype = data;
@@ -42,6 +44,7 @@ namespace Ranitas.Frog.Sim
             State = FrogState.Grounded;
             PreparingJump = false;
             TimePreparingJump = 0f;
+            Toungue = new FrogToungue(data);
         }
     }
 }
