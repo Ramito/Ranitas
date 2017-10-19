@@ -21,6 +21,13 @@ namespace Ranitas.Frog
             SetVertices(mVertexBufferData, frog.RigidBodyState.Rect);
             mVertexBuffer.SetData(mVertexBufferData);
             device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
+            float relativeToungueLength = frog.Toungue.RelativeLength;
+            if (relativeToungueLength > 0f)
+            {
+                SetVertices(mVertexBufferData, frog.GetToungueRect());
+                mVertexBuffer.SetData(mVertexBufferData);
+                device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, 2);
+            }
         }
 
         private static void SetVertices(VertexPositionColor[] vertices, Rect frogRect)
