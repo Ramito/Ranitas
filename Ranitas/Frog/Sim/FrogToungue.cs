@@ -1,4 +1,5 @@
-﻿using Ranitas.Core.StateMachine;
+﻿using Ranitas.Core;
+using Ranitas.Core.StateMachine;
 using Ranitas.Data;
 
 namespace Ranitas.Frog.Sim
@@ -8,6 +9,10 @@ namespace Ranitas.Frog.Sim
         public float TimeStep;
         public readonly FrogData Data;
         public bool ExtendSignal = false;
+
+        public bool ToungueActive;
+        public float RelativePhase { get { return MathExtensions.Clamp01(StatePhase / StateDuration); } }
+        public float RelativeLength;
 
         public float StateDuration;
         public float StatePhase;
@@ -30,6 +35,7 @@ namespace Ranitas.Frog.Sim
 
             public sealed override void OnEnter(FrogToungue stateMachine)
             {
+                stateMachine.ToungueActive = ToungueActive(stateMachine);
                 stateMachine.StateDuration = GetStateDuration(stateMachine.Data);
                 stateMachine.StatePhase = 0f;
             }
@@ -42,10 +48,15 @@ namespace Ranitas.Frog.Sim
                     {
                         stateMachine.TransitionTo(GetNextTransitionState(stateMachine));
                     }
+                    else
+                    {
+                        UpdateLength(stateMachine);
+                    }
                 }
                 else
                 {
                     stateMachine.StatePhase += stateMachine.TimeStep;
+                    UpdateLength(stateMachine);
                 }
             }
 
@@ -56,6 +67,15 @@ namespace Ranitas.Frog.Sim
             protected abstract bool TransitionOnFullPhase(FrogToungue stateMachine);
 
             protected abstract State<FrogToungue> GetNextTransitionState(FrogToungue stateMachine);
+
+            protected virtual bool ToungueActive(FrogToungue stateMachine) { return false; }
+
+            protected virtual float ToungueRelativeLength(FrogToungue stateMachine) { return 0f; }
+
+            private void UpdateLength(FrogToungue stateMachine)
+            {
+                stateMachine.RelativeLength = MathExtensions.Clamp01(ToungueRelativeLength(stateMachine));
+            }
         }
 
         private sealed class Retracted : ToungueStateBase<Retracted>
@@ -92,6 +112,16 @@ namespace Ranitas.Frog.Sim
             {
                 return data.ToungueExtendTime;
             }
+
+            protected sealed override bool ToungueActive(FrogToungue stateMachine)
+            {
+                return true;
+            }
+
+            protected sealed override float ToungueRelativeLength(FrogToungue stateMachine)
+            {
+                return stateMachine.RelativePhase;
+            }
         }
 
         private sealed class Extended : ToungueStateBase<Extended>
@@ -110,6 +140,16 @@ namespace Ranitas.Frog.Sim
             {
                 return true;
             }
+
+            protected sealed override bool ToungueActive(FrogToungue stateMachine)
+            {
+                return true;
+            }
+
+            protected sealed override float ToungueRelativeLength(FrogToungue stateMachine)
+            {
+                return 1f;
+            }
         }
 
         private sealed class Retracting : ToungueStateBase<Retracting>
@@ -127,6 +167,16 @@ namespace Ranitas.Frog.Sim
             protected sealed override bool TransitionOnFullPhase(FrogToungue stateMachine)
             {
                 return true;
+            }
+
+            protected sealed override bool ToungueActive(FrogToungue stateMachine)
+            {
+                return false;
+            }
+
+            protected sealed override float ToungueRelativeLength(FrogToungue stateMachine)
+            {
+                return 1f - stateMachine.RelativePhase;
             }
         }
     }
