@@ -11,11 +11,11 @@
     <SwimKickDuration>0.2</SwimKickDuration>
     <SwimKickRecharge>0.225</SwimKickRecharge>
     <SwimKickVelocity>600</SwimKickVelocity>
-    <ToungueLength>20</ToungueLength>
-    <ToungueThickness>5</ToungueThickness>
-    <ToungueExtendTime>0.15</ToungueExtendTime>
-    <ToungueFullyExtendedTime>0.2</ToungueFullyExtendedTime>
-    <ToungueRetractTime>0.1</ToungueRetractTime>
-    <ToungueRefreshTime>0.3</ToungueRefreshTime>
+    <ToungueLength>25</ToungueLength>
+    <ToungueThickness>4</ToungueThickness>
+    <ToungueExtendTime>0.1</ToungueExtendTime>
+    <ToungueFullyExtendedTime>0.225</ToungueFullyExtendedTime>
+    <ToungueRetractTime>0.07</ToungueRetractTime>
+    <ToungueRefreshTime>0.25</ToungueRefreshTime>
   </Asset>
 </XnaContent>
