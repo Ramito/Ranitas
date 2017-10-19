@@ -20,7 +20,7 @@ namespace Ranitas.Frog.Sim
         public FrogToungue(FrogData data)
         {
             Data = data;
-            TransitionTo(Retracted.Instance);
+            TransitionTo(Refreshing.Instance);
         }
 
         public void Update(float deltaTime)
@@ -78,21 +78,39 @@ namespace Ranitas.Frog.Sim
             }
         }
 
-        private sealed class Retracted : ToungueStateBase<Retracted>
+        private sealed class Refreshing : ToungueStateBase<Refreshing>
         {
             protected sealed override bool TransitionOnFullPhase(FrogToungue stateMachine)
             {
-                return stateMachine.ExtendSignal;
+                return true;
             }
 
             protected sealed override State<FrogToungue> GetNextTransitionState(FrogToungue stateMachine)
             {
-                return Extending.Instance;
+                return Ready.Instance;
             }
 
             protected sealed override float GetStateDuration(FrogData data)
             {
                 return data.ToungueRefreshTime;
+            }
+        }
+
+        private sealed class Ready : ToungueStateBase<Ready>
+        {
+            protected override State<FrogToungue> GetNextTransitionState(FrogToungue stateMachine)
+            {
+                return Extending.Instance;
+            }
+
+            protected override float GetStateDuration(FrogData data)
+            {
+                return 0f;
+            }
+
+            protected override bool TransitionOnFullPhase(FrogToungue stateMachine)
+            {
+                return stateMachine.ExtendSignal;
             }
         }
 
@@ -156,7 +174,7 @@ namespace Ranitas.Frog.Sim
         {
             protected sealed override State<FrogToungue> GetNextTransitionState(FrogToungue stateMachine)
             {
-                return Retracted.Instance;
+                return Refreshing.Instance;
             }
 
             protected sealed override float GetStateDuration(FrogData data)
