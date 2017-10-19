@@ -70,8 +70,6 @@ namespace Ranitas
             System.Diagnostics.Debug.Assert(IsFixedTimeStep);
             mSim = new RanitasSim(flyData, mPond, mFrogs, (float)TargetElapsedTime.TotalSeconds);
 
-            FrogToungue.Initialize((float)TargetElapsedTime.TotalSeconds, 4);
-
             mPondRenderer = new PondRenderer();
             mPondRenderer.Setup(mGraphics.GraphicsDevice, pondData);
 

@@ -14,7 +14,7 @@ namespace Ranitas.Frog.Sim
             foreach (var frog in frogStates)
             {
                 UpdateFrog(frog, pondState, dynamics);
-                UpdateFrogToungue(frog);
+                UpdateFrogToungue(frog, dynamics.FixedTimeStep);
             }
         }
 
@@ -53,9 +53,9 @@ namespace Ranitas.Frog.Sim
             }
         }
 
-        private static void UpdateFrogToungue(FrogSimState frog)
+        private static void UpdateFrogToungue(FrogSimState frog, float deltaTime)
         {
-            frog.Toungue.Update();
+            frog.Toungue.Update(deltaTime);
         }
 
         private static void UpdateNonGroundedFrogState(FrogSimState frog, PondSimState pondState)
