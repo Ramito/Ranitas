@@ -27,6 +27,28 @@ namespace Ranitas.Sim
         {
             FrogSim.UpdateFrogs(mFrogStates, mPondState, mDynamics);
             FlySim.Update();
+            UpdateFlyEating();
+        }
+
+        public void UpdateFlyEating()
+        {
+            foreach (var frog in mFrogStates)
+            {
+                if (!frog.Toungue.ToungueActive)
+                {
+                    continue;
+                }
+                Rect toungue = frog.GetToungueRect();
+                for (int i = FlySim.ActiveFlies.Count - 1; i >= 0; --i)
+                {
+                    var fly = FlySim.ActiveFlies[i];
+                    Rect flyRect = new Rect(fly.Position, fly.Width, fly.Height);
+                    if (flyRect.Intersects(toungue))
+                    {
+                        FlySim.DespawnFly(fly);
+                    }
+                }
+            }
         }
     }
 }

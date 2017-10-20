@@ -56,6 +56,12 @@ namespace Ranitas.Insects
             }
         }
 
+        public void DespawnFly(FlySimState fly)
+        {
+            ActiveFlies.Remove(fly);
+            mFlyPool.Add(fly);
+        }
+
         private void SpawnFly()
         {
 
