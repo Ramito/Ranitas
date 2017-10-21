@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using Ranitas.Data;
 using Ranitas.Frog;
 using Ranitas.Frog.Sim;
+using Ranitas.Input;
 using Ranitas.Insects;
 using Ranitas.Pond;
 using Ranitas.Sim;
@@ -27,13 +28,15 @@ namespace Ranitas
         private PondSimState mPond;
         private PondRenderer mPondRenderer;
 
+        private InputProcessor mInputProcessor = new InputProcessor(sSuportedPlayers.Length);
+
         private List<FrogSimState> mFrogs;
         private FrogRenderer mFrogRenderer;
         private FlyRenderer mFlyRenderer;
 
         private RanitasSim mSim;
 
-        private FrogInput[] mRegisteredPlayers = new FrogInput[sSuportedPlayers.Length];
+        private PlayerBinding[] mPlayerBindings = new PlayerBinding[sSuportedPlayers.Length];
         
         public Game1()
         {
@@ -89,31 +92,18 @@ namespace Ranitas
         {
             foreach (var playerIndex in sSuportedPlayers)
             {
-                if (mRegisteredPlayers[playerIndex] == null)
+                if (mPlayerBindings[playerIndex] == null)
                 {
                     if (GamePad.GetState(playerIndex).Buttons.Start == ButtonState.Pressed)
                     {
                         FrogSimState frog = mPond.SpawnFrog(mFrogPrototype, mFrogSpawns, playerIndex);
                         mFrogs.Add(frog);
-                        mRegisteredPlayers[playerIndex] = new FrogInput(frog);
+                        mPlayerBindings[playerIndex] = new PlayerBinding(playerIndex, frog);
                     }
                 }
                 else
                 {
-                    bool jumpButton = (GamePad.GetState(playerIndex).Buttons.A == ButtonState.Pressed);
-                    bool toungueButton = (GamePad.GetState(playerIndex).Buttons.X == ButtonState.Pressed);
-                    Vector2 controller = GamePad.GetState(playerIndex).ThumbSticks.Left;
-                    FrogInput frogInput = mRegisteredPlayers[playerIndex];
-                    bool previousState = frogInput.JumpButtonState;
-                    frogInput.Update(controller, jumpButton, toungueButton);
-                    if (previousState != frogInput.JumpButtonState)
-                    {
-                        GamePad.SetVibration(playerIndex, 1f, 1f);
-                    }
-                    else
-                    {
-                        GamePad.SetVibration(playerIndex, 0f, 0f);
-                    }
+                    mInputProcessor.ProcessInput(playerIndex);
                 }
                 if ((GamePad.GetState(playerIndex).Buttons.Back == ButtonState.Pressed) || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 {
@@ -121,8 +111,7 @@ namespace Ranitas
                 }
             }
 
-            mSim.Update();
-            // TODO: Add your update logic here
+            mSim.Update(mPlayerBindings, mInputProcessor.Inputs);
 
             base.Update(gameTime);
         }

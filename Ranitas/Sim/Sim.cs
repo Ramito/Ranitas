@@ -4,6 +4,7 @@ using Ranitas.Insects;
 using Ranitas.Pond;
 using Ranitas.Data;
 using System.Collections.Generic;
+using Ranitas.Input;
 
 namespace Ranitas.Sim
 {
@@ -23,8 +24,15 @@ namespace Ranitas.Sim
             FlySim = new FlySim(flyData, mPondState, mDynamics);
         }
 
-        public void Update()
+        public void Update(PlayerBinding[] playerBindings, FrogInput[] inputs)
         {
+            foreach (var player in playerBindings)
+            {
+                if (player != null)
+                {
+                    FrogSim.UpdateFrogInputs(player.Frog, inputs[player.PlayerIndex], mDynamics.FixedTimeStep);
+                }
+            }
             FrogSim.UpdateFrogs(mFrogStates, mPondState, mDynamics);
             FlySim.Update();
             UpdateFlyEating();
