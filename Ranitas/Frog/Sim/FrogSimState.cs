@@ -2,6 +2,7 @@
 using Ranitas.Core;
 using Ranitas.Data;
 using System;
+using static Ranitas.Frog.Sim.FrogSim;
 
 namespace Ranitas.Frog.Sim
 {
@@ -11,21 +12,10 @@ namespace Ranitas.Frog.Sim
 
         public readonly RigidBodyState RigidBodyState;
 
-        public enum FrogState
-        {
-            Grounded,
-            Airborne,
-            Swimming,
-        }
-        public FrogState State;
-
-        public bool PreparingJump;
-        public bool JumpSignaled;
-        public Vector2 SignaledJumpDirection;
-        public float RelativeJumpStrength { get { return Math.Min(1f, TimePreparingJump / Prototype.JumpPrepareTime); } }
+        public FrogGameState GameState = new FrogGameState();
+        public int ToungueDirection;
 
         public float SwimKickPhase;
-        public Vector2 SwimDirection;
 
         public float TimePreparingJump;
         public float PreparedJumpPercentage
@@ -42,8 +32,7 @@ namespace Ranitas.Frog.Sim
             Rect frogRect = RigidBodyState.Rect;
             Vector2 extendDirection;
             Vector2 anchor;
-            Vector2 facing = SignaledJumpDirection; //TODO GENERAL TOUNGUE DIRECTION!
-            if (facing.X >= 0f)
+            if (ToungueDirection >= 0f)
             {
                 extendDirection = Vector2.UnitX;
                 anchor = frogRect.MaxCorner;
@@ -62,8 +51,7 @@ namespace Ranitas.Frog.Sim
         {
             Prototype = data;
             RigidBodyState = new RigidBodyState(data);
-            State = FrogState.Grounded;
-            PreparingJump = false;
+            GameState.State = FrogGameState.States.Grounded;
             TimePreparingJump = 0f;
             Toungue = new FrogToungue(data);
         }

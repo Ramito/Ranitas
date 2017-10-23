@@ -49,6 +49,7 @@
     <Compile Include="Core\StateMachine\PooledState.cs" />
     <Compile Include="Core\StateMachine\State.cs" />
     <Compile Include="Core\StateMachine\StateMachine.cs" />
+    <Compile Include="Frog\Sim\FrogGameState.cs" />
     <Compile Include="Input\FrogInput.cs" />
     <Compile Include="Frog\FrogRenderer.cs" />
     <Compile Include="Frog\Sim\FrogSim.cs" />
