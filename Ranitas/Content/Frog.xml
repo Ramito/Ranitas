@@ -3,19 +3,19 @@
   <Asset Type="Data:FrogData">
     <Width>20</Width>
     <Height>20</Height>
-    <JumpVelocity>790</JumpVelocity>
+    <JumpVelocity>785</JumpVelocity>
     <JumpPrepareTime>0.5</JumpPrepareTime>
-    <JumpSquish>0.72</JumpSquish>
+    <JumpSquish>0.7</JumpSquish>
     <WaterDrag>3.85</WaterDrag>
-    <FrogDensity>0.885</FrogDensity>
-    <SwimKickDuration>0.2</SwimKickDuration>
-    <SwimKickRecharge>0.225</SwimKickRecharge>
-    <SwimKickVelocity>600</SwimKickVelocity>
-    <ToungueLength>25</ToungueLength>
-    <ToungueThickness>4</ToungueThickness>
-    <ToungueExtendTime>0.1</ToungueExtendTime>
-    <ToungueFullyExtendedTime>0.225</ToungueFullyExtendedTime>
-    <ToungueRetractTime>0.07</ToungueRetractTime>
-    <ToungueRefreshTime>0.25</ToungueRefreshTime>
+    <FrogDensity>0.925</FrogDensity>
+    <SwimKickDuration>0.22</SwimKickDuration>
+    <SwimKickRecharge>0.22</SwimKickRecharge>
+    <SwimKickVelocity>610</SwimKickVelocity>
+    <ToungueLength>30</ToungueLength>
+    <ToungueThickness>7</ToungueThickness>
+    <ToungueExtendTime>0.025</ToungueExtendTime>
+    <ToungueFullyExtendedTime>0.5</ToungueFullyExtendedTime>
+    <ToungueRetractTime>0.025</ToungueRetractTime>
+    <ToungueRefreshTime>0.05</ToungueRefreshTime>
   </Asset>
 </XnaContent>
