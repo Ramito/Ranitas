@@ -42,9 +42,9 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Core\FixedTimeStepDynamics.cs" />
-    <Compile Include="Core\MathExtensions.cs" />
-    <Compile Include="Core\Rect.cs" />
+    <Compile Include="Core\Physics\FixedTimeStepDynamics.cs" />
+    <Compile Include="Core\Math\MathExtensions.cs" />
+    <Compile Include="Core\Math\Rect.cs" />
     <Compile Include="Core\Render\RectRenderer.cs" />
     <Compile Include="Core\StateMachine\PooledState.cs" />
     <Compile Include="Core\StateMachine\State.cs" />
