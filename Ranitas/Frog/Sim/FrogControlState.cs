@@ -2,7 +2,7 @@
 
 namespace Ranitas.Frog.Sim
 {
-    public class FrogGameState
+    public class FrogControlState
     {
         public enum States
         {
@@ -12,6 +12,8 @@ namespace Ranitas.Frog.Sim
         }
         public States State;
         public Vector2 InputDirection;
-        public float JumpPercentage;
+        public float RelativeJumpPower;
+        public bool ToungueSignalState;
+        public int ToungueDirection;
     }
 }

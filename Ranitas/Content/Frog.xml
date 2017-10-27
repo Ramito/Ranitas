@@ -3,9 +3,11 @@
   <Asset Type="Data:FrogData">
     <Width>20</Width>
     <Height>20</Height>
-    <JumpVelocity>785</JumpVelocity>
-    <JumpPrepareTime>0.5</JumpPrepareTime>
-    <JumpSquish>0.7</JumpSquish>
+    <MovementData>
+      <JumpVelocity>785</JumpVelocity>
+      <JumpPrepareTime>0.5</JumpPrepareTime>
+      <JumpSquish>0.7</JumpSquish>
+    </MovementData>
     <WaterDrag>3.85</WaterDrag>
     <FrogDensity>0.925</FrogDensity>
     <SwimKickDuration>0.22</SwimKickDuration>
