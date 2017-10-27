@@ -19,7 +19,7 @@ namespace Ranitas.Core.EventSystem
 
         public void PostMessage<T>(T message)
         {
-            if (!mHandlers.TryGetValue(TypeCache<T>.Type, out List<IMessageHandler> handlers))
+            if (mHandlers.TryGetValue(TypeCache<T>.Type, out List<IMessageHandler> handlers))
             {
                 foreach (var handler in handlers)
                 {
