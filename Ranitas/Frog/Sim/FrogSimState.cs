@@ -42,7 +42,7 @@ namespace Ranitas.Frog.Sim
                 extendDirection = -Vector2.UnitX;
                 anchor = frogRect.MinMaxCorner;
             }
-            anchor -= (Prototype.ToungueThickness * Vector2.UnitY);
+            anchor -= (Prototype.ToungueThickness * 0.25f * Vector2.UnitY);
             Vector2 otherCorner = anchor + Prototype.ToungueLength * Toungue.RelativeLength * extendDirection - (Prototype.ToungueThickness * Vector2.UnitY);
             return new Rect(anchor, otherCorner);
         }
