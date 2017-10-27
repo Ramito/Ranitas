@@ -42,6 +42,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Core\EventSystem\EventSystem.cs" />
     <Compile Include="Core\Physics\FixedTimeStepDynamics.cs" />
     <Compile Include="Core\Math\MathExtensions.cs" />
     <Compile Include="Core\Math\Rect.cs" />
