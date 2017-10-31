@@ -14,6 +14,6 @@ namespace Ranitas.Frog.Sim
         public Vector2 InputDirection;
         public float RelativeJumpPower;
         public bool ToungueSignalState;
-        public int ToungueDirection;
+        public int FacingDirection;
     }
 }

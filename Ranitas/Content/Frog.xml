@@ -5,7 +5,7 @@
     <Height>20</Height>
     <MovementData>
       <JumpVelocity>785</JumpVelocity>
-      <JumpPrepareTime>0.5</JumpPrepareTime>
+      <JumpPrepareTime>0.75</JumpPrepareTime>
       <JumpSquish>0.7</JumpSquish>
     </MovementData>
     <WaterDrag>3.85</WaterDrag>
