@@ -1,61 +1,54 @@
 ﻿using Microsoft.Xna.Framework;
 using Ranitas.Core;
+using Ranitas.Core.EventSystem;
 using Ranitas.Input;
 using Ranitas.Pond;
 using System;
 using System.Collections.Generic;
-using static Ranitas.Frog.Sim.FrogSimState;
 
 namespace Ranitas.Frog.Sim
 {
-    public static class FrogSim
+    public class FrogSim
     {
-        public static void UpdateFrogInputs(FrogSimState frog, FrogInput input, float deltaTime)
+        private readonly PlayerBinding[] mPlayerBindings;
+        public readonly List<FrogSimState> FrogStates;
+
+        public readonly FrogControlUpdater ControlUpdater;
+
+        public FrogSim(float deltaTime, EventSystem eventSystem, PlayerBinding[] playerBindings, List<FrogSimState> frogStates)
         {
-            if (frog.GameState.State != FrogGameState.States.Swimming)
+            mPlayerBindings = playerBindings;
+            ControlUpdater = new FrogControlUpdater(deltaTime, eventSystem);
+            eventSystem.AddMessageReceiver<JumpMessage>(OnFrogJump);
+            eventSystem.AddMessageReceiver<ToungueMessage>(OnFrogToungue);
+            FrogStates = frogStates;
+        }
+
+        private void OnFrogJump(JumpMessage jump)
+        {
+            mPlayerBindings[jump.ID].Frog.RigidBodyState.Velocity += jump.Velocity;
+        }
+
+        private void OnFrogToungue(ToungueMessage toungue)
+        {
+            mPlayerBindings[toungue.ID].Frog.Toungue.ExtendSignal = true;
+            mPlayerBindings[toungue.ID].Frog.ToungueDirection = toungue.Direction;
+        }
+
+        public void Update(FrogInput[] inputs)
+        {
+            foreach (var binding in mPlayerBindings)
             {
-                float jumpInputMagnitude = 0f;
-                if (frog.GameState.State == FrogGameState.States.Grounded)
+                if (binding != null)
                 {
-                    if (input.NormalizedDirection.Y >= 0.7f)
-                    {
-                        jumpInputMagnitude = input.Magnitude;
-                    }
-                }
-                    float newJumpPercentage = frog.GameState.JumpPercentage + deltaTime / (frog.Prototype.JumpPrepareTime);
-                    frog.GameState.JumpPercentage = MathHelper.Clamp(newJumpPercentage, 0f, jumpInputMagnitude);
-                    if (jumpInputMagnitude != 0)
-                    {
-                        if ((input.Signals & FrogSignals.Jump) != 0)
-                        {
-                            frog.RigidBodyState.Velocity += ((frog.GameState.JumpPercentage * frog.Prototype.JumpVelocity) * input.NormalizedDirection);
-                            frog.GameState.JumpPercentage = 0f;
-                        }
-                    }
-                frog.Toungue.ExtendSignal = ((input.Signals & FrogSignals.Toungue) != 0);
-            }
-            else
-            {
-                frog.Toungue.ExtendSignal = false;
-                frog.GameState.JumpPercentage = 0f;
-            }
-            frog.GameState.InputDirection = input.NormalizedDirection;
-            if (!frog.Toungue.ToungueActive && (frog.Toungue.RelativeLength == 0f))
-            {
-                if (input.NormalizedDirection.X > 0f)
-                {
-                    frog.ToungueDirection = 1;
-                }
-                else if (input.NormalizedDirection.X < 0f)
-                {
-                    frog.ToungueDirection = -1;
+                    ControlUpdater.Update(binding.PlayerIndex, binding.Frog.Prototype.MovementData, binding.Frog.ControlState, inputs[binding.PlayerIndex]);
                 }
             }
         }
 
-        public static void UpdateFrogs(List<FrogSimState> frogStates, PondSimState pondState, FixedTimeStepDynamics dynamics)
+        public void UpdateFrogs(PondSimState pondState, FixedTimeStepDynamics dynamics)
         {
-            foreach (var frog in frogStates)
+            foreach (var frog in FrogStates)
             {
                 UpdateFrog(frog, pondState, dynamics);
                 UpdateFrogToungue(frog, dynamics.FixedTimeStep);
@@ -64,7 +57,7 @@ namespace Ranitas.Frog.Sim
 
         private static void UpdateFrog(FrogSimState frog, PondSimState pondState, FixedTimeStepDynamics dynamics)
         {
-            if (frog.GameState.State != FrogGameState.States.Swimming)
+            if (frog.ControlState.State != FrogControlState.States.Swimming)
             {
                 UpdateFrogShape(frog);
                 UpdateDryFrogDynamics(frog.RigidBodyState, dynamics);
@@ -94,22 +87,22 @@ namespace Ranitas.Frog.Sim
         {
             if (frog.RigidBodyState.FeetPosition.Y < pondState.WaterLevel)
             {
-                if (frog.GameState.State != FrogGameState.States.Swimming)
+                if (frog.ControlState.State != FrogControlState.States.Swimming)
                 {
-                    frog.GameState.State = FrogGameState.States.Swimming;
+                    frog.ControlState.State = FrogControlState.States.Swimming;
                     frog.SwimKickPhase = 0f;
                 }
             }
             else
             {
-                frog.GameState.State = FrogGameState.States.Airborne;
+                frog.ControlState.State = FrogControlState.States.Airborne;
             }
         }
 
         private static void UpdateFrogShape(FrogSimState frog)
         {
-            float relativeSquish = frog.GameState.JumpPercentage;
-            float scale = relativeSquish * frog.Prototype.JumpSquish + (1f - relativeSquish);
+            float relativeSquish = frog.ControlState.RelativeJumpPower;
+            float scale = relativeSquish * frog.Prototype.MovementData.JumpSquish + (1f - relativeSquish);
             frog.RigidBodyState.Height = scale * frog.Prototype.Height;
             frog.RigidBodyState.Width = frog.Prototype.Width / scale;
         }
@@ -145,7 +138,7 @@ namespace Ranitas.Frog.Sim
             Vector2 inheritedVelocity = lily.Velocity;
             frog.RigidBodyState.FeetPosition = new Vector2(frog.RigidBodyState.Position.X, landingY);
             frog.RigidBodyState.Velocity = inheritedVelocity;
-            frog.GameState.State = FrogGameState.States.Grounded;
+            frog.ControlState.State = FrogControlState.States.Grounded;
         }
 
         private static void UpdateSwimingFrogDynamics(RigidBodyState frogRigidBody, Vector2 swimAcceleration, float waterDrag, PondSimState pondState, FixedTimeStepDynamics dynamics)
@@ -188,13 +181,13 @@ namespace Ranitas.Frog.Sim
                 }
                 frog.SwimKickPhase = newPhase;
             }
-            else if (frog.GameState.InputDirection != Vector2.Zero)
+            else if (frog.ControlState.InputDirection != Vector2.Zero)
             {
                 if (frog.SwimKickPhase > 0f)
                 {
                     frog.SwimKickPhase = Math.Max(0f, frog.SwimKickPhase - dynamics.FixedTimeStep);
                     float accelerationModule = frog.Prototype.SwimKickVelocity * frog.Prototype.WaterDrag;
-                    Vector2 acceleration = frog.GameState.InputDirection;
+                    Vector2 acceleration = frog.ControlState.InputDirection;
                     acceleration.Normalize();
                     return accelerationModule * acceleration;
                 }

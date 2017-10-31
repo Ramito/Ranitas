@@ -71,7 +71,7 @@ namespace Ranitas
             mFrogs = new List<FrogSimState>(sSuportedPlayers.Length);
 
             System.Diagnostics.Debug.Assert(IsFixedTimeStep);
-            mSim = new RanitasSim(flyData, mPond, mFrogs, (float)TargetElapsedTime.TotalSeconds);
+            mSim = new RanitasSim(flyData, mPond, mFrogs, (float)TargetElapsedTime.TotalSeconds, mPlayerBindings);
 
             mPondRenderer = new PondRenderer();
             mPondRenderer.Setup(mGraphics.GraphicsDevice, pondData);
@@ -111,7 +111,7 @@ namespace Ranitas
                 }
             }
 
-            mSim.Update(mPlayerBindings, mInputProcessor.Inputs);
+            mSim.Update(mInputProcessor.Inputs);
 
             base.Update(gameTime);
         }

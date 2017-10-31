@@ -1,46 +1,44 @@
 ﻿using Ranitas.Core;
+using Ranitas.Core.EventSystem;
+using Ranitas.Data;
 using Ranitas.Frog.Sim;
+using Ranitas.Input;
 using Ranitas.Insects;
 using Ranitas.Pond;
-using Ranitas.Data;
 using System.Collections.Generic;
-using Ranitas.Input;
 
 namespace Ranitas.Sim
 {
     public sealed class RanitasSim
     {
+        private EventSystem mEventSystem;
+
         private PondSimState mPondState;
-        private List<FrogSimState> mFrogStates;
         public FlySim FlySim;
+        public FrogSim FrogSim;
 
         private FixedTimeStepDynamics mDynamics;    //TODO: Shareable service!
 
-        public RanitasSim(FlyData flyData, PondSimState pondState, List<FrogSimState> frogStates, float fixedTimeStep)
+        public RanitasSim(FlyData flyData, PondSimState pondState, List<FrogSimState> frogStates, float fixedTimeStep, PlayerBinding[] bindings)
         {
+            mEventSystem = new EventSystem();
             mPondState = pondState;
-            mFrogStates = frogStates;
             mDynamics = new FixedTimeStepDynamics(fixedTimeStep);
             FlySim = new FlySim(flyData, mPondState, mDynamics);
+            FrogSim = new FrogSim(fixedTimeStep, mEventSystem, bindings, frogStates);
         }
 
-        public void Update(PlayerBinding[] playerBindings, FrogInput[] inputs)
+        public void Update(FrogInput[] inputs)
         {
-            foreach (var player in playerBindings)
-            {
-                if (player != null)
-                {
-                    FrogSim.UpdateFrogInputs(player.Frog, inputs[player.PlayerIndex], mDynamics.FixedTimeStep);
-                }
-            }
-            FrogSim.UpdateFrogs(mFrogStates, mPondState, mDynamics);
+            FrogSim.Update(inputs);
+            FrogSim.UpdateFrogs(mPondState, mDynamics);
             FlySim.Update();
             UpdateFlyEating();
         }
 
         public void UpdateFlyEating()
         {
-            foreach (var frog in mFrogStates)
+            foreach (var frog in FrogSim.FrogStates)
             {
                 if (!frog.Toungue.ToungueActive)
                 {

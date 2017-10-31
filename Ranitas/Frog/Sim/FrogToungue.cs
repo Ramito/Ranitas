@@ -110,7 +110,12 @@ namespace Ranitas.Frog.Sim
 
             protected override bool TransitionOnFullPhase(FrogToungue stateMachine)
             {
-                return stateMachine.ExtendSignal;
+                if (stateMachine.ExtendSignal)
+                {
+                    stateMachine.ExtendSignal = false;
+                    return true;
+                }
+                return false;
             }
         }
 

@@ -12,19 +12,12 @@ namespace Ranitas.Frog.Sim
 
         public readonly RigidBodyState RigidBodyState;
 
-        public FrogGameState GameState = new FrogGameState();
+        public FrogControlState ControlState = new FrogControlState();
         public int ToungueDirection;
 
         public float SwimKickPhase;
 
         public float TimePreparingJump;
-        public float PreparedJumpPercentage
-        {
-            get
-            {
-                return Math.Min(1f, TimePreparingJump / Prototype.JumpPrepareTime);
-            }
-        }
 
         public readonly FrogToungue Toungue;
         public Rect GetToungueRect()
@@ -51,7 +44,7 @@ namespace Ranitas.Frog.Sim
         {
             Prototype = data;
             RigidBodyState = new RigidBodyState(data);
-            GameState.State = FrogGameState.States.Grounded;
+            ControlState.State = FrogControlState.States.Grounded;
             TimePreparingJump = 0f;
             Toungue = new FrogToungue(data);
         }
