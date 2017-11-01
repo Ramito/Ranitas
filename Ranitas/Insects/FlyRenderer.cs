@@ -7,13 +7,13 @@ namespace Ranitas.Insects
 {
     public sealed class FlyRenderer
     {
-        private RectRenderer mRenderer;
+        private PrimitiveRenderer mRenderer;
 
         private FlySim mFlySim;
 
         public FlyRenderer(FlySim flySim)
         {
-            mRenderer = new RectRenderer();
+            mRenderer = new PrimitiveRenderer();
             mFlySim = flySim;
         }
 
