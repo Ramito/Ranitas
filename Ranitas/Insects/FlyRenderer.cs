@@ -27,8 +27,9 @@ namespace Ranitas.Insects
             foreach (var fly in mFlySim.ActiveFlies)
             {
                 Rect flyRect = new Rect(fly.Position, mFlySim.FlyData.Width, mFlySim.FlyData.Height);
-                mRenderer.RenderRect(flyRect, Color.Coral, device);
+                mRenderer.PushRect(flyRect, Color.Coral);
             }
+            mRenderer.Render(device);
         }
     }
 }
