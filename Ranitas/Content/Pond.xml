@@ -6,29 +6,29 @@
     <Lilies>
       <Item>
         <LilyPad>
-          <Width>400</Width>
-          <Height>10</Height>
+          <Width>575</Width>
+          <Height>15</Height>
         </LilyPad>
-        <HorizontalPosition>250</HorizontalPosition>
+        <HorizontalPosition>450</HorizontalPosition>
       </Item>
       <Item>
         <LilyPad>
           <Width>100</Width>
-          <Height>10</Height>
+          <Height>15</Height>
         </LilyPad>
         <HorizontalPosition>960</HorizontalPosition>
       </Item>
       <Item>
         <LilyPad>
-          <Width>400</Width>
-          <Height>10</Height>
+          <Width>575</Width>
+          <Height>15</Height>
         </LilyPad>
-        <HorizontalPosition>1670</HorizontalPosition>
+        <HorizontalPosition>1470</HorizontalPosition>
       </Item>
     </Lilies>
     <FrogSpawns>
-      50
-      850
+      100
+      1820
     </FrogSpawns>
     <WaterLevel>300</WaterLevel>
   </Asset>
