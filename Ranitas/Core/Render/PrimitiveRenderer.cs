@@ -5,6 +5,7 @@ namespace Ranitas.Core.Render
 {
     public sealed class PrimitiveRenderer
     {
+        public GraphicsDevice Device { get; private set; }
         private VertexBuffer mVertexBuffer;
         private VertexPositionColor[] mVertexBufferData;
         private int mCurrentIndex = -1;
@@ -12,16 +13,17 @@ namespace Ranitas.Core.Render
         public void Setup(GraphicsDevice device)
         {
             //TODO: Where should the basic effect live??
-            SetupVertexBuffer(device);
+            Device = device;
+            SetupVertexBuffer();
         }
 
-        public void Render(GraphicsDevice device)
+        public void Render()
         {
             if (mCurrentIndex > 0)
             {
                 mVertexBuffer.SetData(mVertexBufferData, 0, mCurrentIndex);
                 int triangleCount = mCurrentIndex - 2;
-                device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, triangleCount);
+                Device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, triangleCount);
                 mCurrentIndex = 0;
             }
         }
@@ -45,11 +47,11 @@ namespace Ranitas.Core.Render
             mCurrentIndex += 6;
         }
 
-        private void SetupVertexBuffer(GraphicsDevice device)
+        private void SetupVertexBuffer()
         {
-            const int kVertexCount = 250 * 5;
-            mVertexBuffer = new VertexBuffer(device, typeof(VertexPositionColor), kVertexCount, BufferUsage.WriteOnly);
-            device.SetVertexBuffer(mVertexBuffer);
+            const int kVertexCount = 250 * 6;
+            mVertexBuffer = new VertexBuffer(Device, typeof(VertexPositionColor), kVertexCount, BufferUsage.WriteOnly);
+            Device.SetVertexBuffer(mVertexBuffer);
             mVertexBufferData = new VertexPositionColor[kVertexCount];
             mCurrentIndex = 0;
         }

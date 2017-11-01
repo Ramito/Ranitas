@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-
+using Ranitas.Core.Render;
 using Ranitas.Data;
 using Ranitas.Frog;
 using Ranitas.Frog.Sim;
@@ -33,6 +33,7 @@ namespace Ranitas
         private List<FrogSimState> mFrogs;
         private FrogRenderer mFrogRenderer;
         private FlyRenderer mFlyRenderer;
+        private PrimitiveRenderer mPrimitiveRenderer;
 
         private RanitasSim mSim;
 
@@ -73,14 +74,15 @@ namespace Ranitas
             System.Diagnostics.Debug.Assert(IsFixedTimeStep);
             mSim = new RanitasSim(flyData, mPond, mFrogs, (float)TargetElapsedTime.TotalSeconds, mPlayerBindings);
 
+            mPrimitiveRenderer = new PrimitiveRenderer();
+            mPrimitiveRenderer.Setup(mGraphics.GraphicsDevice);
+
             mPondRenderer = new PondRenderer();
             mPondRenderer.Setup(mGraphics.GraphicsDevice, pondData);
 
             mFrogRenderer = new FrogRenderer();
-            mFrogRenderer.Setup(mGraphics.GraphicsDevice);
 
             mFlyRenderer = new FlyRenderer(mSim.FlySim);
-            mFlyRenderer.Setup(mGraphics.GraphicsDevice);
         }
 
         protected override void UnloadContent()
@@ -119,12 +121,13 @@ namespace Ranitas
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.DimGray);
-            mPondRenderer.RenderPond(mPond, mGraphics.GraphicsDevice);
+            mPondRenderer.RenderPond(mPond, mPrimitiveRenderer);
             foreach (var frog in mFrogs)
             {
-                mFrogRenderer.RenderFrog(frog, mGraphics.GraphicsDevice);
+                mFrogRenderer.RenderFrog(frog, mPrimitiveRenderer);
             }
-            mFlyRenderer.Render(mGraphics.GraphicsDevice);
+            mFlyRenderer.Render(mPrimitiveRenderer);
+            mPrimitiveRenderer.Render();
             base.Draw(gameTime);
         }
     }
