@@ -9,7 +9,7 @@ namespace Ranitas.Frog.Sim
 {
     public sealed class FrogControlUpdater
     {
-        private static double[] sBlessedAngles = new double[] {Math.PI / 4d, Math.PI / 3d, 2f * Math.PI / 3d };
+        private static double[] sBlessedAngles = new double[] {Math.PI / 3d, (Math.PI / 3d) + (Math.PI / 24d), (Math.PI / 3d) + (2 * Math.PI / 24d), (Math.PI / 3d) + (3 * Math.PI / 24d) };
         private static readonly Vector2[] sBlessedDirections;
 
         static FrogControlUpdater()
@@ -90,7 +90,7 @@ namespace Ranitas.Frog.Sim
             Vector2 absDirection = new Vector2(Math.Abs(direction.X), Math.Abs(direction.Y));
             float maxDot = float.MinValue;
             int bestIndex = -1;
-            for (int i = 0; i < sBlessedDirections.Length; ++i)
+            for (int i = sBlessedDirections.Length - 1; i >= 0; --i)
             {
                 Vector2 blessedDirection = sBlessedDirections[i];
                 float dot = Vector2.Dot(absDirection, blessedDirection);
