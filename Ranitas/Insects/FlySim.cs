@@ -48,18 +48,19 @@ namespace Ranitas.Insects
                 Rect flyRect = new Rect(newPosition, FlyData.Width, FlyData.Height);
                 if (!pondRect.Intersects(flyRect))
                 {
-                    ActiveFlies.RemoveAt(i);
-                    mFlyPool.Add(currentFly);
+                    DespawnFly(i);
                     continue;
                 }
                 currentFly.Position = newPosition;
             }
         }
 
-        public void DespawnFly(FlySimState fly)
+        public void DespawnFly(int flyIndex)
         {
-            ActiveFlies.Remove(fly);
-            mFlyPool.Add(fly);
+            //TODO: Can we not expose this?
+            FlySimState flyToRemove = ActiveFlies[flyIndex];
+            ActiveFlies.RemoveAt(flyIndex);
+            mFlyPool.Add(flyToRemove);
         }
 
         private void SpawnFly()
@@ -67,10 +68,10 @@ namespace Ranitas.Insects
 
             float heightAboveWater = GetRandomInRange(FlyData.MinHeight, FlyData.MaxHeight);
             float randomSpeed = GetRandomInRange(FlyData.MinSpeed, FlyData.MaxSpeed);
-            int coinFlip = mRandom.Next(0, 2);
             float flyHeight = mPond.WaterLevel + heightAboveWater;
             float flySpeed = randomSpeed;
             Vector2 flyInitialPosition;
+            int coinFlip = mRandom.Next(0, 2);
             if (coinFlip == 1)
             {
                 flySpeed = -flySpeed;

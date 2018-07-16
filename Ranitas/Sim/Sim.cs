@@ -51,7 +51,7 @@ namespace Ranitas.Sim
                     Rect flyRect = new Rect(fly.Position, fly.Width, fly.Height);
                     if (flyRect.Intersects(toungue))
                     {
-                        FlySim.DespawnFly(fly);
+                        FlySim.DespawnFly(i);
                     }
                 }
             }
