@@ -42,7 +42,8 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Core\EntityRegistry\EntityRegistry.cs" />
+    <Compile Include="Core\ECS\Entity.cs" />
+    <Compile Include="Core\ECS\EntityRegistry.cs" />
     <Compile Include="Core\EventSystem\EventSystem.cs" />
     <Compile Include="Core\Physics\FixedTimeStepDynamics.cs" />
     <Compile Include="Core\Math\MathExtensions.cs" />
