@@ -42,6 +42,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Core\ECS\ComponentSet.cs" />
     <Compile Include="Core\ECS\Entity.cs" />
     <Compile Include="Core\ECS\EntityRegistry.cs" />
     <Compile Include="Core\EventSystem\EventSystem.cs" />
