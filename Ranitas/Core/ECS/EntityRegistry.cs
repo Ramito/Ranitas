@@ -49,16 +49,6 @@ namespace Ranitas.Core.ECS
             return mEntities[entity.Index] == entity;
         }
 
-        public void RegisterComponentType<TComponent>() where TComponent : struct
-        {
-            Type componentType = typeof(TComponent);
-            Debug.Assert(!mComponentSetLookup.ContainsKey(componentType));
-            ComponentSet<TComponent> componentSet = new ComponentSet<TComponent>(mEntities.Length);
-            ushort lookup = (ushort)mComponentSets.Count;
-            mComponentSets.Add(componentSet);
-            mComponentSetLookup.Add(componentType, lookup);
-        }
-
         public bool HasComponent<TComponent>(Entity entity) where TComponent : struct
         {
             Debug.Assert(IsValid(entity));
@@ -101,10 +91,22 @@ namespace Ranitas.Core.ECS
             componentSet.RemoveComponent(entity.Index);
         }
 
+        private void ValidateOrRegisterComponentType<TComponent>() where TComponent : struct
+        {
+            Type componentType = typeof(TComponent);
+            if (!mComponentSetLookup.ContainsKey(componentType))
+            {
+                ComponentSet<TComponent> componentSet = new ComponentSet<TComponent>(mEntities.Length);
+                ushort lookup = (ushort)mComponentSets.Count;
+                mComponentSets.Add(componentSet);
+                mComponentSetLookup.Add(componentType, lookup);
+            }
+        }
+
         private IUntypedComponentSet GetUntypedComponentSet<TComponent>() where TComponent : struct
         {
             Type componentType = typeof(TComponent);
-            Debug.Assert(mComponentSetLookup.ContainsKey(componentType));
+            ValidateOrRegisterComponentType<TComponent>();
             ushort lookup = mComponentSetLookup[componentType];
             return mComponentSets[lookup];
         }
@@ -112,7 +114,7 @@ namespace Ranitas.Core.ECS
         private ComponentSet<TComponent> GetComponentSet<TComponent>() where TComponent : struct
         {
             Type componentType = typeof(TComponent);
-            Debug.Assert(mComponentSetLookup.ContainsKey(componentType));
+            ValidateOrRegisterComponentType<TComponent>();
             ushort lookup = mComponentSetLookup[componentType];
             return (ComponentSet<TComponent>)mComponentSets[lookup];
         }

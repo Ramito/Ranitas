@@ -93,10 +93,6 @@ namespace CoreUnitTests
         {
             EntityRegistry registry = new EntityRegistry(100);
 
-            registry.RegisterComponentType<TagComponent>();
-            registry.RegisterComponentType<PositionComponent>();
-            registry.RegisterComponentType<ParentedComponent>();
-
             Entity entity1 = registry.Create();
             Entity entity2 = registry.Create();
 
