@@ -11,15 +11,15 @@ namespace Ranitas.Core.ECS
     internal class ComponentSet<TComponent> : IUntypedComponentSet where TComponent : struct
     {
         private uint Count = 0;
-        private TComponent[] mPackedComponents;
-        private uint[] mPackedIndices;
+        private TComponent[] mSparseComponents;
         private uint[] mSparseIndices;
+        private uint[] mPackedIndices;
 
         public ComponentSet(int maxEntities)
         {
-            mPackedComponents = new TComponent[maxEntities];
-            mPackedIndices = new uint[maxEntities];
+            mSparseComponents = new TComponent[maxEntities];
             mSparseIndices = new uint[maxEntities];
+            mPackedIndices = new uint[maxEntities];
         }
 
         public bool HasComponent(uint entityIndex)
@@ -33,9 +33,9 @@ namespace Ranitas.Core.ECS
         {
             //The registry needs to ensure that no invalid entity gets here and that all invalid entities are cleared!
             Debug.Assert(!HasComponent(entityIndex));
-            mPackedComponents[Count] = component;
-            mPackedIndices[Count] = entityIndex;
+            mSparseComponents[entityIndex] = component;
             mSparseIndices[entityIndex] = Count;
+            mPackedIndices[Count] = entityIndex;
             ++Count;
         }
 
@@ -43,8 +43,7 @@ namespace Ranitas.Core.ECS
         {
             //The registry needs to ensure that no invalid entity gets here and that all invalid entities are cleared!
             Debug.Assert(HasComponent(entityIndex));
-            uint sparseIndex = mSparseIndices[entityIndex];
-            mPackedComponents[sparseIndex] = component;
+            mSparseComponents[entityIndex] = component;
         }
 
         public void SetOrAddComponent(uint entityIndex, TComponent component)
@@ -63,7 +62,7 @@ namespace Ranitas.Core.ECS
         {
             //The registry needs to ensure that no invalid entity gets here and that all invalid entities are cleared!
             Debug.Assert(HasComponent(entityIndex));
-            return mPackedComponents[mSparseIndices[entityIndex]];
+            return mSparseComponents[entityIndex];
         }
 
         public void RemoveComponent(uint entityIndex)
@@ -72,10 +71,9 @@ namespace Ranitas.Core.ECS
             Debug.Assert(HasComponent(entityIndex));
             --Count;
             uint deletedInPacked = mSparseIndices[entityIndex];
-            mPackedComponents[deletedInPacked] = mPackedComponents[Count];
             uint movedIndex = mPackedIndices[Count];
-            mPackedIndices[deletedInPacked] = movedIndex;
             mSparseIndices[movedIndex] = deletedInPacked;
+            mPackedIndices[deletedInPacked] = movedIndex;
         }
     }
 }
