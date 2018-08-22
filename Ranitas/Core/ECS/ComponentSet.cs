@@ -2,7 +2,13 @@
 
 namespace Ranitas.Core.ECS
 {
-    internal class ComponentSet<TComponent> where TComponent : struct
+    internal interface IUntypedComponentSet
+    {
+        bool HasComponent(uint entityIndex);
+        void RemoveComponent(uint entityIndex);
+    }
+
+    internal class ComponentSet<TComponent> : IUntypedComponentSet where TComponent : struct
     {
         private uint Count = 0;
         private TComponent[] mPackedComponents;
@@ -16,64 +22,60 @@ namespace Ranitas.Core.ECS
             mSparseIndices = new uint[maxEntities];
         }
 
-        public bool HasComponent(Entity entity)
+        public bool HasComponent(uint entityIndex)
         {
             //The registry needs to ensure that no invalid entity gets here and that all invalid entities are cleared!
-            uint entityIndex = entity.Index;
             uint sparseIndex = mSparseIndices[entityIndex];
             return (sparseIndex < Count) && (mPackedIndices[sparseIndex] == entityIndex);
         }
 
-        public void AddComponent(Entity entity, TComponent component)
+        public void AddComponent(uint entityIndex, TComponent component)
         {
             //The registry needs to ensure that no invalid entity gets here and that all invalid entities are cleared!
-            Debug.Assert(!HasComponent(entity));
+            Debug.Assert(!HasComponent(entityIndex));
             mPackedComponents[Count] = component;
-            uint entityIndex = entity.Index;
             mPackedIndices[Count] = entityIndex;
             mSparseIndices[entityIndex] = Count;
             ++Count;
         }
 
-        public void SetComponent(Entity entity, TComponent component)
+        public void SetComponent(uint entityIndex, TComponent component)
         {
             //The registry needs to ensure that no invalid entity gets here and that all invalid entities are cleared!
-            Debug.Assert(HasComponent(entity));
-            uint entityIndex = entity.Index;
+            Debug.Assert(HasComponent(entityIndex));
             uint sparseIndex = mSparseIndices[entityIndex];
             mPackedComponents[sparseIndex] = component;
         }
 
-        public void SetOrAddComponent(Entity entity, TComponent component)
+        public void SetOrAddComponent(uint entityIndex, TComponent component)
         {
-            if (HasComponent(entity))
+            if (HasComponent(entityIndex))
             {
-                SetComponent(entity, component);
+                SetComponent(entityIndex, component);
             }
             else
             {
-                AddComponent(entity, component);
+                AddComponent(entityIndex, component);
             }
         }
 
-        public TComponent GetComponent(Entity entity)
+        public TComponent GetComponent(uint entityIndex)
         {
             //The registry needs to ensure that no invalid entity gets here and that all invalid entities are cleared!
-            Debug.Assert(HasComponent(entity));
-            uint entityIndex = entity.Index;
+            Debug.Assert(HasComponent(entityIndex));
             return mPackedComponents[mSparseIndices[entityIndex]];
         }
 
-        public void RemoveComponent(Entity entity)
+        public void RemoveComponent(uint entityIndex)
         {
             //The registry needs to ensure that no invalid entity gets here and that all invalid entities are cleared!
-            Debug.Assert(HasComponent(entity));
-            uint entityIndex = entity.Index;
+            Debug.Assert(HasComponent(entityIndex));
             --Count;
-            mPackedComponents[entityIndex] = mPackedComponents[Count];
+            uint deletedInPacked = mSparseIndices[entityIndex];
+            mPackedComponents[deletedInPacked] = mPackedComponents[Count];
             uint movedIndex = mPackedIndices[Count];
-            mPackedIndices[entityIndex] = movedIndex;
-            mSparseIndices[movedIndex] = entityIndex;
+            mPackedIndices[deletedInPacked] = movedIndex;
+            mSparseIndices[movedIndex] = deletedInPacked;
         }
     }
 }

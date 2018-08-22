@@ -59,5 +59,90 @@ namespace CoreUnitTests
                 Assert.IsFalse(registry.IsValid(entity));
             }
         }
+
+        #region Test Components
+        public struct TagComponent
+        {
+        }
+
+        public struct PositionComponent
+        {
+            public PositionComponent(float x, float y)
+            {
+                X = x;
+                Y = y;
+            }
+
+            public readonly float X;
+            public readonly float Y;
+        }
+
+        public struct ParentedComponent
+        {
+            public ParentedComponent(Entity parent)
+            {
+                Parent = parent;
+            }
+
+            public readonly Entity Parent;
+        }
+        #endregion
+
+        [TestMethod]
+        public void TestComponents()
+        {
+            EntityRegistry registry = new EntityRegistry(100);
+
+            registry.RegisterComponentType<TagComponent>();
+            registry.RegisterComponentType<PositionComponent>();
+            registry.RegisterComponentType<ParentedComponent>();
+
+            Entity entity1 = registry.Create();
+            Entity entity2 = registry.Create();
+
+            PositionComponent pos1 = new PositionComponent(1, 0);
+            PositionComponent pos2 = new PositionComponent(0, 1);
+
+            registry.AddComponent(entity1, new TagComponent());
+
+            registry.AddComponent(entity1, pos1);
+            registry.AddComponent(entity2, pos2);
+
+            registry.AddComponent(entity2, new ParentedComponent(entity1));
+
+            Assert.IsTrue(registry.HasComponent<TagComponent>(entity1));
+            Assert.IsFalse(registry.HasComponent<TagComponent>(entity2));
+            Assert.IsTrue(registry.HasComponent<PositionComponent>(entity1));
+            Assert.IsTrue(registry.HasComponent<PositionComponent>(entity2));
+            Assert.IsFalse(registry.HasComponent<ParentedComponent>(entity1));
+            Assert.IsTrue(registry.HasComponent<ParentedComponent>(entity2));
+
+            Assert.AreEqual(registry.GetComponent<PositionComponent>(entity1), pos1);
+            Assert.AreEqual(registry.GetComponent<PositionComponent>(entity2), pos2);
+
+            registry.Destroy(entity1);
+
+            Assert.IsFalse(registry.IsValid(registry.GetComponent<ParentedComponent>(entity2).Parent));
+            
+            Assert.IsFalse(registry.HasComponent<TagComponent>(entity2));
+            Assert.IsTrue(registry.HasComponent<PositionComponent>(entity2));
+            Assert.IsTrue(registry.HasComponent<ParentedComponent>(entity2));
+
+            Entity entity3 = registry.Create();
+            Entity entity4 = registry.Create();
+            registry.AddComponent(entity4, pos1);
+            registry.AddComponent(entity3, pos1);
+            registry.AddComponent(entity3, new ParentedComponent());
+            registry.AddComponent(entity4, new ParentedComponent());
+            Assert.IsFalse(registry.HasComponent<TagComponent>(entity3));
+            Assert.IsTrue(registry.HasComponent<PositionComponent>(entity3));
+            Assert.IsTrue(registry.HasComponent<PositionComponent>(entity4));
+            Assert.IsTrue(registry.HasComponent<ParentedComponent>(entity3));
+            Assert.IsTrue(registry.HasComponent<ParentedComponent>(entity4));
+
+            Assert.IsFalse(registry.HasComponent<TagComponent>(entity2));
+            Assert.IsTrue(registry.HasComponent<PositionComponent>(entity2));
+            Assert.IsTrue(registry.HasComponent<ParentedComponent>(entity2));
+        }
     }
 }
