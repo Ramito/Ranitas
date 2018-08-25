@@ -32,11 +32,11 @@ namespace Ranitas.Core.ECS
         public void Destroy(Entity entity)
         {
             uint entityIndex = entity.Index;
-            foreach (IUntypedComponentSet componentSet in mComponentSets)
+            foreach (IUntypedIndexedSet componentSet in mComponentSets)
             {
-                if (componentSet.HasComponent(entityIndex))
+                if (componentSet.Contains(entityIndex))
                 {
-                    componentSet.RemoveComponent(entityIndex);
+                    componentSet.Remove(entityIndex);
                 }
             }
             Debug.Assert(IsValid(entity), "Can't destroy invalid entity.");
@@ -52,43 +52,43 @@ namespace Ranitas.Core.ECS
         public bool HasComponent<TComponent>(Entity entity) where TComponent : struct
         {
             Debug.Assert(IsValid(entity));
-            IUntypedComponentSet componentSet = GetUntypedComponentSet<TComponent>();
-            return componentSet.HasComponent(entity.Index);
+            IUntypedIndexedSet componentSet = GetUntypedIndexedSet<TComponent>();
+            return componentSet.Contains(entity.Index);
         }
 
         public void AddComponent<TComponent>(Entity entity, TComponent component) where TComponent : struct
         {
             Debug.Assert(IsValid(entity));
-            ComponentSet<TComponent> componentSet = GetComponentSet<TComponent>();
-            componentSet.AddComponent(entity.Index, component);
+            IndexedSet<TComponent> componentSet = GetIndexedSet<TComponent>();
+            componentSet.Add(component, entity.Index);
         }
 
         public void SetComponent<TComponent>(Entity entity, TComponent component) where TComponent : struct
         {
             Debug.Assert(IsValid(entity));
-            ComponentSet<TComponent> componentSet = GetComponentSet<TComponent>();
-            componentSet.SetComponent(entity.Index, component);
+            IndexedSet<TComponent> componentSet = GetIndexedSet<TComponent>();
+            componentSet.Replace(component, entity.Index);
         }
 
         public void SetOrAddComponent<TComponent>(Entity entity, TComponent component) where TComponent : struct
         {
             Debug.Assert(IsValid(entity));
-            ComponentSet<TComponent> componentSet = GetComponentSet<TComponent>();
-            componentSet.SetOrAddComponent(entity.Index, component);
+            IndexedSet<TComponent> componentSet = GetIndexedSet<TComponent>();
+            componentSet.AddOrReplace(component, entity.Index);
         }
 
         public TComponent GetComponent<TComponent>(Entity entity) where TComponent : struct
         {
             Debug.Assert(IsValid(entity));
-            ComponentSet<TComponent> componentSet = GetComponentSet<TComponent>();
-            return componentSet.GetComponent(entity.Index);
+            IndexedSet<TComponent> componentSet = GetIndexedSet<TComponent>();
+            return componentSet.GetValue(entity.Index);
         }
 
         public void RemoveComponent<TComponent>(Entity entity) where TComponent : struct
         {
             Debug.Assert(IsValid(entity));
-            IUntypedComponentSet componentSet = GetUntypedComponentSet<TComponent>();
-            componentSet.RemoveComponent(entity.Index);
+            IUntypedIndexedSet componentSet = GetUntypedIndexedSet<TComponent>();
+            componentSet.Remove(entity.Index);
         }
 
         private void ValidateOrRegisterComponentType<TComponent>() where TComponent : struct
@@ -96,14 +96,14 @@ namespace Ranitas.Core.ECS
             Type componentType = typeof(TComponent);
             if (!mComponentSetLookup.ContainsKey(componentType))
             {
-                ComponentSet<TComponent> componentSet = new ComponentSet<TComponent>(mEntities.Length);
+                IndexedSet<TComponent> componentSet = new IndexedSet<TComponent>(mEntities.Length);
                 ushort lookup = (ushort)mComponentSets.Count;
                 mComponentSets.Add(componentSet);
                 mComponentSetLookup.Add(componentType, lookup);
             }
         }
 
-        private IUntypedComponentSet GetUntypedComponentSet<TComponent>() where TComponent : struct
+        private IUntypedIndexedSet GetUntypedIndexedSet<TComponent>() where TComponent : struct
         {
             Type componentType = typeof(TComponent);
             ValidateOrRegisterComponentType<TComponent>();
@@ -111,18 +111,18 @@ namespace Ranitas.Core.ECS
             return mComponentSets[lookup];
         }
 
-        private ComponentSet<TComponent> GetComponentSet<TComponent>() where TComponent : struct
+        private IndexedSet<TComponent> GetIndexedSet<TComponent>() where TComponent : struct
         {
             Type componentType = typeof(TComponent);
             ValidateOrRegisterComponentType<TComponent>();
             ushort lookup = mComponentSetLookup[componentType];
-            return (ComponentSet<TComponent>)mComponentSets[lookup];
+            return (IndexedSet<TComponent>)mComponentSets[lookup];
         }
 
         private uint mNext;
         private Entity[] mEntities;
 
-        private List<IUntypedComponentSet> mComponentSets = new List<IUntypedComponentSet>();
+        private List<IUntypedIndexedSet> mComponentSets = new List<IUntypedIndexedSet>();
         private Dictionary<Type, ushort> mComponentSetLookup = new Dictionary<Type, ushort>();
     }
 }

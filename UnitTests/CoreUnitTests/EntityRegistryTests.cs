@@ -118,6 +118,8 @@ namespace CoreUnitTests
 
             registry.Destroy(entity1);
 
+            Assert.AreEqual(registry.GetComponent<PositionComponent>(entity2), pos2);
+
             Assert.IsFalse(registry.IsValid(registry.GetComponent<ParentedComponent>(entity2).Parent));
             
             Assert.IsFalse(registry.HasComponent<TagComponent>(entity2));
