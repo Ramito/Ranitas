@@ -2,7 +2,7 @@
 
 namespace Ranitas.Core.ECS
 {
-    public class IndexSet
+    public class IndexSet : IIndexDirectory
     {
         public uint Count { get; private set; }
         private uint[] mSparseIndices;
@@ -44,5 +44,10 @@ namespace Ranitas.Core.ECS
             Debug.Assert(Contains(index));
             return mSparseIndices[index];
         }
+    }
+
+    public interface IIndexDirectory
+    {
+        bool Contains(uint index);
     }
 }

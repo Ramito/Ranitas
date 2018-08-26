@@ -2,13 +2,12 @@
 
 namespace Ranitas.Core.ECS
 {
-    public interface IUntypedIndexedSet
+    public interface IUntypedIndexedSet : IIndexDirectory
     {
-        bool Contains(uint index);
         void Remove(uint atIndex);
     }
 
-    public class IndexedSet<TValue> : IUntypedIndexedSet where TValue : struct
+    public class IndexedSet<TValue> : IIndexDirectory, IUntypedIndexedSet where TValue : struct
     {
         private TValue[] mPackedValues;
         private IndexSet mIndexSet;
