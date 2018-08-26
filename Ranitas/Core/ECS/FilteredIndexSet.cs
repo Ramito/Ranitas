@@ -6,6 +6,7 @@ namespace Ranitas.Core.ECS
 {
     public class IndexFilter
     {
+        //ANNOTATION: I like this class's role as a dumb and simple filter, just the initialization registration is something I would consider changing
         private List<IIndexDirectory> mRequireFilters;
         private List<IIndexDirectory> mExcludeFilters;
 
@@ -71,24 +72,64 @@ namespace Ranitas.Core.ECS
         }
     }
 
+    public struct ValueAttachedMessage<TComponent> where TComponent : struct
+    {
+        public ValueAttachedMessage(uint index)
+        {
+            IndexID = index;
+        }
+
+        public readonly uint IndexID;   //TODO: Need to formalize and consistently use index language (packed (id) vs sparse (?))
+    }
+
+    public struct ValueRemovedMessage<TComponent> where TComponent : struct
+    {
+        public ValueRemovedMessage(uint index)
+        {
+            IndexID = index;
+        }
+
+        public readonly uint IndexID;
+    }
+
+    public struct ValueModifiedEvent<TComponent> where TComponent : struct
+    {
+        public ValueModifiedEvent(uint index)
+        {
+            IndexID = index;
+        }
+
+        public readonly uint IndexID;
+    }
+
+    public delegate void ComponentRemoved<TComponent>(uint index);
+
     public class FilteredIndexSet
     {
         private IndexFilter mFilter;
         private IndexSet mIndexSet;
         private List<IValueInjector> mInjectors;
 
-        public void RegisterRequirement<TValue>(IndexedSet<TValue> valueSource, ValueRegistry<TValue> valueTarget) where TValue : struct
+        public void RegisterRequirement<TValue>(EventSystem.EventSystem eventSystem, IndexedSet<TValue> valueSource, ValueRegistry<TValue> valueTarget) where TValue : struct
         {
             mFilter.RegisterRequirement(valueSource);
             ValueInjector<TValue> injector = new ValueInjector<TValue>(valueSource, valueTarget);
-            //TODO: Register to add/remove signals!
+
             mInjectors.Add(injector);
+
+            //TODO: Validate no type collisions between requirements and exclusions?
+
+            eventSystem.AddMessageReceiver<ValueAttachedMessage<TValue>>((msg) => { TryInsert(msg.IndexID); });
+            eventSystem.AddMessageReceiver<ValueModifiedEvent<TValue>>((msg) => { UpdateValue(msg.IndexID); });
+            eventSystem.AddMessageReceiver<ValueRemovedMessage<TValue>>((msg) => { Remove(msg.IndexID); });
         }
 
-        public void RegisterExclusion<TValue>(IndexedSet<TValue> exclusionSource) where TValue : struct
+        public void RegisterExclusion<TValue>(EventSystem.EventSystem eventSystem, IndexedSet<TValue> exclusionSource) where TValue : struct
         {
             mFilter.RegisterExclusion(exclusionSource);
-            //TODO: Register to add remove signals!
+
+            eventSystem.AddMessageReceiver<ValueAttachedMessage<TValue>>((msg) => { Remove(msg.IndexID); });
+            eventSystem.AddMessageReceiver<ValueRemovedMessage<TValue>>((msg) => { TryInsert(msg.IndexID); });
         }
 
         private void TryInsert(uint index)
@@ -101,6 +142,12 @@ namespace Ranitas.Core.ECS
                     injetor.InjectNewValue(index);
                 }
             }
+        }
+
+        private void UpdateValue(uint index)
+        {
+            //TODO: Consider batching component value updates so the whole packed array can be flushed, instead of firing an event for each!
+            throw new NotImplementedException();
         }
 
         private void Remove(uint index)

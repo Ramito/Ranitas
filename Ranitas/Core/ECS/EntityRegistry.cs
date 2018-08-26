@@ -61,6 +61,8 @@ namespace Ranitas.Core.ECS
             Debug.Assert(IsValid(entity));
             IndexedSet<TComponent> componentSet = GetIndexedSet<TComponent>();
             componentSet.Add(component, entity.Index);
+
+            mEventSystem.PostMessage(new ValueAttachedMessage<TComponent>(entity.Index));
         }
 
         public void SetComponent<TComponent>(Entity entity, TComponent component) where TComponent : struct
@@ -68,6 +70,9 @@ namespace Ranitas.Core.ECS
             Debug.Assert(IsValid(entity));
             IndexedSet<TComponent> componentSet = GetIndexedSet<TComponent>();
             componentSet.Replace(component, entity.Index);
+
+            mEventSystem.PostMessage(new ValueModifiedEvent<TComponent>(entity.Index));
+            //TODO: Do I need a way to update these en masse, rather than posting for each?
         }
 
         public void SetOrAddComponent<TComponent>(Entity entity, TComponent component) where TComponent : struct
@@ -89,6 +94,8 @@ namespace Ranitas.Core.ECS
             Debug.Assert(IsValid(entity));
             IUntypedIndexedSet componentSet = GetUntypedIndexedSet<TComponent>();
             componentSet.Remove(entity.Index);
+
+            mEventSystem.PostMessage(new ValueRemovedMessage<TComponent>(entity.Index));
         }
 
         private void ValidateOrRegisterComponentType<TComponent>() where TComponent : struct
@@ -124,5 +131,7 @@ namespace Ranitas.Core.ECS
 
         private List<IUntypedIndexedSet> mComponentSets = new List<IUntypedIndexedSet>();
         private Dictionary<Type, ushort> mComponentSetLookup = new Dictionary<Type, ushort>();
+
+        private EventSystem.EventSystem mEventSystem = new EventSystem.EventSystem();
     }
 }
