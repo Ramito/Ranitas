@@ -18,6 +18,11 @@ namespace Ranitas.Core.ECS
             }
         }
 
+        public int Capacity
+        {
+            get { return mEntities.Length - 1; }
+        }
+
         public Entity Create()
         {
             uint createdIndex = mNext;
@@ -133,5 +138,35 @@ namespace Ranitas.Core.ECS
         private Dictionary<Type, ushort> mComponentSetLookup = new Dictionary<Type, ushort>();
 
         private EventSystem.EventSystem mEventSystem = new EventSystem.EventSystem();
+    }
+
+    public struct ValueAttachedMessage<TComponent> where TComponent : struct
+    {
+        public ValueAttachedMessage(uint index)
+        {
+            IndexID = index;
+        }
+
+        public readonly uint IndexID;   //TODO: Need to formalize and consistently use index language (packed (id) vs sparse (?))
+    }
+
+    public struct ValueRemovedMessage<TComponent> where TComponent : struct
+    {
+        public ValueRemovedMessage(uint index)
+        {
+            IndexID = index;
+        }
+
+        public readonly uint IndexID;
+    }
+
+    public struct ValueModifiedEvent<TComponent> where TComponent : struct
+    {
+        public ValueModifiedEvent(uint index)
+        {
+            IndexID = index;
+        }
+
+        public readonly uint IndexID;
     }
 }

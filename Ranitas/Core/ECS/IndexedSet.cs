@@ -18,46 +18,51 @@ namespace Ranitas.Core.ECS
             mIndexSet = new IndexSet(capacity);
         }
 
-        public void Add(TValue value, uint atIndex)
+        public void Add(TValue value, uint indexID)
         {
             mPackedValues[mIndexSet.Count] = value;
-            mIndexSet.Add(atIndex);
+            mIndexSet.Add(indexID);
         }
 
-        public bool Contains(uint index)
+        public bool Contains(uint indexID)
         {
-            return mIndexSet.Contains(index);
+            return mIndexSet.Contains(indexID);
         }
 
-        public void Replace(TValue newValue, uint atIndex)
+        public void Replace(TValue newValue, uint indexID)
         {
-            uint packedIndex = mIndexSet.GetPackedIndex(atIndex);
+            uint packedIndex = GetPackedIndex(indexID);
             mPackedValues[packedIndex] = newValue;
         }
 
-        public void AddOrReplace(TValue value, uint atIndex)
+        public void AddOrReplace(TValue value, uint indexID)
         {
-            if (Contains(atIndex))
+            if (Contains(indexID))
             {
-                Replace(value, atIndex);
+                Replace(value, indexID);
             }
             else
             {
-                Add(value, atIndex);
+                Add(value, indexID);
             }
         }
 
-        public TValue GetValue(uint atIndex)
+        public TValue GetValue(uint indexID)
         {
-            uint packedIndex = mIndexSet.GetPackedIndex(atIndex);
+            uint packedIndex = GetPackedIndex(indexID);
             return mPackedValues[packedIndex];
         }
 
-        public void Remove(uint atIndex)
+        public void Remove(uint indexID)
         {
-            uint packedIndex = mIndexSet.GetPackedIndex(atIndex);
-            mIndexSet.Remove(atIndex);
+            uint packedIndex = GetPackedIndex(indexID);
+            mIndexSet.Remove(indexID);
             mPackedValues[packedIndex] = mPackedValues[mIndexSet.Count];
+        }
+
+        public uint GetPackedIndex(uint indexID)
+        {
+            return mIndexSet.GetPackedIndex(indexID);
         }
     }
 }

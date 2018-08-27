@@ -15,39 +15,39 @@ namespace Ranitas.Core.ECS
             mPackedIndices = new uint[capacity];
         }
 
-        public bool Contains(uint index)
+        public bool Contains(uint indexID)
         {
-            uint sparseIndex = mSparseIndices[index];
-            return (sparseIndex < Count) && (mPackedIndices[sparseIndex] == index);
+            uint sparseIndex = mSparseIndices[indexID];
+            return (sparseIndex < Count) && (mPackedIndices[sparseIndex] == indexID);
         }
 
-        public void Add(uint index)
+        public void Add(uint indexID)
         {
-            Debug.Assert(!Contains(index));
-            mSparseIndices[index] = Count;
-            mPackedIndices[Count] = index;
+            Debug.Assert(!Contains(indexID));
+            mSparseIndices[indexID] = Count;
+            mPackedIndices[Count] = indexID;
             ++Count;
         }
 
-        public void Remove(uint index)
+        public void Remove(uint indexID)
         {
-            Debug.Assert(Contains(index));
+            Debug.Assert(Contains(indexID));
             --Count;
-            uint deletedInPacked = mSparseIndices[index];
+            uint deletedInPacked = mSparseIndices[indexID];
             uint movedIndex = mPackedIndices[Count];
             mSparseIndices[movedIndex] = deletedInPacked;
             mPackedIndices[deletedInPacked] = movedIndex;
         }
 
-        internal uint GetPackedIndex(uint index)
+        internal uint GetPackedIndex(uint indexID)
         {
-            Debug.Assert(Contains(index));
-            return mSparseIndices[index];
+            Debug.Assert(Contains(indexID));
+            return mSparseIndices[indexID];
         }
     }
 
     public interface IIndexDirectory
     {
-        bool Contains(uint index);
+        bool Contains(uint indexID);
     }
 }

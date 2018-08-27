@@ -118,7 +118,8 @@ namespace CoreUnitTests
 
             registry.Destroy(entity1);
 
-            Assert.AreEqual(registry.GetComponent<PositionComponent>(entity2), pos2);
+            Assert.AreEqual(registry.GetComponent<PositionComponent>(entity2)
+, pos2);
 
             Assert.IsFalse(registry.IsValid(registry.GetComponent<ParentedComponent>(entity2).Parent));
             
@@ -142,5 +143,48 @@ namespace CoreUnitTests
             Assert.IsTrue(registry.HasComponent<PositionComponent>(entity2));
             Assert.IsTrue(registry.HasComponent<ParentedComponent>(entity2));
         }
+
+        #region Test Slices
+        public struct TagPosition
+        {
+            public TagPosition(EntityRegistry registry)
+            {
+                IndexFilter filter = new IndexFilter(2, 0);
+                Set = new FilteredIndexSet(registry, filter);
+                Tags = new ValueRegistry<TagComponent>(registry.Capacity);
+                Positions = new ValueRegistry<PositionComponent>(registry.Capacity);
+            }
+
+            public readonly FilteredIndexSet Set;
+            public readonly ValueRegistry<TagComponent> Tags;
+            public readonly ValueRegistry<PositionComponent> Positions;
+        }
+
+        public struct ParentedPositions
+        {
+            public ParentedPositions(EntityRegistry registry)
+            {
+                IndexFilter filter = new IndexFilter(2, 0);
+                Set = new FilteredIndexSet(registry, filter);
+                Parents = new ValueRegistry<ParentedComponent>(registry.Capacity);
+                Positions = new ValueRegistry<PositionComponent>(registry.Capacity);
+            }
+
+            public readonly FilteredIndexSet Set;
+            public readonly ValueRegistry<ParentedComponent> Parents;
+            public readonly ValueRegistry<PositionComponent> Positions;
+        }
+
+        public struct NoPosition
+        {
+            public NoPosition(EntityRegistry registry)
+            {
+                IndexFilter filter = new IndexFilter(0, 1);
+                Set = new FilteredIndexSet(registry, filter);
+            }
+
+            public readonly FilteredIndexSet Set;
+        }
+        #endregion
     }
 }

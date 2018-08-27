@@ -1,117 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace Ranitas.Core.ECS
 {
-    public class IndexFilter
-    {
-        //ANNOTATION: I like this class's role as a dumb and simple filter, just the initialization registration is something I would consider changing
-        private List<IIndexDirectory> mRequireFilters;
-        private List<IIndexDirectory> mExcludeFilters;
-
-        public bool PassesFilter(uint index)
-        {
-            foreach (IIndexDirectory indexDirectory in mRequireFilters)
-            {
-                if (!indexDirectory.Contains(index))
-                {
-                    return false;
-                }
-            }
-            foreach (IIndexDirectory indexDirectory in mExcludeFilters)
-            {
-                if (indexDirectory.Contains(index))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
-        public void RegisterRequirement(IIndexDirectory indexDirectory)
-        {
-            mRequireFilters.Add(indexDirectory);
-        }
-
-        public void RegisterExclusion(IIndexDirectory indexDirectory)
-        {
-            mExcludeFilters.Add(indexDirectory);
-        }
-    }
-
-    public class ValueRegistry<TValue> where TValue : struct
-    {
-        private uint mCount;
-        private TValue[] mValues;
-
-        public ValueRegistry(int capacity)
-        {
-            mCount = 0;
-            mValues = new TValue[capacity];
-        }
-
-        public void AddValue(TValue value)
-        {
-            mValues[mCount] = value;
-            ++mCount;
-        }
-
-        //BUG ERROR WTF This index needs to be looked up from the sparse sets. I am not using it correctly!
-        public void SetValue(TValue value, uint index)
-        {
-            Debug.Assert(mCount > index);
-            mValues[index] = value;
-        }
-
-        public void RemoveValue(uint index)
-        {
-            Debug.Assert(mCount > 0);
-            --mCount;
-            mValues[index] = mValues[mCount];
-        }
-    }
-
-    public struct ValueAttachedMessage<TComponent> where TComponent : struct
-    {
-        public ValueAttachedMessage(uint index)
-        {
-            IndexID = index;
-        }
-
-        public readonly uint IndexID;   //TODO: Need to formalize and consistently use index language (packed (id) vs sparse (?))
-    }
-
-    public struct ValueRemovedMessage<TComponent> where TComponent : struct
-    {
-        public ValueRemovedMessage(uint index)
-        {
-            IndexID = index;
-        }
-
-        public readonly uint IndexID;
-    }
-
-    public struct ValueModifiedEvent<TComponent> where TComponent : struct
-    {
-        public ValueModifiedEvent(uint index)
-        {
-            IndexID = index;
-        }
-
-        public readonly uint IndexID;
-    }
-
-    public delegate void ComponentRemoved<TComponent>(uint index);
-
     public class FilteredIndexSet
     {
         private IndexFilter mFilter;
         private IndexSet mIndexSet;
         private List<IValueInjector> mInjectors;
 
+        public FilteredIndexSet(EntityRegistry registry, IndexFilter filter)
+        {
+            mFilter = filter;
+            mIndexSet = new IndexSet(registry.Capacity);
+            mInjectors = new List<IValueInjector>();    //TODO: This constructor/class is a mess!
+        }
+
         public void RegisterRequirement<TValue>(EventSystem.EventSystem eventSystem, IndexedSet<TValue> valueSource, ValueRegistry<TValue> valueTarget) where TValue : struct
         {
+            //THIS IS THE MAIN ISSUE CURRENTLY: HOW TO BEST CREATE AND SETUP THESE?
+
             mFilter.RegisterRequirement(valueSource);
             ValueInjector<TValue> injector = new ValueInjector<TValue>(valueSource, valueTarget);
 
@@ -132,42 +40,49 @@ namespace Ranitas.Core.ECS
             eventSystem.AddMessageReceiver<ValueRemovedMessage<TValue>>((msg) => { TryInsert(msg.IndexID); });
         }
 
-        private void TryInsert(uint index)
+        private void TryInsert(uint indexID)
         {
-            if (mFilter.PassesFilter(index))
+            Debug.Assert(!mIndexSet.Contains(indexID));
+            if (mFilter.PassesFilter(indexID))
             {
-                mIndexSet.Add(index);
+                mIndexSet.Add(indexID);
                 foreach (IValueInjector injetor in mInjectors)
                 {
-                    injetor.InjectNewValue(index);
+                    injetor.InjectNewValue(indexID);
                 }
             }
         }
 
-        private void UpdateValue(uint index)
+        private void UpdateValue(uint indexID)
         {
             //TODO: Consider batching component value updates so the whole packed array can be flushed, instead of firing an event for each!
-            throw new NotImplementedException();
-        }
-
-        private void Remove(uint index)
-        {
-            if (mIndexSet.Contains(index))
+            if (mIndexSet.Contains(indexID))
             {
-                // TODO: mIndexSet.GetPackedIndex(index);
-                mIndexSet.Remove(index);//BUG NO WTF
                 foreach (IValueInjector injetor in mInjectors)
                 {
-                    injetor.RemoveValue(index);
+                    injetor.InjectExistingValue(indexID);
+                }
+            }
+        }
+
+        private void Remove(uint indexID)
+        {
+            if (mIndexSet.Contains(indexID))
+            {
+                // TODO: mIndexSet.GetPackedIndex(index);
+                mIndexSet.Remove(indexID);//BUG NO WTF
+                foreach (IValueInjector injetor in mInjectors)
+                {
+                    injetor.RemoveValue(indexID);
                 }
             }
         }
 
         private interface IValueInjector
         {
-            void InjectNewValue(uint index);
-            void InjectExistingValue(uint index);
-            void RemoveValue(uint index);
+            void InjectNewValue(uint indexID);
+            void InjectExistingValue(uint indexID);
+            void RemoveValue(uint indexID);
         }
 
         private class ValueInjector<TValue> : IValueInjector where TValue : struct
@@ -181,21 +96,23 @@ namespace Ranitas.Core.ECS
                 mTargetRegistry = target;
             }
 
-            public void InjectNewValue(uint index)
+            public void InjectNewValue(uint indexID)
             {
-                TValue value = mSourceSet.GetValue(index);
+                TValue value = mSourceSet.GetValue(indexID);
                 mTargetRegistry.AddValue(value);
             }
 
-            public void InjectExistingValue(uint index)
+            public void InjectExistingValue(uint indexID)
             {
-                TValue value = mSourceSet.GetValue(index);
-                mTargetRegistry.SetValue(value, index);
+                TValue value = mSourceSet.GetValue(indexID);
+                uint packedIndex = mSourceSet.GetPackedIndex(indexID);
+                mTargetRegistry.SetValue(value, packedIndex);
             }
 
-            public void RemoveValue(uint index)
+            public void RemoveValue(uint indexID)
             {
-                mTargetRegistry.RemoveValue(index);
+                uint packedIndex = mSourceSet.GetPackedIndex(indexID);
+                mTargetRegistry.RemoveValue(packedIndex);
             }
         }
     }
