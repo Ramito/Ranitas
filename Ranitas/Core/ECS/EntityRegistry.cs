@@ -36,7 +36,15 @@ namespace Ranitas.Core.ECS
 
         public void Destroy(Entity entity)
         {
+            Debug.Assert(IsValid(entity), "Can't destroy invalid entity.");
             uint entityIndex = entity.Index;
+
+            //Remove from any slices! This is not done through remove value/component events since a slice can be made up of only exclusions
+            foreach (EntitySlice slice in mRegisteredSlices)
+            {
+                slice.Remove(entityIndex);
+            }
+            //It is important to clear slices before touching the component sets, as the component sets drive the slices internally!
             foreach (IUntypedIndexedSet componentSet in mComponentSets)
             {
                 if (componentSet.Contains(entityIndex))
@@ -44,7 +52,7 @@ namespace Ranitas.Core.ECS
                     componentSet.Remove(entityIndex);
                 }
             }
-            Debug.Assert(IsValid(entity), "Can't destroy invalid entity.");
+
             mEntities[entityIndex] = new Entity(mNext, entity.Version + 1);
             mNext = entityIndex;
         }
@@ -103,6 +111,12 @@ namespace Ranitas.Core.ECS
             mEventSystem.PostMessage(new ValueRemovedMessage<TComponent>(entity.Index));
         }
 
+        public EntitySlice BeginSlice()
+        {
+            EntitySlice newSlice = new EntitySlice(this);
+            return newSlice;
+        }
+
         private void ValidateOrRegisterComponentType<TComponent>() where TComponent : struct
         {
             Type componentType = typeof(TComponent);
@@ -138,8 +152,42 @@ namespace Ranitas.Core.ECS
         private Dictionary<Type, ushort> mComponentSetLookup = new Dictionary<Type, ushort>();
 
         private EventSystem.EventSystem mEventSystem = new EventSystem.EventSystem();
+
+        private List<EntitySlice> mRegisteredSlices = new List<EntitySlice>();
+        public class EntitySlice : FilteredIndexSet
+        {
+            private EntityRegistry mRegistry;
+
+            public EntitySlice(EntityRegistry registry) : base(registry.Capacity + 1)
+            {
+                mRegistry = registry;
+            }
+
+            public EntitySlice Require<TComponent>(ValueRegistry<TComponent> targetRegistry) where TComponent : struct
+            {
+                IndexedSet<TComponent> componentSet = mRegistry.GetIndexedSet<TComponent>();
+                RegisterRequirement(mRegistry.mEventSystem, componentSet, targetRegistry);
+                return this;
+            }
+
+            public EntitySlice Exclude<TComponent>() where TComponent : struct
+            {
+                IndexedSet<TComponent> componentSet = mRegistry.GetIndexedSet<TComponent>();
+                RegisterExclusion(mRegistry.mEventSystem, componentSet);
+                return this;
+            }
+
+            public void CloseSlice()
+            {
+                //TODO: Actually close slice
+                //TODO: Register slice events at this time!(?)
+                mRegistry.mRegisteredSlices.Add(this);
+                mRegistry = null;
+            }
+        }
     }
 
+    //TODO: Hookup delegates directly not through events?
     public struct ValueAttachedMessage<TComponent> where TComponent : struct
     {
         public ValueAttachedMessage(uint index)

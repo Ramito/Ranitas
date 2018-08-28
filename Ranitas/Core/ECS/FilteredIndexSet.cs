@@ -3,24 +3,20 @@ using System.Diagnostics;
 
 namespace Ranitas.Core.ECS
 {
-    public class FilteredIndexSet
+    public class FilteredIndexSet : IndexFilter
     {
-        private IndexFilter mFilter;
         private IndexSet mIndexSet;
         private List<IValueInjector> mInjectors;
 
-        public FilteredIndexSet(EntityRegistry registry, IndexFilter filter)
+        public FilteredIndexSet(int capacity)
         {
-            mFilter = filter;
-            mIndexSet = new IndexSet(registry.Capacity);
+            mIndexSet = new IndexSet(capacity);
             mInjectors = new List<IValueInjector>();    //TODO: This constructor/class is a mess!
         }
 
         public void RegisterRequirement<TValue>(EventSystem.EventSystem eventSystem, IndexedSet<TValue> valueSource, ValueRegistry<TValue> valueTarget) where TValue : struct
         {
-            //THIS IS THE MAIN ISSUE CURRENTLY: HOW TO BEST CREATE AND SETUP THESE?
-
-            mFilter.RegisterRequirement(valueSource);
+            RegisterRequirement(valueSource);
             ValueInjector<TValue> injector = new ValueInjector<TValue>(valueSource, valueTarget);
 
             mInjectors.Add(injector);
@@ -34,7 +30,7 @@ namespace Ranitas.Core.ECS
 
         public void RegisterExclusion<TValue>(EventSystem.EventSystem eventSystem, IndexedSet<TValue> exclusionSource) where TValue : struct
         {
-            mFilter.RegisterExclusion(exclusionSource);
+            RegisterExclusion(exclusionSource);
 
             eventSystem.AddMessageReceiver<ValueAttachedMessage<TValue>>((msg) => { Remove(msg.IndexID); });
             eventSystem.AddMessageReceiver<ValueRemovedMessage<TValue>>((msg) => { TryInsert(msg.IndexID); });
@@ -43,7 +39,7 @@ namespace Ranitas.Core.ECS
         private void TryInsert(uint indexID)
         {
             Debug.Assert(!mIndexSet.Contains(indexID));
-            if (mFilter.PassesFilter(indexID))
+            if (PassesFilter(indexID))
             {
                 mIndexSet.Add(indexID);
                 foreach (IValueInjector injetor in mInjectors)
@@ -65,16 +61,15 @@ namespace Ranitas.Core.ECS
             }
         }
 
-        private void Remove(uint indexID)
+        public void Remove(uint indexID)
         {
             if (mIndexSet.Contains(indexID))
             {
-                // TODO: mIndexSet.GetPackedIndex(index);
-                mIndexSet.Remove(indexID);//BUG NO WTF
                 foreach (IValueInjector injetor in mInjectors)
                 {
                     injetor.RemoveValue(indexID);
                 }
+                mIndexSet.Remove(indexID);
             }
         }
 

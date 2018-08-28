@@ -147,44 +147,91 @@ namespace CoreUnitTests
         #region Test Slices
         public struct TagPosition
         {
-            public TagPosition(EntityRegistry registry)
+            public TagPosition(int capacity)
             {
-                IndexFilter filter = new IndexFilter(2, 0);
-                Set = new FilteredIndexSet(registry, filter);
-                Tags = new ValueRegistry<TagComponent>(registry.Capacity);
-                Positions = new ValueRegistry<PositionComponent>(registry.Capacity);
+                Tags = new ValueRegistry<TagComponent>(capacity);
+                Positions = new ValueRegistry<PositionComponent>(capacity);
             }
 
-            public readonly FilteredIndexSet Set;
             public readonly ValueRegistry<TagComponent> Tags;
             public readonly ValueRegistry<PositionComponent> Positions;
         }
 
-        public struct ParentedPositions
+        public struct ParentedPosition
         {
-            public ParentedPositions(EntityRegistry registry)
+            public ParentedPosition(int capacity)
             {
-                IndexFilter filter = new IndexFilter(2, 0);
-                Set = new FilteredIndexSet(registry, filter);
-                Parents = new ValueRegistry<ParentedComponent>(registry.Capacity);
-                Positions = new ValueRegistry<PositionComponent>(registry.Capacity);
+                Parents = new ValueRegistry<ParentedComponent>(capacity);
+                Positions = new ValueRegistry<PositionComponent>(capacity);
             }
 
-            public readonly FilteredIndexSet Set;
             public readonly ValueRegistry<ParentedComponent> Parents;
             public readonly ValueRegistry<PositionComponent> Positions;
         }
 
-        public struct NoPosition
+        public struct UnparentedPosition
         {
-            public NoPosition(EntityRegistry registry)
+            public UnparentedPosition(int capacity)
             {
-                IndexFilter filter = new IndexFilter(0, 1);
-                Set = new FilteredIndexSet(registry, filter);
+                Positions = new ValueRegistry<PositionComponent>(capacity);
             }
-
-            public readonly FilteredIndexSet Set;
+            
+            public readonly ValueRegistry<PositionComponent> Positions;
         }
         #endregion
+
+        [TestMethod]
+        public void TestSlices()
+        {
+            EntityRegistry registry = new EntityRegistry(5000);
+
+            TagPosition sliceTagPosition = new TagPosition(registry.Capacity);
+            ParentedPosition sliceParentedPosition = new ParentedPosition(registry.Capacity);
+            UnparentedPosition sliceUnparentedPosition = new UnparentedPosition(registry.Capacity);
+
+            registry.BeginSlice()
+                .Require(sliceTagPosition.Tags)
+                .Require(sliceTagPosition.Positions)
+                .CloseSlice();
+
+            registry.BeginSlice()
+                .Require(sliceParentedPosition.Parents)
+                .Require(sliceParentedPosition.Positions)
+                .CloseSlice();
+
+            registry.BeginSlice()
+                .Require(sliceUnparentedPosition.Positions)
+                .Exclude<ParentedComponent>()
+                .CloseSlice();
+
+            List<Entity> entities = new List<Entity>(registry.Capacity);
+            for (int i = 0; i < registry.Capacity; ++i)
+            {
+                Entity entity = registry.Create();
+                entities.Add(entity);
+                registry.AddComponent(entity, new PositionComponent(i, i));
+            }
+            Assert.AreEqual(0u, sliceTagPosition.Positions.Count);
+            Assert.AreEqual(0u, sliceParentedPosition.Positions.Count);
+            Assert.AreEqual((uint)registry.Capacity, sliceUnparentedPosition.Positions.Count);
+            for (int i = 0; i < registry.Capacity; i += 2)
+            {
+                Entity entity = entities[i];
+                registry.AddComponent(entity, new ParentedComponent(entities[i+1]));
+            }
+            Assert.AreEqual(0u, sliceTagPosition.Positions.Count);
+            Assert.AreEqual(2500u, sliceParentedPosition.Positions.Count);
+            Assert.AreEqual(2500u, sliceUnparentedPosition.Positions.Count);
+
+            foreach (Entity entity in entities)
+            {
+                registry.Destroy(entity);
+            }
+            entities.Clear();
+
+            Assert.AreEqual(0u, sliceTagPosition.Positions.Count);
+            Assert.AreEqual(0u, sliceParentedPosition.Positions.Count);
+            Assert.AreEqual(0u, sliceUnparentedPosition.Positions.Count);
+        }
     }
 }

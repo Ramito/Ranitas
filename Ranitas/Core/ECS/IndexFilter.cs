@@ -8,10 +8,10 @@ namespace Ranitas.Core.ECS
         private List<IIndexDirectory> mRequireFilters;
         private List<IIndexDirectory> mExcludeFilters;
 
-        public IndexFilter(int requirements, int exclusions)
+        public IndexFilter()
         {
-            mRequireFilters = new List<IIndexDirectory>(requirements);
-            mExcludeFilters = new List<IIndexDirectory>(exclusions);
+            mRequireFilters = new List<IIndexDirectory>();
+            mExcludeFilters = new List<IIndexDirectory>();
         }
 
         public bool PassesFilter(uint index)
