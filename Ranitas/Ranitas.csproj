@@ -48,6 +48,8 @@
     <Compile Include="Core\ECS\FilteredIndexSet.cs" />
     <Compile Include="Core\ECS\IndexFilter.cs" />
     <Compile Include="Core\ECS\IndexSet.cs" />
+    <Compile Include="Core\ECS\IReadonlyIndexSet.cs" />
+    <Compile Include="Core\ECS\IUntypedIndexSet.cs" />
     <Compile Include="Core\ECS\ValueRegistry.cs" />
     <Compile Include="Core\EventSystem\EventSystem.cs" />
     <Compile Include="Core\Physics\FixedTimeStepDynamics.cs" />

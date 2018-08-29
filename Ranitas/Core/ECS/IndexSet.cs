@@ -2,7 +2,7 @@
 
 namespace Ranitas.Core.ECS
 {
-    public class IndexSet : IIndexDirectory
+    public class IndexSet : IReadonlyIndexSet
     {
         public uint Count { get; private set; }
         private uint[] mSparseIndices;
@@ -39,15 +39,10 @@ namespace Ranitas.Core.ECS
             mPackedIndices[deletedInPacked] = movedIndex;
         }
 
-        internal uint GetPackedIndex(uint indexID)
+        public uint GetPackedIndex(uint indexID)
         {
             Debug.Assert(Contains(indexID));
             return mSparseIndices[indexID];
         }
-    }
-
-    public interface IIndexDirectory
-    {
-        bool Contains(uint indexID);
     }
 }

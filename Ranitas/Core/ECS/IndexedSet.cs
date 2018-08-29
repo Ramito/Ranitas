@@ -1,13 +1,6 @@
-﻿using System.Diagnostics;
-
-namespace Ranitas.Core.ECS
+﻿namespace Ranitas.Core.ECS
 {
-    public interface IUntypedIndexedSet : IIndexDirectory
-    {
-        void Remove(uint atIndex);
-    }
-
-    public class IndexedSet<TValue> : IIndexDirectory, IUntypedIndexedSet where TValue : struct
+    public class IndexedSet<TValue> : IReadonlyIndexSet, IUntypedIndexedSet where TValue : struct
     {
         private TValue[] mPackedValues;
         private IndexSet mIndexSet;

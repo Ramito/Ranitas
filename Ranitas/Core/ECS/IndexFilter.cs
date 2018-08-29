@@ -5,25 +5,25 @@ namespace Ranitas.Core.ECS
     public class IndexFilter
     {
         //ANNOTATION: I like this class's role as a dumb and simple filter, just the initialization registration is something I would consider changing
-        private List<IIndexDirectory> mRequireFilters;
-        private List<IIndexDirectory> mExcludeFilters;
+        private List<IReadonlyIndexSet> mRequireFilters;
+        private List<IReadonlyIndexSet> mExcludeFilters;
 
         public IndexFilter()
         {
-            mRequireFilters = new List<IIndexDirectory>();
-            mExcludeFilters = new List<IIndexDirectory>();
+            mRequireFilters = new List<IReadonlyIndexSet>();
+            mExcludeFilters = new List<IReadonlyIndexSet>();
         }
 
         public bool PassesFilter(uint index)
         {
-            foreach (IIndexDirectory indexDirectory in mRequireFilters)
+            foreach (IReadonlyIndexSet indexDirectory in mRequireFilters)
             {
                 if (!indexDirectory.Contains(index))
                 {
                     return false;
                 }
             }
-            foreach (IIndexDirectory indexDirectory in mExcludeFilters)
+            foreach (IReadonlyIndexSet indexDirectory in mExcludeFilters)
             {
                 if (indexDirectory.Contains(index))
                 {
@@ -33,12 +33,12 @@ namespace Ranitas.Core.ECS
             return true;
         }
 
-        public void RegisterRequirement(IIndexDirectory indexDirectory)
+        public void RegisterRequirement(IReadonlyIndexSet indexDirectory)
         {
             mRequireFilters.Add(indexDirectory);
         }
 
-        public void RegisterExclusion(IIndexDirectory indexDirectory)
+        public void RegisterExclusion(IReadonlyIndexSet indexDirectory)
         {
             mExcludeFilters.Add(indexDirectory);
         }
