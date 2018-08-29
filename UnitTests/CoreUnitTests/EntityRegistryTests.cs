@@ -185,24 +185,24 @@ namespace CoreUnitTests
         {
             EntityRegistry registry = new EntityRegistry(5000);
 
-            TagPosition sliceTagPosition = new TagPosition(registry.Capacity);
-            ParentedPosition sliceParentedPosition = new ParentedPosition(registry.Capacity);
-            UnparentedPosition sliceUnparentedPosition = new UnparentedPosition(registry.Capacity);
+            TagPosition sliceTagPosition = new TagPosition(registry.Capacity + 1);
+            ParentedPosition sliceParentedPosition = new ParentedPosition(registry.Capacity + 1);
+            UnparentedPosition sliceUnparentedPosition = new UnparentedPosition(registry.Capacity + 1);
 
-            registry.BeginSlice()
+            registry.ConfigureSlice()
                 .Require(sliceTagPosition.Tags)
                 .Require(sliceTagPosition.Positions)
-                .CloseSlice();
+                .CreateSlice();
 
-            registry.BeginSlice()
+            registry.ConfigureSlice()
                 .Require(sliceParentedPosition.Parents)
                 .Require(sliceParentedPosition.Positions)
-                .CloseSlice();
+                .CreateSlice();
 
-            registry.BeginSlice()
+            registry.ConfigureSlice()
                 .Require(sliceUnparentedPosition.Positions)
                 .Exclude<ParentedComponent>()
-                .CloseSlice();
+                .CreateSlice();
 
             List<Entity> entities = new List<Entity>(registry.Capacity);
             for (int i = 0; i < registry.Capacity; ++i)

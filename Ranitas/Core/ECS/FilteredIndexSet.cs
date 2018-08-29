@@ -3,112 +3,87 @@ using System.Diagnostics;
 
 namespace Ranitas.Core.ECS
 {
-    public class FilteredIndexSet : IndexFilter
+    public class FilteredIndexSet : IReadonlyIndexSet
     {
-        private IndexSet mIndexSet;
-        private List<IValueInjector> mInjectors;
+        private readonly IndexFilter mFilter;
+        private readonly IndexSet mIndexSet;
 
-        public FilteredIndexSet(int capacity)
+        public FilteredIndexSet(int capacity, List<IReadonlyIndexSet> requirements, List<IReadonlyIndexSet> exclusions)
+            :this(capacity, requirements.ToArray(), exclusions.ToArray())
+        { }
+
+        public FilteredIndexSet(int capacity, IReadonlyIndexSet[] requirements, IReadonlyIndexSet[] exclusions)
         {
+            mFilter = new IndexFilter(requirements, exclusions);
             mIndexSet = new IndexSet(capacity);
-            mInjectors = new List<IValueInjector>();    //TODO: This constructor/class is a mess!
+            //mInjectors = new List<IValueInjector>();    //TODO: This constructor/class is a mess!
         }
 
-        public void RegisterRequirement<TValue>(EventSystem.EventSystem eventSystem, IndexedSet<TValue> valueSource, ValueRegistry<TValue> valueTarget) where TValue : struct
+        public bool TryInsert(uint indexID)
         {
-            RegisterRequirement(valueSource);
-            ValueInjector<TValue> injector = new ValueInjector<TValue>(valueSource, valueTarget);
-
-            mInjectors.Add(injector);
-
-            //TODO: Validate no type collisions between requirements and exclusions?
-
-            eventSystem.AddMessageReceiver<ValueAttachedMessage<TValue>>((msg) => { TryInsert(msg.IndexID); });
-            eventSystem.AddMessageReceiver<ValueModifiedEvent<TValue>>((msg) => { UpdateValue(msg.IndexID); });
-            eventSystem.AddMessageReceiver<ValueRemovedMessage<TValue>>((msg) => { Remove(msg.IndexID); });
-        }
-
-        public void RegisterExclusion<TValue>(EventSystem.EventSystem eventSystem, IndexedSet<TValue> exclusionSource) where TValue : struct
-        {
-            RegisterExclusion(exclusionSource);
-
-            eventSystem.AddMessageReceiver<ValueAttachedMessage<TValue>>((msg) => { Remove(msg.IndexID); });
-            eventSystem.AddMessageReceiver<ValueRemovedMessage<TValue>>((msg) => { TryInsert(msg.IndexID); });
-        }
-
-        private void TryInsert(uint indexID)
-        {
-            Debug.Assert(!mIndexSet.Contains(indexID));
-            if (PassesFilter(indexID))
+            Debug.Assert(!Contains(indexID));
+            if (mFilter.PassesFilter(indexID))
             {
                 mIndexSet.Add(indexID);
-                foreach (IValueInjector injetor in mInjectors)
-                {
-                    injetor.InjectNewValue(indexID);
-                }
+                return true;
             }
+            return false;
         }
 
-        private void UpdateValue(uint indexID)
+        public bool Contains(uint indexID)
         {
-            //TODO: Consider batching component value updates so the whole packed array can be flushed, instead of firing an event for each!
-            if (mIndexSet.Contains(indexID))
-            {
-                foreach (IValueInjector injetor in mInjectors)
-                {
-                    injetor.InjectExistingValue(indexID);
-                }
-            }
+            return mIndexSet.Contains(indexID);
         }
 
-        public void Remove(uint indexID)
+        public bool Remove(uint indexID)
         {
-            if (mIndexSet.Contains(indexID))
+            if (Contains(indexID))
             {
-                foreach (IValueInjector injetor in mInjectors)
-                {
-                    injetor.RemoveValue(indexID);
-                }
                 mIndexSet.Remove(indexID);
+                return true;
             }
+            return false;
+        }
+    }
+
+    public delegate void IndexedValueHandler(uint indexID);
+
+    public interface IValueInjector
+    {
+        void InjectNewValue(uint indexID);
+        void InjectExistingValue(uint indexID);
+        void RemoveValue(uint indexID);
+    }
+
+    public class ValueInjector<TValue> : IValueInjector where TValue : struct
+    {
+        //TODO: Take IComponentSet and register modification events inside here?
+        private IIndexedSet<TValue> mSourceSet;
+        private ValueRegistry<TValue> mTargetRegistry;
+
+        public ValueInjector(IIndexedSet<TValue> source, ValueRegistry<TValue> target)
+        {
+            mSourceSet = source;
+            mTargetRegistry = target;
         }
 
-        private interface IValueInjector
+        public void InjectNewValue(uint indexID)
         {
-            void InjectNewValue(uint indexID);
-            void InjectExistingValue(uint indexID);
-            void RemoveValue(uint indexID);
+            TValue value = mSourceSet.GetValue(indexID);
+            mTargetRegistry.AddValue(value);
         }
 
-        private class ValueInjector<TValue> : IValueInjector where TValue : struct
+        public void InjectExistingValue(uint indexID)
         {
-            private IndexedSet<TValue> mSourceSet;
-            private ValueRegistry<TValue> mTargetRegistry;
+            TValue value = mSourceSet.GetValue(indexID);
+            uint packedIndex = mSourceSet.GetPackedIndex(indexID);
+            mTargetRegistry.SetValue(value, packedIndex);
+        }
 
-            public ValueInjector(IndexedSet<TValue> source, ValueRegistry<TValue> target)
-            {
-                mSourceSet = source;
-                mTargetRegistry = target;
-            }
-
-            public void InjectNewValue(uint indexID)
-            {
-                TValue value = mSourceSet.GetValue(indexID);
-                mTargetRegistry.AddValue(value);
-            }
-
-            public void InjectExistingValue(uint indexID)
-            {
-                TValue value = mSourceSet.GetValue(indexID);
-                uint packedIndex = mSourceSet.GetPackedIndex(indexID);
-                mTargetRegistry.SetValue(value, packedIndex);
-            }
-
-            public void RemoveValue(uint indexID)
-            {
-                uint packedIndex = mSourceSet.GetPackedIndex(indexID);
-                mTargetRegistry.RemoveValue(packedIndex);
-            }
+        public void RemoveValue(uint indexID)
+        {
+            uint packedIndex = mSourceSet.GetPackedIndex(indexID);
+            mTargetRegistry.RemoveValue(packedIndex);
         }
     }
 }
