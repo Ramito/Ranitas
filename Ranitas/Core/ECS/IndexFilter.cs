@@ -4,7 +4,6 @@ namespace Ranitas.Core.ECS
 {
     public class IndexFilter
     {
-        //ANNOTATION: I like this class's role as a dumb and simple filter, just the initialization registration is something I would consider changing
         private readonly IReadonlyIndexSet[] mRequireFilters;
         private readonly IReadonlyIndexSet[] mExcludeFilters;
 

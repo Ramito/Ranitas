@@ -1,10 +1,5 @@
 ﻿namespace Ranitas.Core.ECS
 {
-    public interface IReadonlyIndexSet
-    {
-        bool Contains(uint indexID);
-    }
-
     public delegate void IndexedValueHandler(uint indexID);
 
     public interface IPublishingIndexSet : IReadonlyIndexSet

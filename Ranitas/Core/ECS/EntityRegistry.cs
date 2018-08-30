@@ -145,6 +145,8 @@ namespace Ranitas.Core.ECS
         private Dictionary<Type, ushort> mComponentSetLookup = new Dictionary<Type, ushort>();
 
         private List<EntitySlice> mRegisteredSlices = new List<EntitySlice>();
+
+        #region Entity slice classes and interfaces
         public class EntitySliceConfiguration
         {
             private EntityRegistry mRegistry;
@@ -175,8 +177,7 @@ namespace Ranitas.Core.ECS
 
             public void CreateSlice()
             {
-                //TODO: Index woes?
-                EntitySlice slice = new EntitySlice(mRegistry.Capacity + 1, mRequirements, mInjectors, mExclusions);
+                EntitySlice slice = new EntitySlice(mRegistry.mEntities.Length, mRequirements, mInjectors, mExclusions);
                 //TODO: Register slice events here???
                 mRegistry.mRegisteredSlices.Add(slice);
             }
@@ -200,7 +201,6 @@ namespace Ranitas.Core.ECS
                     IPublishingIndexSet publisher = requirements[i];
                     publisher.NewValue += TryAddValue;
                     publisher.Removed += RemoveValue;
-                    IValueInjector injector = injectors[i];
                     int injectorIndex = i;
                     publisher.ValueModified += (index) => UpdateValue(index, injectorIndex);
                 }
@@ -255,5 +255,45 @@ namespace Ranitas.Core.ECS
                 }
             }
         }
+
+        private interface IValueInjector
+        {
+            void InjectNewValue(uint indexID);
+            void InjectExistingValue(uint indexID);
+            void RemoveValue(uint indexID);
+        }
+
+        private class ValueInjector<TValue> : IValueInjector where TValue : struct
+        {
+            //TODO: Take IComponentSet and register modification events inside here?
+            private IIndexedSet<TValue> mSourceSet;
+            private ValueRegistry<TValue> mTargetRegistry;
+
+            public ValueInjector(IIndexedSet<TValue> source, ValueRegistry<TValue> target)
+            {
+                mSourceSet = source;
+                mTargetRegistry = target;
+            }
+
+            public void InjectNewValue(uint indexID)
+            {
+                TValue value = mSourceSet.GetValue(indexID);
+                mTargetRegistry.AddValue(value);
+            }
+
+            public void InjectExistingValue(uint indexID)
+            {
+                TValue value = mSourceSet.GetValue(indexID);
+                uint packedIndex = mSourceSet.GetPackedIndex(indexID);
+                mTargetRegistry.SetValue(value, packedIndex);
+            }
+
+            public void RemoveValue(uint indexID)
+            {
+                uint packedIndex = mSourceSet.GetPackedIndex(indexID);
+                mTargetRegistry.RemoveValue(packedIndex);
+            }
+        }
+        #endregion
     }
 }

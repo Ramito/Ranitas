@@ -2,6 +2,7 @@
 
 namespace Ranitas.Core.ECS
 {
+    //TODO: This class needs work!
     public class ValueRegistry<TValue> where TValue : struct
     {
         public uint Count { private set; get; }
@@ -11,6 +12,7 @@ namespace Ranitas.Core.ECS
         {
             get
             {
+                Debug.Assert(index < Count);
                 return mValues[index];
             }
         }

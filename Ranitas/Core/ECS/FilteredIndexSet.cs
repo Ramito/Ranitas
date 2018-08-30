@@ -45,45 +45,4 @@ namespace Ranitas.Core.ECS
             return false;
         }
     }
-
-    public delegate void IndexedValueHandler(uint indexID);
-
-    public interface IValueInjector
-    {
-        void InjectNewValue(uint indexID);
-        void InjectExistingValue(uint indexID);
-        void RemoveValue(uint indexID);
-    }
-
-    public class ValueInjector<TValue> : IValueInjector where TValue : struct
-    {
-        //TODO: Take IComponentSet and register modification events inside here?
-        private IIndexedSet<TValue> mSourceSet;
-        private ValueRegistry<TValue> mTargetRegistry;
-
-        public ValueInjector(IIndexedSet<TValue> source, ValueRegistry<TValue> target)
-        {
-            mSourceSet = source;
-            mTargetRegistry = target;
-        }
-
-        public void InjectNewValue(uint indexID)
-        {
-            TValue value = mSourceSet.GetValue(indexID);
-            mTargetRegistry.AddValue(value);
-        }
-
-        public void InjectExistingValue(uint indexID)
-        {
-            TValue value = mSourceSet.GetValue(indexID);
-            uint packedIndex = mSourceSet.GetPackedIndex(indexID);
-            mTargetRegistry.SetValue(value, packedIndex);
-        }
-
-        public void RemoveValue(uint indexID)
-        {
-            uint packedIndex = mSourceSet.GetPackedIndex(indexID);
-            mTargetRegistry.RemoveValue(packedIndex);
-        }
-    }
 }
