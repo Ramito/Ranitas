@@ -42,6 +42,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Core\ECS\ComponentSet.cs" />
     <Compile Include="Core\ECS\IIndexedSet.cs" />
     <Compile Include="Core\ECS\IndexedSet.cs" />
     <Compile Include="Core\ECS\Entity.cs" />
@@ -49,7 +50,9 @@
     <Compile Include="Core\ECS\FilteredIndexSet.cs" />
     <Compile Include="Core\ECS\IndexFilter.cs" />
     <Compile Include="Core\ECS\IndexSet.cs" />
+    <Compile Include="Core\ECS\IPublishingIndexSet.cs" />
     <Compile Include="Core\ECS\IReadonlyIndexSet.cs" />
+    <Compile Include="Core\ECS\IUntypedComponentSet.cs" />
     <Compile Include="Core\ECS\IUntypedIndexSet.cs" />
     <Compile Include="Core\ECS\ValueRegistry.cs" />
     <Compile Include="Core\EventSystem\EventSystem.cs" />

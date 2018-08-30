@@ -115,7 +115,7 @@ namespace Ranitas.Core.ECS
             Type componentType = typeof(TComponent);
             if (!mComponentSetLookup.ContainsKey(componentType))
             {
-                ComponentSet<TComponent> componentSet = new ComponentSet<TComponent>(mEntities.Length);     //TODO: Index issue?
+                ComponentSet<TComponent> componentSet = new ComponentSet<TComponent>(mEntities.Length);
                 ushort lookup = (ushort)mComponentSets.Count;
                 mComponentSets.Add(componentSet);
                 mComponentSetLookup.Add(componentType, lookup);
@@ -178,7 +178,6 @@ namespace Ranitas.Core.ECS
             public void CreateSlice()
             {
                 EntitySlice slice = new EntitySlice(mRegistry.mEntities.Length, mRequirements, mInjectors, mExclusions);
-                //TODO: Register slice events here???
                 mRegistry.mRegisteredSlices.Add(slice);
             }
         }
@@ -265,7 +264,6 @@ namespace Ranitas.Core.ECS
 
         private class ValueInjector<TValue> : IValueInjector where TValue : struct
         {
-            //TODO: Take IComponentSet and register modification events inside here?
             private IIndexedSet<TValue> mSourceSet;
             private ValueRegistry<TValue> mTargetRegistry;
 

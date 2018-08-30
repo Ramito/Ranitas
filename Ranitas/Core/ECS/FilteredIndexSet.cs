@@ -16,7 +16,6 @@ namespace Ranitas.Core.ECS
         {
             mFilter = new IndexFilter(requirements, exclusions);
             mIndexSet = new IndexSet(capacity);
-            //mInjectors = new List<IValueInjector>();    //TODO: This constructor/class is a mess!
         }
 
         public bool TryInsert(uint indexID)
