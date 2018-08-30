@@ -103,8 +103,8 @@
 
         public void Remove(uint atIndex)
         {
-            mIndexedSet.Remove(atIndex);
             Removed?.Invoke(atIndex);
+            mIndexedSet.Remove(atIndex);
         }
 
         public void Replace(TValue newValue, uint indexID)

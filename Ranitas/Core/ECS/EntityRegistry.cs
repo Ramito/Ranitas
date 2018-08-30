@@ -238,7 +238,7 @@ namespace Ranitas.Core.ECS
 
             public void RemoveValue(uint indexID)
             {
-                if (mFilteredSet.Contains(indexID))
+                if (mFilteredSet.Remove(indexID))
                 {
                     foreach (IValueInjector injector in mInjectors)
                     {
