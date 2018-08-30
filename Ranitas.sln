@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ranitas", "Ranitas\Ranitas.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RanitasData", "RanitasData\RanitasData.csproj", "{F9977623-C4A3-4179-9027-B05B7CD2C37E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreUnitTests", "UnitTests\CoreUnitTests\CoreUnitTests.csproj", "{8AE54E60-55B2-449B-8DCD-9BC1A775251B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{F9977623-C4A3-4179-9027-B05B7CD2C37E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9977623-C4A3-4179-9027-B05B7CD2C37E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F9977623-C4A3-4179-9027-B05B7CD2C37E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8AE54E60-55B2-449B-8DCD-9BC1A775251B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8AE54E60-55B2-449B-8DCD-9BC1A775251B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8AE54E60-55B2-449B-8DCD-9BC1A775251B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8AE54E60-55B2-449B-8DCD-9BC1A775251B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
