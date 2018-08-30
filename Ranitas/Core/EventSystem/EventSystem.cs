@@ -5,52 +5,53 @@ namespace Ranitas.Core.EventSystem
 {
     public sealed class EventSystem
     {
-        Dictionary<Type, List<IMessageHandler>> mHandlers = new Dictionary<Type, List<IMessageHandler>>();
+        private Dictionary<Type, int> mTypeLookup = new Dictionary<Type, int>();
+        private List<IHandlerCollection> mHandlers = new List<IHandlerCollection>();
 
-        public void AddMessageReceiver<T>(Action<T> action) where T : struct
+        public void AddMessageReceiver<TMessage>(Action<TMessage> action) where TMessage : struct
         {
-            if (!mHandlers.TryGetValue(TypeCache<T>.Type, out List<IMessageHandler> handlers))
+            HandlerCollection<TMessage> handlerCollection;
+            if (!mTypeLookup.TryGetValue(typeof(TMessage), out int typeIndex))
             {
-                handlers = new List<IMessageHandler>();
-                mHandlers.Add(TypeCache<T>.Type, handlers);
+                typeIndex = mHandlers.Count;
+                mTypeLookup.Add(typeof(TMessage), typeIndex);
+                handlerCollection = new HandlerCollection<TMessage>();
+                mHandlers.Add(handlerCollection);
             }
-            handlers.Add(new MessageHandler<T>(action));
+            else
+            {
+                handlerCollection = (HandlerCollection<TMessage>)mHandlers[typeIndex];
+            }
+            handlerCollection.Add(action);
         }
 
-        public void PostMessage<T>(T message)
+        public void PostMessage<TMessage>(TMessage message) where TMessage : struct
         {
-            if (mHandlers.TryGetValue(TypeCache<T>.Type, out List<IMessageHandler> handlers))
+            if (mTypeLookup.TryGetValue(typeof(TMessage), out int typeIndex))
             {
-                foreach (var handler in handlers)
+                HandlerCollection<TMessage> collection = (HandlerCollection<TMessage>)mHandlers[typeIndex];
+                collection.Handle(message);
+            }
+        }
+
+        private interface IHandlerCollection { }
+
+        private class HandlerCollection<TMessage> : IHandlerCollection where TMessage : struct
+        {
+            private List<Action<TMessage>> mHandlers = new List<Action<TMessage>>();
+
+            public void Add(Action<TMessage> handler)
+            {
+                mHandlers.Add(handler);
+            }
+
+            public void Handle(TMessage message)
+            {
+                foreach (Action<TMessage> handler in mHandlers)
                 {
-                    handler.Handle(message);
+                    handler(message);
                 }
             }
         }
-
-        private interface IMessageHandler
-        {
-            void Handle(object message);
-        }
-
-        private class MessageHandler<T> : IMessageHandler
-        {
-            private readonly Action<T> mAction;
-
-            public MessageHandler(Action<T> action)
-            {
-                mAction = action;
-            }
-
-            public void Handle(object message)
-            {
-                mAction((T)message);
-            }
-        }
-    }
-
-    public static class TypeCache<T>
-    {
-        public static Type Type = typeof(T);
     }
 }
