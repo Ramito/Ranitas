@@ -147,24 +147,12 @@ namespace CoreUnitTests
         #region Test Slices
         public struct TagPosition
         {
-            public TagPosition(int capacity)
-            {
-                Tags = new ValueRegistry<TagComponent>(capacity);
-                Positions = new ValueRegistry<PositionComponent>(capacity);
-            }
-
             public readonly ValueRegistry<TagComponent> Tags;
             public readonly ValueRegistry<PositionComponent> Positions;
         }
 
         public struct ParentedPosition
         {
-            public ParentedPosition(int capacity)
-            {
-                Parents = new ValueRegistry<ParentedComponent>(capacity);
-                Positions = new ValueRegistry<PositionComponent>(capacity);
-            }
-
             public readonly ValueRegistry<ParentedComponent> Parents;
             public readonly ValueRegistry<PositionComponent> Positions;
         }
@@ -185,20 +173,13 @@ namespace CoreUnitTests
         {
             EntityRegistry registry = new EntityRegistry(5000);
 
-            TagPosition sliceTagPosition = new TagPosition(registry.Capacity + 1);
-            ParentedPosition sliceParentedPosition = new ParentedPosition(registry.Capacity + 1);
+            TagPosition sliceTagPosition = new TagPosition();
+            registry.MakeMagicSlice(ref sliceTagPosition);
+
+            ParentedPosition sliceParentedPosition = new ParentedPosition();
+            registry.MakeMagicSlice(ref sliceParentedPosition);
+
             UnparentedPosition sliceUnparentedPosition = new UnparentedPosition(registry.Capacity + 1);
-
-            registry.ConfigureSlice()
-                .Require(sliceTagPosition.Tags)
-                .Require(sliceTagPosition.Positions)
-                .CreateSlice();
-
-            registry.ConfigureSlice()
-                .Require(sliceParentedPosition.Parents)
-                .Require(sliceParentedPosition.Positions)
-                .CreateSlice();
-
             registry.ConfigureSlice()
                 .Require(sliceUnparentedPosition.Positions)
                 .Exclude<ParentedComponent>()
@@ -217,7 +198,7 @@ namespace CoreUnitTests
             for (int i = 0; i < registry.Capacity; i += 2)
             {
                 Entity entity = entities[i];
-                registry.AddComponent(entity, new ParentedComponent(entities[i+1]));
+                registry.AddComponent(entity, new ParentedComponent(entities[i + 1]));
             }
             Assert.AreEqual(0u, sliceTagPosition.Positions.Count);
             Assert.AreEqual(2500u, sliceParentedPosition.Positions.Count);
