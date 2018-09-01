@@ -43,6 +43,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Core\ECS\ComponentSet.cs" />
+    <Compile Include="Core\ECS\EntityRegistryExtensions.cs" />
     <Compile Include="Core\ECS\Interfaces\IIndexedSet.cs" />
     <Compile Include="Core\ECS\IndexedSet.cs" />
     <Compile Include="Core\ECS\Entity.cs" />
