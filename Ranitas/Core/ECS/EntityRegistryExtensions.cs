@@ -6,28 +6,27 @@ namespace Ranitas.Core.ECS
 {
     public static class EntityRegistryExtensions
     {
-        //TODO: Maybe this should return the created slice rather than take a ref
-        public static void MakeMagicSlice<TSlice>(this EntityRegistry registry, ref TSlice slice)
+        public static void SetupSlice<TSlice>(this EntityRegistry registry, ref TSlice slice) where TSlice : struct
         {
-            object boxedSlice = slice;
-            Type sliceType = typeof(TSlice);
-
             EntitySliceConfiguration sliceConfiguration = registry.ConfigureSlice();
 
+            object boxedSlice = slice;  //Box it so we can set members with reflection (otherwise they are lost when passed by value)
+            Type sliceType = typeof(TSlice);
+            //Find slice output and config members:
             FieldInfo[] memberFields = sliceType.GetFields();
             foreach (FieldInfo field in memberFields)
             {
                 Type fieldType = field.FieldType;
-                if (fieldType.Name == typeof(ValueRegistry<>).Name)
+                if (fieldType.Name == typeof(SliceRequirementOutput<>).Name)
                 {
-                    //Instantiate registry and set it back on the slice
-                    object registryInstance = Activator.CreateInstance(fieldType, new object[] { registry.Capacity });
-                    field.SetValue(boxedSlice, registryInstance);
+                    //Instantiate output and set it back on the slice struct
+                    object outputInstance = Activator.CreateInstance(fieldType);
+                    field.SetValue(boxedSlice, outputInstance);
 
-                    //Configure entity slice to require this component type and target this registry
+                    //Configure entity slice to require this component type and target this output
                     MethodInfo requireMethod = typeof(EntitySliceConfiguration).GetMethod("Require");
                     MethodInfo genericRequire = requireMethod.MakeGenericMethod(fieldType.GenericTypeArguments[0]);
-                    sliceConfiguration = (EntitySliceConfiguration)genericRequire.Invoke(sliceConfiguration, new object[] { registryInstance });
+                    sliceConfiguration = (EntitySliceConfiguration)genericRequire.Invoke(sliceConfiguration, new object[] { outputInstance });
                 }
 
             }

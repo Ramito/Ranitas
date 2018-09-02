@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 
 namespace Ranitas.Core.ECS
 {
@@ -159,12 +160,20 @@ namespace Ranitas.Core.ECS
                 mRegistry = registry;
             }
 
-            public EntitySliceConfiguration Require<TComponent>(ValueRegistry<TComponent> targetRegistry) where TComponent : struct
+            public EntitySliceConfiguration Require<TComponent>(SliceRequirementOutput<TComponent> targetOutput) where TComponent : struct
             {
                 ComponentSet<TComponent> componentSet = mRegistry.GetComponentSet<TComponent>();
                 mRequirements.Add(componentSet);
-                ValueInjector<TComponent> injector = new ValueInjector<TComponent>(componentSet, targetRegistry);
+
+                RestrictedArray<TComponent> writeArray = new RestrictedArray<TComponent>(mRegistry.Capacity);
+                ValueInjector<TComponent> injector = new ValueInjector<TComponent>(componentSet, writeArray);
                 mInjectors.Add(injector);
+
+                //Set the write array to be accessed by the component output passed
+                Type outputType = typeof(SliceRequirementOutput<TComponent>);
+                FieldInfo arrayField = outputType.GetField("mArray", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                arrayField.SetValue(targetOutput, writeArray);
+
                 return this;
             }
 
@@ -179,6 +188,11 @@ namespace Ranitas.Core.ECS
             {
                 EntitySlice slice = new EntitySlice(mRegistry.mEntities.Length, mRequirements, mInjectors, mExclusions);
                 mRegistry.mRegisteredSlices.Add(slice);
+                //Invalidate further use
+                mRegistry = null;
+                mRequirements.Clear();
+                mInjectors.Clear();
+                mExclusions.Clear();
             }
         }
 
@@ -265,31 +279,31 @@ namespace Ranitas.Core.ECS
         private class ValueInjector<TValue> : IValueInjector where TValue : struct
         {
             private IIndexedSet<TValue> mSourceSet;
-            private ValueRegistry<TValue> mTargetRegistry;
+            private RestrictedArray<TValue> mTargetOutput;
 
-            public ValueInjector(IIndexedSet<TValue> source, ValueRegistry<TValue> target)
+            public ValueInjector(IIndexedSet<TValue> source, RestrictedArray<TValue> target)
             {
                 mSourceSet = source;
-                mTargetRegistry = target;
+                mTargetOutput = target;
             }
 
             public void InjectNewValue(uint indexID)
             {
                 TValue value = mSourceSet.GetValue(indexID);
-                mTargetRegistry.AddValue(value);
+                mTargetOutput.AddValue(value);
             }
 
             public void InjectExistingValue(uint indexID)
             {
                 TValue value = mSourceSet.GetValue(indexID);
                 uint packedIndex = mSourceSet.GetPackedIndex(indexID);
-                mTargetRegistry.SetValue(value, packedIndex);
+                mTargetOutput.SetValue(value, packedIndex);
             }
 
             public void RemoveValue(uint indexID)
             {
                 uint packedIndex = mSourceSet.GetPackedIndex(indexID);
-                mTargetRegistry.RemoveValue(packedIndex);
+                mTargetOutput.RemoveValue(packedIndex);
             }
         }
         #endregion

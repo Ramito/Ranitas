@@ -147,24 +147,24 @@ namespace CoreUnitTests
         #region Test Slices
         public struct TagPosition
         {
-            public readonly ValueRegistry<TagComponent> Tags;
-            public readonly ValueRegistry<PositionComponent> Positions;
+            public readonly SliceRequirementOutput<TagComponent> Tags;
+            public readonly SliceRequirementOutput<PositionComponent> Positions;
         }
 
         public struct ParentedPosition
         {
-            public readonly ValueRegistry<ParentedComponent> Parents;
-            public readonly ValueRegistry<PositionComponent> Positions;
+            public readonly SliceRequirementOutput<ParentedComponent> Parents;
+            public readonly SliceRequirementOutput<PositionComponent> Positions;
         }
 
         public struct UnparentedPosition
         {
             public UnparentedPosition(int capacity)
             {
-                Positions = new ValueRegistry<PositionComponent>(capacity);
+                Positions = new SliceRequirementOutput<PositionComponent>();
             }
             
-            public readonly ValueRegistry<PositionComponent> Positions;
+            public readonly SliceRequirementOutput<PositionComponent> Positions;
         }
         #endregion
 
@@ -174,10 +174,10 @@ namespace CoreUnitTests
             EntityRegistry registry = new EntityRegistry(5000);
 
             TagPosition sliceTagPosition = new TagPosition();
-            registry.MakeMagicSlice(ref sliceTagPosition);
+            registry.SetupSlice(ref sliceTagPosition);
 
             ParentedPosition sliceParentedPosition = new ParentedPosition();
-            registry.MakeMagicSlice(ref sliceParentedPosition);
+            registry.SetupSlice(ref sliceParentedPosition);
 
             UnparentedPosition sliceUnparentedPosition = new UnparentedPosition(registry.Capacity + 1);
             registry.ConfigureSlice()
