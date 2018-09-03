@@ -162,6 +162,8 @@ namespace Ranitas.Core.ECS
 
             public EntitySliceConfiguration Require<TComponent>(SliceRequirementOutput<TComponent> targetOutput) where TComponent : struct
             {
+                Debug.Assert(targetOutput != null, "Target output cannot be null before calling this method!");
+
                 ComponentSet<TComponent> componentSet = mRegistry.GetComponentSet<TComponent>();
                 mRequirements.Add(componentSet);
 

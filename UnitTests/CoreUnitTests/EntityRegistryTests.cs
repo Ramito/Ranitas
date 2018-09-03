@@ -159,12 +159,8 @@ namespace CoreUnitTests
 
         public struct UnparentedPosition
         {
-            public UnparentedPosition(int capacity)
-            {
-                Positions = new SliceRequirementOutput<PositionComponent>();
-            }
-            
             public readonly SliceRequirementOutput<PositionComponent> Positions;
+            public readonly SliceExclusion<ParentedComponent> ExcludeParented;
         }
         #endregion
 
@@ -179,11 +175,8 @@ namespace CoreUnitTests
             ParentedPosition sliceParentedPosition = new ParentedPosition();
             registry.SetupSlice(ref sliceParentedPosition);
 
-            UnparentedPosition sliceUnparentedPosition = new UnparentedPosition(registry.Capacity + 1);
-            registry.ConfigureSlice()
-                .Require(sliceUnparentedPosition.Positions)
-                .Exclude<ParentedComponent>()
-                .CreateSlice();
+            UnparentedPosition sliceUnparentedPosition = new UnparentedPosition();
+            registry.SetupSlice(ref sliceUnparentedPosition);
 
             List<Entity> entities = new List<Entity>(registry.Capacity);
             for (int i = 0; i < registry.Capacity; ++i)

@@ -21,12 +21,19 @@ namespace Ranitas.Core.ECS
                 {
                     //Instantiate output and set it back on the slice struct
                     object outputInstance = Activator.CreateInstance(fieldType);
-                    field.SetValue(boxedSlice, outputInstance);
 
                     //Configure entity slice to require this component type and target this output
                     MethodInfo requireMethod = typeof(EntitySliceConfiguration).GetMethod("Require");
                     MethodInfo genericRequire = requireMethod.MakeGenericMethod(fieldType.GenericTypeArguments[0]);
                     sliceConfiguration = (EntitySliceConfiguration)genericRequire.Invoke(sliceConfiguration, new object[] { outputInstance });
+                    field.SetValue(boxedSlice, outputInstance);
+                }
+                else if (fieldType.Name == typeof(SliceExclusion<>).Name)
+                {
+                    //Configure entity slice to exclude this component type
+                    MethodInfo requireMethod = typeof(EntitySliceConfiguration).GetMethod("Exclude");
+                    MethodInfo genericRequire = requireMethod.MakeGenericMethod(fieldType.GenericTypeArguments[0]);
+                    sliceConfiguration = (EntitySliceConfiguration)genericRequire.Invoke(sliceConfiguration, null);
                 }
 
             }
