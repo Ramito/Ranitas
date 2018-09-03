@@ -23,10 +23,29 @@ namespace Ranitas.Core.ECS
                     object outputInstance = Activator.CreateInstance(fieldType);
 
                     //Configure entity slice to require this component type and target this output
-                    MethodInfo requireMethod = typeof(EntitySliceConfiguration).GetMethod("Require");
-                    MethodInfo genericRequire = requireMethod.MakeGenericMethod(fieldType.GenericTypeArguments[0]);
-                    sliceConfiguration = (EntitySliceConfiguration)genericRequire.Invoke(sliceConfiguration, new object[] { outputInstance });
-                    field.SetValue(boxedSlice, outputInstance);
+                    foreach (MethodInfo methodInfo in typeof(EntitySliceConfiguration).GetMethods())
+                    {
+                        if (methodInfo.IsGenericMethod && (methodInfo.Name == "Require") && (methodInfo.GetParameters().Length == 1))
+                        {
+                            MethodInfo requireMethod = methodInfo.MakeGenericMethod(fieldType.GenericTypeArguments[0]);
+                            sliceConfiguration = (EntitySliceConfiguration)requireMethod.Invoke(sliceConfiguration, new object[] { outputInstance });
+                            field.SetValue(boxedSlice, outputInstance);
+                            break;
+                        }
+                    }
+                }
+                else if (fieldType.Name == typeof(SliceRequirement<>).Name)
+                {
+                    //Configure entity slice to require this component type
+                    foreach (MethodInfo methodInfo in typeof(EntitySliceConfiguration).GetMethods())
+                    {
+                        if (methodInfo.IsGenericMethod && (methodInfo.Name == "Require") && (methodInfo.GetParameters().Length == 0))
+                        {
+                            MethodInfo requireMethod = methodInfo.MakeGenericMethod(fieldType.GenericTypeArguments[0]);
+                            sliceConfiguration = (EntitySliceConfiguration)requireMethod.Invoke(sliceConfiguration, null);
+                            break;
+                        }
+                    }
                 }
                 else if (fieldType.Name == typeof(SliceExclusion<>).Name)
                 {

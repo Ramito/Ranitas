@@ -179,6 +179,14 @@ namespace Ranitas.Core.ECS
                 return this;
             }
 
+            public EntitySliceConfiguration Require<TComponent>() where TComponent : struct
+            {
+                ComponentSet<TComponent> componentSet = mRegistry.GetComponentSet<TComponent>();
+                mRequirements.Add(componentSet);
+                mInjectors.Add(null);
+                return this;
+            }
+
             public EntitySliceConfiguration Exclude<TComponent>() where TComponent : struct
             {
                 ComponentSet<TComponent> componentSet = mRegistry.GetComponentSet<TComponent>();
@@ -205,19 +213,30 @@ namespace Ranitas.Core.ECS
 
             public EntitySlice(int capacity, List<IPublishingIndexSet> requirements, List<IValueInjector> injectors, List<IPublishingIndexSet> exclusions)
             {
-                Debug.Assert(requirements.Count == injectors.Count);    //Assumption is there is an injector per requirement (which should match the type)
-
                 IReadonlyIndexSet[] reqArray = ArrayCastedType(requirements);
                 IReadonlyIndexSet[] exclArray = ArrayCastedType(exclusions);
                 mFilteredSet = new FilteredIndexSet(capacity, reqArray, exclArray);
 
+                Debug.Assert(requirements.Count == injectors.Count);    //Assumption is there is an injector per requirement (which should match the type)
+                int injectorIndex = 0;
                 for (int i = 0; i < requirements.Count; ++i)
                 {
                     IPublishingIndexSet publisher = requirements[i];
                     publisher.NewValue += TryAddValue;
                     publisher.Removed += RemoveValue;
-                    int injectorIndex = i;
-                    publisher.ValueModified += (index) => UpdateValue(index, injectorIndex);
+                    if (injectors.Count > i)
+                    {
+                        if (injectors[i] != null)
+                        {
+                            int closureInjectorIndex = injectorIndex;
+                            publisher.ValueModified += (index) => UpdateValue(index, closureInjectorIndex);
+                            ++injectorIndex;
+                        }
+                        else
+                        {
+                            injectors.RemoveAt(i);
+                        }
+                    }
                 }
 
                 for (int i = 0; i < exclusions.Count; ++i)

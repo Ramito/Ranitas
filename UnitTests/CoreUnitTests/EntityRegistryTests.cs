@@ -147,7 +147,7 @@ namespace CoreUnitTests
         #region Test Slices
         public struct TagPosition
         {
-            public readonly SliceRequirementOutput<TagComponent> Tags;
+            public readonly SliceRequirement<TagComponent> Tags;
             public readonly SliceRequirementOutput<PositionComponent> Positions;
         }
 
