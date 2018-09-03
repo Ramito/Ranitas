@@ -171,7 +171,7 @@ namespace Ranitas.Core.ECS
 
                 //Set the write array to be accessed by the component output passed
                 Type outputType = typeof(SliceRequirementOutput<TComponent>);
-                FieldInfo arrayField = outputType.GetField("mArray", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                FieldInfo arrayField = outputType.GetField("mArray", BindingFlags.NonPublic | BindingFlags.Instance);
                 arrayField.SetValue(targetOutput, writeArray);
 
                 return this;
