@@ -2,9 +2,9 @@
 
 namespace Ranitas.Core.ECS
 {
-    public sealed class SliceRequirementOutput<TComponent> where TComponent : struct
+    public sealed class SliceEntityOutput
     {
-        private RestrictedArray<TComponent> mArray = null;
+        private RestrictedArray<Entity> mArray = null;
 
         public uint Count
         {
@@ -15,7 +15,7 @@ namespace Ranitas.Core.ECS
             }
         }
 
-        public TComponent this[uint index]
+        public Entity this[uint index]
         {
             get
             {

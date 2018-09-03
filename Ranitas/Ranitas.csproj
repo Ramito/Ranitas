@@ -48,6 +48,7 @@
     <Compile Include="Core\ECS\IndexedSet.cs" />
     <Compile Include="Core\ECS\Entity.cs" />
     <Compile Include="Core\ECS\EntityRegistry.cs" />
+    <Compile Include="Core\ECS\Interfaces\IReadonlyIndexedSet.cs" />
     <Compile Include="Core\ECS\Slice\FilteredIndexSet.cs" />
     <Compile Include="Core\ECS\IndexFilter.cs" />
     <Compile Include="Core\ECS\IndexSet.cs" />
@@ -56,6 +57,7 @@
     <Compile Include="Core\ECS\Interfaces\IUntypedComponentSet.cs" />
     <Compile Include="Core\ECS\Interfaces\IUntypedIndexSet.cs" />
     <Compile Include="Core\ECS\Slice\RestrictedArray.cs" />
+    <Compile Include="Core\ECS\Slice\SliceEntityOutput.cs" />
     <Compile Include="Core\ECS\Slice\SliceExclusion.cs" />
     <Compile Include="Core\ECS\Slice\SliceRequirement.cs" />
     <Compile Include="Core\ECS\Slice\SliceRequirementOutput.cs" />

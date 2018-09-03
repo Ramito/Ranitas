@@ -34,6 +34,14 @@ namespace Ranitas.Core.ECS
                         }
                     }
                 }
+                else if (fieldType.Name == typeof(SliceEntityOutput).Name)
+                {
+                    //Instantiate output and set it back on the slice struct
+                    object outputInstance = Activator.CreateInstance(fieldType);
+                    MethodInfo requireMethod = typeof(EntitySliceConfiguration).GetMethod("GetEntities");
+                    sliceConfiguration = (EntitySliceConfiguration)requireMethod.Invoke(sliceConfiguration, new object[] { outputInstance });
+                    field.SetValue(boxedSlice, outputInstance);
+                }
                 else if (fieldType.Name == typeof(SliceRequirement<>).Name)
                 {
                     //Configure entity slice to require this component type

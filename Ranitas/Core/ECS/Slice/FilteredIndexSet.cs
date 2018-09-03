@@ -34,14 +34,14 @@ namespace Ranitas.Core.ECS
             return mIndexSet.Contains(indexID);
         }
 
-        public bool Remove(uint indexID)
+        public void Remove(uint indexID)
         {
-            if (Contains(indexID))
-            {
-                mIndexSet.Remove(indexID);
-                return true;
-            }
-            return false;
+            mIndexSet.Remove(indexID);
+        }
+
+        public uint GetPackedIndex(uint indexID)
+        {
+            return mIndexSet.GetPackedIndex(indexID);
         }
     }
 }

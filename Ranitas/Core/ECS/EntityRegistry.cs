@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Ranitas.Core.ECS
 {
-    public class EntityRegistry
+    public class EntityRegistry : IReadonlyIndexedSet<Entity>
     {
         public EntityRegistry(int maxEntities)
         {
@@ -139,6 +139,11 @@ namespace Ranitas.Core.ECS
             return (ComponentSet<TComponent>)mComponentSets[lookup];
         }
 
+        Entity IReadonlyIndexedSet<Entity>.GetValue(uint indexID)
+        {
+            return mEntities[indexID];
+        }
+
         private uint mNext;
         private Entity[] mEntities;
 
@@ -171,6 +176,11 @@ namespace Ranitas.Core.ECS
                 ValueInjector<TComponent> injector = new ValueInjector<TComponent>(componentSet, writeArray);
                 mInjectors.Add(injector);
 
+                //TODO: Register this now or only after the slice is complete? <--- Important if I plan to resuse slices when they share filters!
+                //ALTERNATIVES: Pass requirement injector pairs, to register this by pair or use reflection to mix and match
+                componentSet.ValueModified += (index) => injector.InjectExistingValue(index, componentSet.GetPackedIndex(index));
+
+
                 //Set the write array to be accessed by the component output passed
                 Type outputType = typeof(SliceRequirementOutput<TComponent>);
                 FieldInfo arrayField = outputType.GetField("mArray", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -179,11 +189,26 @@ namespace Ranitas.Core.ECS
                 return this;
             }
 
+            public EntitySliceConfiguration GetEntities(SliceEntityOutput output)
+            {
+                RestrictedArray<Entity> writeArray = new RestrictedArray<Entity>(mRegistry.Capacity);
+                ValueInjector<Entity> injector = new ValueInjector<Entity>(mRegistry, writeArray);
+                mInjectors.Add(injector);
+
+                //I THINK InjectExistingValue is impossible to use in this context? An entity would never be replaced, without being destroyed and then created
+
+                //Set the write array to be accessed by the component output passed
+                Type outputType = typeof(SliceEntityOutput);
+                FieldInfo arrayField = outputType.GetField("mArray", BindingFlags.NonPublic | BindingFlags.Instance);
+                arrayField.SetValue(output, writeArray);
+
+                return this;
+            }
+
             public EntitySliceConfiguration Require<TComponent>() where TComponent : struct
             {
                 ComponentSet<TComponent> componentSet = mRegistry.GetComponentSet<TComponent>();
                 mRequirements.Add(componentSet);
-                mInjectors.Add(null);
                 return this;
             }
 
@@ -217,26 +242,11 @@ namespace Ranitas.Core.ECS
                 IReadonlyIndexSet[] exclArray = ArrayCastedType(exclusions);
                 mFilteredSet = new FilteredIndexSet(capacity, reqArray, exclArray);
 
-                Debug.Assert(requirements.Count == injectors.Count);    //Assumption is there is an injector per requirement (which should match the type)
-                int injectorIndex = 0;
                 for (int i = 0; i < requirements.Count; ++i)
                 {
                     IPublishingIndexSet publisher = requirements[i];
                     publisher.NewValue += TryAddValue;
                     publisher.Removed += RemoveValue;
-                    if (injectors.Count > i)
-                    {
-                        if (injectors[i] != null)
-                        {
-                            int closureInjectorIndex = injectorIndex;
-                            publisher.ValueModified += (index) => UpdateValue(index, closureInjectorIndex);
-                            ++injectorIndex;
-                        }
-                        else
-                        {
-                            injectors.RemoveAt(i);
-                        }
-                    }
                 }
 
                 for (int i = 0; i < exclusions.Count; ++i)
@@ -272,37 +282,32 @@ namespace Ranitas.Core.ECS
 
             public void RemoveValue(uint indexID)
             {
-                if (mFilteredSet.Remove(indexID))
+                if (mFilteredSet.Contains(indexID))
                 {
+                    uint packedIndex = mFilteredSet.GetPackedIndex(indexID);
+                    mFilteredSet.Remove(indexID);
                     foreach (IValueInjector injector in mInjectors)
                     {
-                        injector.RemoveValue(indexID);
+                        injector.RemoveValue(indexID, packedIndex);
                     }
                 }
             }
 
-            private void UpdateValue(uint indexID, int injectorIndex)
-            {
-                if (mFilteredSet.Contains(indexID))
-                {
-                    mInjectors[injectorIndex].InjectExistingValue(indexID);
-                }
-            }
         }
 
         private interface IValueInjector
         {
             void InjectNewValue(uint indexID);
-            void InjectExistingValue(uint indexID);
-            void RemoveValue(uint indexID);
+            void InjectExistingValue(uint indexID, uint packedIndex);
+            void RemoveValue(uint indexID, uint packedIndex);
         }
 
         private class ValueInjector<TValue> : IValueInjector where TValue : struct
         {
-            private IIndexedSet<TValue> mSourceSet;
+            private IReadonlyIndexedSet<TValue> mSourceSet;
             private RestrictedArray<TValue> mTargetOutput;
 
-            public ValueInjector(IIndexedSet<TValue> source, RestrictedArray<TValue> target)
+            public ValueInjector(IReadonlyIndexedSet<TValue> source, RestrictedArray<TValue> target)
             {
                 mSourceSet = source;
                 mTargetOutput = target;
@@ -314,16 +319,14 @@ namespace Ranitas.Core.ECS
                 mTargetOutput.AddValue(value);
             }
 
-            public void InjectExistingValue(uint indexID)
+            public void InjectExistingValue(uint indexID, uint packedIndex)
             {
                 TValue value = mSourceSet.GetValue(indexID);
-                uint packedIndex = mSourceSet.GetPackedIndex(indexID);
                 mTargetOutput.SetValue(value, packedIndex);
             }
 
-            public void RemoveValue(uint indexID)
+            public void RemoveValue(uint indexID, uint packedIndex)
             {
-                uint packedIndex = mSourceSet.GetPackedIndex(indexID);
                 mTargetOutput.RemoveValue(packedIndex);
             }
         }

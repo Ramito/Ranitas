@@ -153,6 +153,7 @@ namespace CoreUnitTests
 
         public struct ParentedPosition
         {
+            public readonly SliceEntityOutput Entities;
             public readonly SliceRequirementOutput<ParentedComponent> Parents;
             public readonly SliceRequirementOutput<PositionComponent> Positions;
         }
