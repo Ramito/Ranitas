@@ -2,7 +2,7 @@
 {
     public interface IReadonlyIndexSet
     {
-        bool Contains(uint indexID);
-        uint GetPackedIndex(uint indexID);
+        bool Contains(int indexID);
+        int GetPackedIndex(int indexID);
     }
 }

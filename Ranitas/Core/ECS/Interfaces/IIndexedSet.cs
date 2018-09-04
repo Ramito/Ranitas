@@ -2,8 +2,8 @@
 {
     public interface IIndexedSet<TValue> : IReadonlyIndexedSet<TValue>, IReadonlyIndexSet, IUntypedIndexedSet where TValue : struct
     {
-        void Add(TValue value, uint indexID);
-        void AddOrReplace(TValue value, uint indexID);
-        void Replace(TValue newValue, uint indexID);
+        void Add(TValue value, int indexID);
+        void AddOrReplace(TValue value, int indexID);
+        void Replace(TValue newValue, int indexID);
     }
 }

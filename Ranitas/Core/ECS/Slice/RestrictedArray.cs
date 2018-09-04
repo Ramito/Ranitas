@@ -2,10 +2,10 @@
 
 public class RestrictedArray<TValue> where TValue : struct
 {
-    public uint Count { private set; get; }  //TODO: All those uints need to go!
+    public int Count { private set; get; }
     private readonly TValue[] mValues;
 
-    public TValue this[uint index]  //TODO: All those uints need to go!
+    public TValue this[int index]
     {
         get
         {
@@ -26,13 +26,13 @@ public class RestrictedArray<TValue> where TValue : struct
         ++Count;
     }
 
-    public void SetValue(TValue value, uint packedIndex)
+    public void SetValue(TValue value, int packedIndex)
     {
         Debug.Assert(Count > packedIndex);
         mValues[packedIndex] = value;
     }
 
-    public void RemoveValue(uint packedIndex)
+    public void RemoveValue(int packedIndex)
     {
         Debug.Assert(Count > 0);
         --Count;

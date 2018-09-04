@@ -6,7 +6,7 @@ namespace Ranitas.Core.ECS
     {
         private RestrictedArray<Entity> mArray = null;
 
-        public uint Count
+        public int Count
         {
             get
             {
@@ -15,7 +15,7 @@ namespace Ranitas.Core.ECS
             }
         }
 
-        public Entity this[uint index]
+        public Entity this[int index]
         {
             get
             {

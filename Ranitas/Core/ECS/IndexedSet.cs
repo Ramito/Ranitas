@@ -11,24 +11,24 @@
             mIndexSet = new IndexSet(capacity);
         }
 
-        public void Add(TValue value, uint indexID)
+        public void Add(TValue value, int indexID)
         {
             mPackedValues[mIndexSet.Count] = value;
             mIndexSet.Add(indexID);
         }
 
-        public bool Contains(uint indexID)
+        public bool Contains(int indexID)
         {
             return mIndexSet.Contains(indexID);
         }
 
-        public void Replace(TValue newValue, uint indexID)
+        public void Replace(TValue newValue, int indexID)
         {
-            uint packedIndex = GetPackedIndex(indexID);
+            int packedIndex = GetPackedIndex(indexID);
             mPackedValues[packedIndex] = newValue;
         }
 
-        public void AddOrReplace(TValue value, uint indexID)
+        public void AddOrReplace(TValue value, int indexID)
         {
             if (Contains(indexID))
             {
@@ -40,20 +40,20 @@
             }
         }
 
-        public TValue GetValue(uint indexID)
+        public TValue GetValue(int indexID)
         {
-            uint packedIndex = GetPackedIndex(indexID);
+            int packedIndex = GetPackedIndex(indexID);
             return mPackedValues[packedIndex];
         }
 
-        public void Remove(uint indexID)
+        public void Remove(int indexID)
         {
-            uint packedIndex = GetPackedIndex(indexID);
+            int packedIndex = GetPackedIndex(indexID);
             mIndexSet.Remove(indexID);
             mPackedValues[packedIndex] = mPackedValues[mIndexSet.Count];
         }
 
-        public uint GetPackedIndex(uint indexID)
+        public int GetPackedIndex(int indexID)
         {
             return mIndexSet.GetPackedIndex(indexID);
         }

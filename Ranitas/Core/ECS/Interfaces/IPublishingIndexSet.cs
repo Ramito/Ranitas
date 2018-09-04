@@ -1,6 +1,6 @@
 ﻿namespace Ranitas.Core.ECS
 {
-    public delegate void IndexedValueHandler(uint indexID);
+    public delegate void IndexedValueHandler(int indexID);
 
     public interface IPublishingIndexSet : IReadonlyIndexSet
     {

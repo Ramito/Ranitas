@@ -13,39 +13,39 @@
         public event IndexedValueHandler ValueModified;
         public event IndexedValueHandler Removed;
 
-        public void Add(TValue value, uint indexID)
+        public void Add(TValue value, int indexID)
         {
             mIndexedSet.Add(value, indexID);
             NewValue?.Invoke(indexID);
         }
 
-        public void AddOrReplace(TValue value, uint indexID)
+        public void AddOrReplace(TValue value, int indexID)
         {
             mIndexedSet.AddOrReplace(value, indexID);
         }
 
-        public bool Contains(uint indexID)
+        public bool Contains(int indexID)
         {
             return mIndexedSet.Contains(indexID);
         }
 
-        public uint GetPackedIndex(uint indexID)
+        public int GetPackedIndex(int indexID)
         {
             return mIndexedSet.GetPackedIndex(indexID);
         }
 
-        public TValue GetValue(uint indexID)
+        public TValue GetValue(int indexID)
         {
             return mIndexedSet.GetValue(indexID);
         }
 
-        public void Remove(uint atIndex)
+        public void Remove(int atIndex)
         {
             Removed?.Invoke(atIndex);
             mIndexedSet.Remove(atIndex);
         }
 
-        public void Replace(TValue newValue, uint indexID)
+        public void Replace(TValue newValue, int indexID)
         {
             mIndexedSet.Replace(newValue, indexID);
             ValueModified?.Invoke(indexID);

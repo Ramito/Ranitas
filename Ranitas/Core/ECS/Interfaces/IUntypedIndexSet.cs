@@ -2,6 +2,6 @@
 {
     public interface IUntypedIndexedSet : IReadonlyIndexSet
     {
-        void Remove(uint atIndex);
+        void Remove(int atIndex);
     }
 }

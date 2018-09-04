@@ -18,7 +18,7 @@ namespace Ranitas.Core.ECS
             mIndexSet = new IndexSet(capacity);
         }
 
-        public bool TryInsert(uint indexID)
+        public bool TryInsert(int indexID)
         {
             Debug.Assert(!Contains(indexID));
             if (mFilter.PassesFilter(indexID))
@@ -29,17 +29,17 @@ namespace Ranitas.Core.ECS
             return false;
         }
 
-        public bool Contains(uint indexID)
+        public bool Contains(int indexID)
         {
             return mIndexSet.Contains(indexID);
         }
 
-        public void Remove(uint indexID)
+        public void Remove(int indexID)
         {
             mIndexSet.Remove(indexID);
         }
 
-        public uint GetPackedIndex(uint indexID)
+        public int GetPackedIndex(int indexID)
         {
             return mIndexSet.GetPackedIndex(indexID);
         }

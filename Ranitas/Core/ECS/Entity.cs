@@ -5,18 +5,18 @@ namespace Ranitas.Core.ECS
     public struct Entity : IEquatable<Entity>
     {
         #region Constants
-        public static uint MaxIndex { get { return kIDMask; } }
+        public static int MaxIndex { get { return kIDMask; } }
         public static readonly Entity NullEntity = new Entity(0, 0);
         private const int kIDBits = 20;
-        private const uint kIDMask = (1u << kIDBits) - 1;
+        private const int kIDMask = (1 << kIDBits) - 1;
         #endregion
 
-        public readonly uint mValue;
+        public readonly int mValue;
 
-        internal uint Index { get { return mValue & kIDMask; } }
-        internal uint Version { get { return mValue >> kIDBits; } }
+        internal int Index { get { return mValue & kIDMask; } }
+        internal int Version { get { return mValue >> kIDBits; } }
 
-        internal Entity(uint index, uint version)
+        internal Entity(int index, int version)
         {
             mValue = (index & kIDMask) | (version << kIDBits);
         }

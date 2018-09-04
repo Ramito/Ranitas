@@ -6,7 +6,7 @@ namespace Ranitas.Core.ECS
     {
         private RestrictedArray<TComponent> mArray = null;
 
-        public uint Count
+        public int Count
         {
             get
             {
@@ -15,7 +15,7 @@ namespace Ranitas.Core.ECS
             }
         }
 
-        public TComponent this[uint index]
+        public TComponent this[int index]
         {
             get
             {

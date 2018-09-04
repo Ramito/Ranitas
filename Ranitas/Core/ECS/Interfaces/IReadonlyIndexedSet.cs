@@ -2,6 +2,6 @@
 {
     public interface IReadonlyIndexedSet<TValue> where TValue : struct
     {
-        TValue GetValue(uint indexID);
+        TValue GetValue(int indexID);
     }
 }

@@ -4,24 +4,24 @@ namespace Ranitas.Core.ECS
 {
     public class IndexSet : IReadonlyIndexSet
     {
-        public uint Count { get; private set; }
-        private uint[] mSparseIndices;
-        private uint[] mPackedIndices;
+        public int Count { get; private set; }
+        private int[] mSparseIndices;
+        private int[] mPackedIndices;
 
         public IndexSet(int capacity)
         {
             Count = 0;
-            mSparseIndices = new uint[capacity];
-            mPackedIndices = new uint[capacity];
+            mSparseIndices = new int[capacity];
+            mPackedIndices = new int[capacity];
         }
 
-        public bool Contains(uint indexID)
+        public bool Contains(int indexID)
         {
-            uint sparseIndex = mSparseIndices[indexID];
+            int sparseIndex = mSparseIndices[indexID];
             return (sparseIndex < Count) && (mPackedIndices[sparseIndex] == indexID);
         }
 
-        public void Add(uint indexID)
+        public void Add(int indexID)
         {
             Debug.Assert(!Contains(indexID));
             mSparseIndices[indexID] = Count;
@@ -29,17 +29,17 @@ namespace Ranitas.Core.ECS
             ++Count;
         }
 
-        public void Remove(uint indexID)
+        public void Remove(int indexID)
         {
             Debug.Assert(Contains(indexID));
             --Count;
-            uint deletedInPacked = mSparseIndices[indexID];
-            uint movedIndex = mPackedIndices[Count];
+            int deletedInPacked = mSparseIndices[indexID];
+            int movedIndex = mPackedIndices[Count];
             mSparseIndices[movedIndex] = deletedInPacked;
             mPackedIndices[deletedInPacked] = movedIndex;
         }
 
-        public uint GetPackedIndex(uint indexID)
+        public int GetPackedIndex(int indexID)
         {
             Debug.Assert(Contains(indexID));
             return mSparseIndices[indexID];

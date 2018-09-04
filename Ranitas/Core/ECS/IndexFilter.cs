@@ -17,7 +17,7 @@ namespace Ranitas.Core.ECS
             mExcludeFilters = exclusions;
         }
 
-        public bool PassesFilter(uint index)
+        public bool PassesFilter(int index)
         {
             foreach (IReadonlyIndexSet indexDirectory in mRequireFilters)
             {

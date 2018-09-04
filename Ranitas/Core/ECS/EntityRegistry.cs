@@ -11,9 +11,9 @@ namespace Ranitas.Core.ECS
         {
             Debug.Assert(maxEntities <= Entity.MaxIndex, "Can't store this many entities!");
             mEntities = new Entity[maxEntities + 1];
-            mEntities[0] = new Entity(0, uint.MaxValue); //Index 0 is never assigned, and NullEntity is invalid.
+            mEntities[0] = new Entity(0, int.MaxValue); //Index 0 is never assigned, and NullEntity is invalid.
             mNext = 1;
-            for (uint i = 1; i <= maxEntities; ++i)
+            for (int i = 1; i <= maxEntities; ++i)
             {
                 mEntities[i] = new Entity(i + 1, 0);    //Point to the next entity available
             }
@@ -26,7 +26,7 @@ namespace Ranitas.Core.ECS
 
         public Entity Create()
         {
-            uint createdIndex = mNext;
+            int createdIndex = mNext;
             Debug.Assert(createdIndex < mEntities.Length, "Entities have run out!");
             Entity inPlaceEntity = mEntities[createdIndex];
             mNext = inPlaceEntity.Index;
@@ -38,7 +38,7 @@ namespace Ranitas.Core.ECS
         public void Destroy(Entity entity)
         {
             Debug.Assert(IsValid(entity), "Can't destroy invalid entity.");
-            uint entityIndex = entity.Index;
+            int entityIndex = entity.Index;
 
             //It is important to clear slices before touching the component sets, as the component sets drive the slices internally!
             foreach (IUntypedComponentSet componentSet in mComponentSets)
@@ -139,12 +139,12 @@ namespace Ranitas.Core.ECS
             return (ComponentSet<TComponent>)mComponentSets[lookup];
         }
 
-        Entity IReadonlyIndexedSet<Entity>.GetValue(uint indexID)
+        Entity IReadonlyIndexedSet<Entity>.GetValue(int indexID)
         {
             return mEntities[indexID];
         }
 
-        private uint mNext;
+        private int mNext;
         private Entity[] mEntities;
 
         private List<IUntypedComponentSet> mComponentSets = new List<IUntypedComponentSet>();
@@ -279,7 +279,7 @@ namespace Ranitas.Core.ECS
                 return itemsArray;
             }
 
-            private void TryAddValue(uint indexID)
+            private void TryAddValue(int indexID)
             {
                 if (mFilteredSet.TryInsert(indexID))
                 {
@@ -290,11 +290,11 @@ namespace Ranitas.Core.ECS
                 }
             }
 
-            public void RemoveValue(uint indexID)
+            public void RemoveValue(int indexID)
             {
                 if (mFilteredSet.Contains(indexID))
                 {
-                    uint packedIndex = mFilteredSet.GetPackedIndex(indexID);
+                    int packedIndex = mFilteredSet.GetPackedIndex(indexID);
                     mFilteredSet.Remove(indexID);
                     foreach (IValueInjector injector in mInjectors)
                     {
@@ -306,9 +306,9 @@ namespace Ranitas.Core.ECS
 
         private interface IValueInjector
         {
-            void InjectNewValue(uint indexID);
-            void InjectExistingValue(uint indexID, uint packedIndex);
-            void RemoveValue(uint indexID, uint packedIndex);
+            void InjectNewValue(int indexID);
+            void InjectExistingValue(int indexID, int packedIndex);
+            void RemoveValue(int indexID, int packedIndex);
         }
 
         private class ValueInjector<TValue> : IValueInjector where TValue : struct
@@ -322,19 +322,19 @@ namespace Ranitas.Core.ECS
                 mTargetOutput = target;
             }
 
-            public void InjectNewValue(uint indexID)
+            public void InjectNewValue(int indexID)
             {
                 TValue value = mSourceSet.GetValue(indexID);
                 mTargetOutput.AddValue(value);
             }
 
-            public void InjectExistingValue(uint indexID, uint packedIndex)
+            public void InjectExistingValue(int indexID, int packedIndex)
             {
                 TValue value = mSourceSet.GetValue(indexID);
                 mTargetOutput.SetValue(value, packedIndex);
             }
 
-            public void RemoveValue(uint indexID, uint packedIndex)
+            public void RemoveValue(int indexID, int packedIndex)
             {
                 mTargetOutput.RemoveValue(packedIndex);
             }

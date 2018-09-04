@@ -186,17 +186,17 @@ namespace CoreUnitTests
                 entities.Add(entity);
                 registry.AddComponent(entity, new PositionComponent(i, i));
             }
-            Assert.AreEqual(0u, sliceTagPosition.Positions.Count);
-            Assert.AreEqual(0u, sliceParentedPosition.Positions.Count);
-            Assert.AreEqual((uint)registry.Capacity, sliceUnparentedPosition.Positions.Count);
+            Assert.AreEqual(0, sliceTagPosition.Positions.Count);
+            Assert.AreEqual(0, sliceParentedPosition.Positions.Count);
+            Assert.AreEqual((int)registry.Capacity, sliceUnparentedPosition.Positions.Count);
             for (int i = 0; i < registry.Capacity; i += 2)
             {
                 Entity entity = entities[i];
                 registry.AddComponent(entity, new ParentedComponent(entities[i + 1]));
             }
-            Assert.AreEqual(0u, sliceTagPosition.Positions.Count);
-            Assert.AreEqual(2500u, sliceParentedPosition.Positions.Count);
-            Assert.AreEqual(2500u, sliceUnparentedPosition.Positions.Count);
+            Assert.AreEqual(0, sliceTagPosition.Positions.Count);
+            Assert.AreEqual(2500, sliceParentedPosition.Positions.Count);
+            Assert.AreEqual(2500, sliceUnparentedPosition.Positions.Count);
 
             foreach (Entity entity in entities)
             {
@@ -204,9 +204,9 @@ namespace CoreUnitTests
             }
             entities.Clear();
 
-            Assert.AreEqual(0u, sliceTagPosition.Positions.Count);
-            Assert.AreEqual(0u, sliceParentedPosition.Positions.Count);
-            Assert.AreEqual(0u, sliceUnparentedPosition.Positions.Count);
+            Assert.AreEqual(0, sliceTagPosition.Positions.Count);
+            Assert.AreEqual(0, sliceParentedPosition.Positions.Count);
+            Assert.AreEqual(0, sliceUnparentedPosition.Positions.Count);
         }
 
         [TestMethod]
@@ -248,7 +248,7 @@ namespace CoreUnitTests
                     registry.Destroy(activeEntities[randomIndex]);
                     activeEntities.RemoveAt(randomIndex);
                 }
-                for (uint i = 0; i < parentedPositionSlice.Entities.Count; ++i)
+                for (int i = 0; i < parentedPositionSlice.Entities.Count; ++i)
                 {
                     Entity entity = parentedPositionSlice.Entities[i];
 
@@ -260,7 +260,7 @@ namespace CoreUnitTests
                     Assert.IsTrue(registry.HasComponent<ParentedComponent>(entity));
                     Assert.AreEqual(registry.GetComponent<ParentedComponent>(entity), parentedPositionSlice.Parents[i]);
                 }
-                for (uint i = 0; i < parentedPositionSlice.Entities.Count; ++i)
+                for (int i = 0; i < parentedPositionSlice.Entities.Count; ++i)
                 {
                     Entity entity = parentedPositionSlice.Entities[i];
                     PositionComponent position = parentedPositionSlice.Positions[i];
