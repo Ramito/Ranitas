@@ -43,18 +43,24 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Core\ECS\ComponentSet.cs" />
-    <Compile Include="Core\ECS\IIndexedSet.cs" />
+    <Compile Include="Core\ECS\EntityRegistryExtensions.cs" />
+    <Compile Include="Core\ECS\Interfaces\IIndexedSet.cs" />
     <Compile Include="Core\ECS\IndexedSet.cs" />
     <Compile Include="Core\ECS\Entity.cs" />
     <Compile Include="Core\ECS\EntityRegistry.cs" />
-    <Compile Include="Core\ECS\FilteredIndexSet.cs" />
+    <Compile Include="Core\ECS\Interfaces\IReadonlyIndexedSet.cs" />
+    <Compile Include="Core\ECS\Slice\FilteredIndexSet.cs" />
     <Compile Include="Core\ECS\IndexFilter.cs" />
     <Compile Include="Core\ECS\IndexSet.cs" />
-    <Compile Include="Core\ECS\IPublishingIndexSet.cs" />
-    <Compile Include="Core\ECS\IReadonlyIndexSet.cs" />
-    <Compile Include="Core\ECS\IUntypedComponentSet.cs" />
-    <Compile Include="Core\ECS\IUntypedIndexSet.cs" />
-    <Compile Include="Core\ECS\ValueRegistry.cs" />
+    <Compile Include="Core\ECS\Interfaces\IPublishingIndexSet.cs" />
+    <Compile Include="Core\ECS\Interfaces\IReadonlyIndexSet.cs" />
+    <Compile Include="Core\ECS\Interfaces\IUntypedComponentSet.cs" />
+    <Compile Include="Core\ECS\Interfaces\IUntypedIndexSet.cs" />
+    <Compile Include="Core\ECS\Slice\RestrictedArray.cs" />
+    <Compile Include="Core\ECS\Slice\SliceEntityOutput.cs" />
+    <Compile Include="Core\ECS\Slice\SliceExclusion.cs" />
+    <Compile Include="Core\ECS\Slice\SliceRequirement.cs" />
+    <Compile Include="Core\ECS\Slice\SliceRequirementOutput.cs" />
     <Compile Include="Core\EventSystem\EventSystem.cs" />
     <Compile Include="Core\Physics\FixedTimeStepDynamics.cs" />
     <Compile Include="Core\Math\MathExtensions.cs" />
