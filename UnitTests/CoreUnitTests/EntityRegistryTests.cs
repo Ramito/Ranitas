@@ -208,5 +208,71 @@ namespace CoreUnitTests
             Assert.AreEqual(0u, sliceParentedPosition.Positions.Count);
             Assert.AreEqual(0u, sliceUnparentedPosition.Positions.Count);
         }
+
+        [TestMethod]
+        public void TestSliceInjection()
+        {
+            Random randomizer = new Random();
+            const int kMaxEntities = 2000;
+            EntityRegistry registry = new EntityRegistry(kMaxEntities);
+
+            ParentedPosition parentedPositionSlice = new ParentedPosition();
+            registry.SetupSlice(ref parentedPositionSlice);
+
+            List<Entity> activeEntities = new List<Entity>(kMaxEntities);
+
+            //Create and destroy various waves of entities to ensure things are shuffled enough
+            int shufles = 10;
+            while (--shufles >= 0)
+            {
+                int randomCreate = randomizer.Next(kMaxEntities - activeEntities.Count);
+                Entity previousEntity = Entity.NullEntity;
+                for (int i = 0; i < randomCreate; ++i)
+                {
+                    Entity entity = registry.Create();
+                    if (i % 2 == 0)
+                    {
+                        registry.AddComponent(entity, new PositionComponent(i, i));
+                    }
+                    if (i % 3 == 0)
+                    {
+                        registry.AddComponent(entity, new ParentedComponent(previousEntity));
+                    }
+                    activeEntities.Add(entity);
+                    previousEntity = entity;
+                }
+                int randomDestroy = randomizer.Next(activeEntities.Count);
+                for (int i = 0; i < randomDestroy; ++i)
+                {
+                    int randomIndex = randomizer.Next(activeEntities.Count);
+                    registry.Destroy(activeEntities[randomIndex]);
+                    activeEntities.RemoveAt(randomIndex);
+                }
+                for (uint i = 0; i < parentedPositionSlice.Entities.Count; ++i)
+                {
+                    Entity entity = parentedPositionSlice.Entities[i];
+
+                    Assert.IsTrue(registry.IsValid(entity));
+
+                    Assert.IsTrue(registry.HasComponent<PositionComponent>(entity));
+                    Assert.AreEqual(registry.GetComponent<PositionComponent>(entity), parentedPositionSlice.Positions[i]);
+
+                    Assert.IsTrue(registry.HasComponent<ParentedComponent>(entity));
+                    Assert.AreEqual(registry.GetComponent<ParentedComponent>(entity), parentedPositionSlice.Parents[i]);
+                }
+                for (uint i = 0; i < parentedPositionSlice.Entities.Count; ++i)
+                {
+                    Entity entity = parentedPositionSlice.Entities[i];
+                    PositionComponent position = parentedPositionSlice.Positions[i];
+
+                    PositionComponent newPosition = new PositionComponent(position.X + 1, position.Y + 1);
+                    registry.SetComponent(entity, newPosition);
+
+                    Assert.IsTrue(registry.HasComponent<PositionComponent>(entity));
+                    Assert.AreEqual(registry.GetComponent<PositionComponent>(entity), newPosition);
+                    Assert.AreEqual(newPosition, parentedPositionSlice.Positions[i]);
+                }
+            }
+        }
     }
 }

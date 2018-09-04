@@ -8,7 +8,7 @@ namespace Ranitas.Core.ECS
     {
         public static void SetupSlice<TSlice>(this EntityRegistry registry, ref TSlice slice) where TSlice : struct
         {
-            EntitySliceConfiguration sliceConfiguration = registry.ConfigureSlice();
+            EntitySliceConfiguration sliceConfiguration = registry.BeginSlice();
 
             object boxedSlice = slice;  //Box it so we can set members with reflection (otherwise they are lost when passed by value)
             Type sliceType = typeof(TSlice);
@@ -64,7 +64,7 @@ namespace Ranitas.Core.ECS
                 }
 
             }
-            sliceConfiguration.CreateSlice();   //TODO: Would be great to check if a slice is just like another existing slice, and if so just reuse!
+            sliceConfiguration.CompleteSlice();   //TODO: Would be great to check if a slice is just like another existing slice, and if so just reuse!
             slice = (TSlice)boxedSlice;
         }
     }
