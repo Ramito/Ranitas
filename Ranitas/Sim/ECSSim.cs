@@ -1,5 +1,6 @@
 ﻿using Ranitas.Core.ECS;
 using Ranitas.Core.EventSystem;
+using System.Collections.Generic;
 
 namespace Ranitas.Sim
 {
@@ -9,17 +10,54 @@ namespace Ranitas.Sim
         private EntityRegistry mRegistry = new EntityRegistry(kMaxEntities);
         private EventSystem mEventSystem = new EventSystem();
 
-        //WIP ControlUpdater should be ported to this!
+        private List<ISystem> mSystems;
 
-        //Determine if frog is landed
-        //Determine if frog is airborne
-        //Update airborne frogs
-        //Update swimming frogs
-        //Update flies
-        //Update toungues
-        //Check flies vs toungues
+        public ECSSim()
+        {
+            RanitasDependencies dependencies = RanitasSystems.MakeDependencies();
+            mSystems = RanitasSystems.MakeSystems(dependencies);
+        }
 
+        public void Initialize()
+        {
+            foreach (ISystem system in mSystems)
+            {
+                system.Initialize(mRegistry, mEventSystem);
+            }
+        }
+
+        public void Update()
+        {
+            foreach (ISystem system in mSystems)
+            {
+                system.Update(mRegistry, mEventSystem);
+            }
+        }
     }
+
+    public class RanitasDependencies
+    {
+        public Pond.PondSimState Pond;
+    }
+
+    public static class RanitasSystems
+    {
+        public static RanitasDependencies MakeDependencies()
+        {
+            RanitasDependencies dependencies = new RanitasDependencies();
+            return dependencies;
+        }
+
+        public static List<ISystem> MakeSystems(RanitasDependencies dependencies)
+        {
+            List<ISystem> systems = new List<ISystem>()
+            {
+                new WetDryFrogSystem(dependencies.Pond),
+            };
+            return systems;
+        }
+    }
+
 
     public static class FrogFactory
     {
@@ -27,7 +65,8 @@ namespace Ranitas.Sim
         {
             Entity entity = registry.Create();
 
-            registry.AddComponent(entity, new WetDryFrogState());
+            //WIP WE NEED SPAWN LOCATIONS
+            registry.AddComponent(entity, new Airborne());
 
             return entity;
         }

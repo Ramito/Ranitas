@@ -69,10 +69,12 @@
     <Compile Include="Core\StateMachine\PooledState.cs" />
     <Compile Include="Core\StateMachine\State.cs" />
     <Compile Include="Core\StateMachine\StateMachine.cs" />
-    <Compile Include="Sim\ComponentSystems\FrogShape\FrogShape.cs" />
+    <Compile Include="Sim\ComponentSystems\FrogPhysics\Landed.cs" />
+    <Compile Include="Sim\ComponentSystems\RectShape\RectShape.cs" />
     <Compile Include="Sim\ComponentSystems\Position\Position.cs" />
     <Compile Include="Sim\ComponentSystems\FrogPhysics\Airborne.cs" />
     <Compile Include="Sim\ComponentSystems\FrogPhysics\Waterborne.cs" />
+    <Compile Include="Sim\ComponentSystems\Velocity\Velocity.cs" />
     <Compile Include="Sim\ECSSim.cs" />
     <Compile Include="Frog\Sim\FrogControlState.cs" />
     <Compile Include="Frog\Sim\FrogControlUpdater.cs" />
@@ -93,6 +95,7 @@
     <Compile Include="Pond\PondRenderer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sim\ISystem.cs" />
     <Compile Include="Sim\Sim.cs" />
     <Compile Include="Sim\ComponentSystems\FrogPhysics\WetDryFrogSystem.cs" />
   </ItemGroup>
