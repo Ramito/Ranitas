@@ -37,14 +37,6 @@ namespace Ranitas.Sim
         }
         private WaterborneFrogs mWaterborneFrogs = new WaterborneFrogs();
 
-        private struct FallingFrogs
-        {
-            public SliceEntityOutput Entities;
-            public SliceRequirement<Airborne> Airborne;
-            public SliceRequirementOutput<Position> Positions;
-            public SliceRequirementOutput<RectShape> Shapes;
-        }
-
         //[Dependency]    //TODO: Fancy dpendency injection via reflection?
         private readonly PondSimState mPond;
         private readonly List<Entity> mSplashingInFrogs;

@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Ranitas.Core.ECS
 {
-    public class EntityRegistry : IReadonlyIndexedSet<Entity>
+    public sealed class EntityRegistry : IReadonlyIndexedSet<Entity>
     {
         public EntityRegistry(int maxEntities)
         {
