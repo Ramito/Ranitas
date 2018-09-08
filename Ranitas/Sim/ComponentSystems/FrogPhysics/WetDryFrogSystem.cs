@@ -51,9 +51,8 @@ namespace Ranitas.Sim
 
         public void Update(EntityRegistry registry, EventSystem eventSystem)
         {
-            UpdateWetDryState(registry);
             CheckLillyCollisions(registry);
-            //UPDATE AIR PHYSICS AND WATER PHYSICS!
+            UpdateWetDryState(registry);
         }
 
         private void UpdateWetDryState(EntityRegistry registry)
@@ -83,7 +82,7 @@ namespace Ranitas.Sim
             {
                 if (mAirborneFogs.Velocities[i].Value.Y < 0f)
                 {
-                    Rect frogRect = FrogRect(mAirborneFogs.Positions[i], mAirborneFogs.Shapes[i]);
+                    Rect frogRect = CommonFrogProperties.FrogRect(mAirborneFogs.Positions[i], mAirborneFogs.Shapes[i]);
                     foreach (LilyPadSimState lilypad in mPond.Lilies)
                     {
                         if (frogRect.Intersects(lilypad.Rect))
@@ -107,9 +106,7 @@ namespace Ranitas.Sim
             int frogCount = mAirborneFogs.Entities.Count;
             for (int i = 0; i < frogCount; ++i)
             {
-                //TODO: Check lilly pad collision!
-
-                Vector2 feetPosition = FrogFeetPosition(mAirborneFogs.Positions[i], mAirborneFogs.Shapes[i]);
+                Vector2 feetPosition = CommonFrogProperties.FrogFeetPosition(mAirborneFogs.Positions[i], mAirborneFogs.Shapes[i]);
                 if (feetPosition.Y < mPond.WaterLevel)
                 {
                     mSplashingInFrogs.Add(mAirborneFogs.Entities[i]);
@@ -122,24 +119,12 @@ namespace Ranitas.Sim
             int frogCount = mWaterborneFrogs.Entities.Count;
             for (int i = 0; i < frogCount; ++i)
             {
-                //TODO: Check lilly pad collision!
-
-                Vector2 feetPosition = FrogFeetPosition(mWaterborneFrogs.Positions[i], mWaterborneFrogs.Shapes[i]);
+                Vector2 feetPosition = CommonFrogProperties.FrogFeetPosition(mWaterborneFrogs.Positions[i], mWaterborneFrogs.Shapes[i]);
                 if (feetPosition.Y < mPond.WaterLevel)
                 {
                     mSplashingOutFrogs.Add(mWaterborneFrogs.Entities[i]);
                 }
             }
-        }
-
-        private static Rect FrogRect(Position position, RectShape shape)
-        {
-            return new Rect(position.Value, shape.Width, shape.Height);
-        }
-
-        private static Vector2 FrogFeetPosition(Position position, RectShape shape)
-        {
-            return position.Value - new Vector2(0f, shape.Height * 0.5f);
         }
     }
 }
