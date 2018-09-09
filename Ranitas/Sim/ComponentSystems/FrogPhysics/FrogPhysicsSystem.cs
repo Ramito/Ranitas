@@ -10,8 +10,13 @@ namespace Ranitas.Sim
 {
     public sealed class FrogPhysicsSystem : ISystem
     {
-        private float mTimeStep;    //TODO: Hook up!
-        private float mHalfTimeStepSquared;
+        public FrogPhysicsSystem(FrameTime frameTime, PondSimState pond)
+        {
+            mTime = frameTime;
+            mPond = pond;
+        }
+
+        private FrameTime mTime;    //Currently a class, but should this be it's own copy?
         private PondSimState mPond;
 
         private struct DryFrogs
@@ -67,20 +72,20 @@ namespace Ranitas.Sim
 
         private Vector2 FramePositionDelta(Vector2 frameVelocity, Vector2 acceleration)
         {
-            Vector2 velocityContribution = mTimeStep * frameVelocity;
-            Vector2 accelerationContribution = mHalfTimeStepSquared * acceleration;
+            Vector2 velocityContribution = mTime.DeltaTime * frameVelocity;
+            Vector2 accelerationContribution = mTime.HalfDeltaSquaredTime * acceleration;
             return velocityContribution + accelerationContribution;
         }
 
         private Vector2 FrameVelocityDelta(Vector2 acceleration)
         {
-            return mTimeStep * acceleration;
+            return mTime.DeltaTime * acceleration;
         }
 
         public Vector2 FrameLinearDragVelocityDelta(Vector2 frameVelocity, float dragCoefficient, Vector2 acceleration)
         {
             Debug.Assert(dragCoefficient > 0f); //TODO: Enforce even if data is bad!
-            float dragFactor = (float)Math.Exp(-dragCoefficient * mTimeStep);
+            float dragFactor = (float)Math.Exp(-dragCoefficient * mTime.DeltaTime);
             float accelerationModule = acceleration.Length();
             Vector2 terminalVelocity = (1f / dragCoefficient) * acceleration;
             return (dragFactor - 1f) * (frameVelocity - terminalVelocity);
@@ -89,10 +94,10 @@ namespace Ranitas.Sim
         public Vector2 FrameLinearDragPositionDelta(Vector2 frameVelocity, float dragCoefficient, Vector2 acceleration)
         {
             Debug.Assert(dragCoefficient > 0f); //TODO: Enforce even if data is bad!
-            float dragFactor = (float)Math.Exp(-dragCoefficient * mTimeStep);
+            float dragFactor = (float)Math.Exp(-dragCoefficient * mTime.DeltaTime);
             float accelerationModule = acceleration.Length();
             Vector2 terminalVelocity = (1f / dragCoefficient) * acceleration;
-            return (terminalVelocity * mTimeStep) + ((frameVelocity - terminalVelocity) / dragCoefficient) * (1f - dragFactor);
+            return (terminalVelocity * mTime.DeltaTime) + ((frameVelocity - terminalVelocity) / dragCoefficient) * (1f - dragFactor);
         }
 
         private void UpdateWaterborneFrogs(EntityRegistry registry)
@@ -152,7 +157,7 @@ namespace Ranitas.Sim
             float swimKickPhase = mWetFrogs.Waterborne[iterationIndex].SwimKickPhase;
             if (swimKickPhase < 0f)
             {
-                swimKickPhase = swimKickPhase + mTimeStep;
+                swimKickPhase = swimKickPhase + mTime.DeltaTime;
                 if (swimKickPhase >= 0f)
                 {
                     swimKickPhase = swimData.SwimKickDuration;
@@ -160,7 +165,7 @@ namespace Ranitas.Sim
             }
             else if ((swimKickPhase > 0f) && (mWetFrogs.Control[iterationIndex].InputDirection != Vector2.Zero))
             {
-                swimKickPhase = Math.Max(0f, swimKickPhase - mTimeStep);
+                swimKickPhase = Math.Max(0f, swimKickPhase - mTime.DeltaTime);
                 float accelerationModule = swimData.SwimKickVelocity * swimData.WaterDrag;  //TODO: replace kick velocity for this product?
                 swimAcceleration = mWetFrogs.Control[iterationIndex].InputDirection;
                 swimAcceleration.Normalize();

@@ -37,7 +37,8 @@ namespace Ranitas.Sim
 
     public class RanitasDependencies
     {
-        public Pond.PondSimState Pond;
+        public readonly FrameTime Time;
+        public readonly Pond.PondSimState Pond;
     }
 
     public static class RanitasSystems
@@ -53,6 +54,7 @@ namespace Ranitas.Sim
             List<ISystem> systems = new List<ISystem>()
             {
                 new WetDryFrogSystem(dependencies.Pond),
+                new FrogPhysicsSystem(dependencies.Time, dependencies.Pond),
             };
             return systems;
         }
