@@ -99,6 +99,7 @@
     <Compile Include="Pond\PondRenderer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Sim\Factories\PlayerFactory.cs" />
     <Compile Include="Sim\FrameTime.cs" />
     <Compile Include="Sim\ISystem.cs" />
     <Compile Include="Sim\Sim.cs" />

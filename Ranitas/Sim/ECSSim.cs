@@ -59,18 +59,4 @@ namespace Ranitas.Sim
             return systems;
         }
     }
-
-
-    public static class FrogFactory
-    {
-        public static Entity MakeFrog(EntityRegistry registry)
-        {
-            Entity entity = registry.Create();
-
-            //WIP WE NEED SPAWN LOCATIONS
-            registry.AddComponent(entity, new Airborne());
-
-            return entity;
-        }
-    }
 }
