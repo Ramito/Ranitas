@@ -72,6 +72,7 @@
     <Compile Include="Sim\ComponentSystems\FrogControlState.cs" />
     <Compile Include="Sim\ComponentSystems\FrogPhysics\CommonFrogProperties.cs" />
     <Compile Include="Sim\ComponentSystems\FrogPhysics\FrogPhysicsSystem.cs" />
+    <Compile Include="Sim\ComponentSystems\FrogPhysics\FrogSwimData.cs" />
     <Compile Include="Sim\ComponentSystems\FrogPhysics\Landed.cs" />
     <Compile Include="Sim\ComponentSystems\RectShape\RectShape.cs" />
     <Compile Include="Sim\ComponentSystems\Position\Position.cs" />
