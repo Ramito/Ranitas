@@ -53,6 +53,7 @@ namespace Ranitas.Sim
         {
             List<ISystem> systems = new List<ISystem>()
             {
+                new FrogInputSystem(),
                 new WetDryFrogSystem(dependencies.Pond),
                 new FrogPhysicsSystem(dependencies.Time, dependencies.Pond),
             };

@@ -70,6 +70,7 @@
     <Compile Include="Core\StateMachine\State.cs" />
     <Compile Include="Core\StateMachine\StateMachine.cs" />
     <Compile Include="Sim\ComponentSystems\FrogControlState.cs" />
+    <Compile Include="Sim\ComponentSystems\FrogInputSystem.cs" />
     <Compile Include="Sim\ComponentSystems\FrogPhysics\CommonFrogProperties.cs" />
     <Compile Include="Sim\ComponentSystems\FrogPhysics\FrogPhysicsSystem.cs" />
     <Compile Include="Sim\ComponentSystems\FrogPhysics\FrogSwimData.cs" />

@@ -4,9 +4,8 @@ namespace Ranitas.Sim
 {
     public struct FrogControlState
     {
+        public bool JumpSignal;
         public bool ToungueSignalState;
-        public int FacingDirection;
-        public float RelativeJumpPower;
         public Vector2 InputDirection;
     }
 }
