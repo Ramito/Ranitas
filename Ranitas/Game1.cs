@@ -5,7 +5,6 @@ using Ranitas.Core.Render;
 using Ranitas.Data;
 using Ranitas.Frog;
 using Ranitas.Frog.Sim;
-using Ranitas.Input;
 using Ranitas.Insects;
 using Ranitas.Pond;
 using Ranitas.Sim;
@@ -18,26 +17,27 @@ namespace Ranitas
     /// </summary>
     public class Game1 : Game
     {
-        private static readonly int[] sSuportedPlayers = new[] { 0, 1, 2, 3 };
+        private static readonly int kSuportedPlayers = 4;
 
         private GraphicsDeviceManager mGraphics;
 
-        private FrogData mFrogPrototype;
+        //private FrogData mFrogPrototype;
         private float[] mFrogSpawns;
 
-        private PondSimState mPond;
+        //private PondSimState mPond;
         private PondRenderer mPondRenderer;
 
-        private InputProcessor mInputProcessor = new InputProcessor(sSuportedPlayers.Length);
+        //private InputProcessor mInputProcessor = new InputProcessor(sSuportedPlayers.Length);
 
-        private List<FrogSimState> mFrogs;
+        //private List<FrogSimState> mFrogs;
         private FrogRenderer mFrogRenderer;
-        private FlyRenderer mFlyRenderer;
+        //private FlyRenderer mFlyRenderer;
         private PrimitiveRenderer mPrimitiveRenderer;
 
-        private RanitasSim mSim;
+        //private RanitasSim mSim;
+        private ECSSim mSim;
 
-        private PlayerBinding[] mPlayerBindings = new PlayerBinding[sSuportedPlayers.Length];
+        private bool[] mSPawnedPlayers = new bool[kSuportedPlayers];
         
         public Game1()
         {
@@ -63,16 +63,18 @@ namespace Ranitas
 
         protected override void LoadContent()
         {
-            mFrogPrototype = Content.Load<FrogData>("Frog");
+            FrogData frogData = Content.Load<FrogData>("Frog");
             PondData pondData = Content.Load<PondData>("Pond");
-            FlyData flyData = Content.Load<FlyData>("Fly");
+            FlyData flyData = Content.Load<FlyData>("Fly"); //WIP TODO WIP
             mFrogSpawns = pondData.FrogSpawns;
 
-            mPond = new PondSimState(pondData);
-            mFrogs = new List<FrogSimState>(sSuportedPlayers.Length);
+            //mPond = new PondSimState(pondData);
+            //mFrogs = new List<FrogSimState>(sSuportedPlayers.Length);
 
             System.Diagnostics.Debug.Assert(IsFixedTimeStep);
-            mSim = new RanitasSim(flyData, mPond, mFrogs, (float)TargetElapsedTime.TotalSeconds, mPlayerBindings);
+            //mSim = new RanitasSim(flyData, mPond, mFrogs, (float)TargetElapsedTime.TotalSeconds, mPlayerBindings);
+            RanitasDependencies dependencies = new RanitasDependencies((float)TargetElapsedTime.TotalSeconds, pondData, frogData);
+            mSim = new ECSSim(dependencies);
 
             mPrimitiveRenderer = new PrimitiveRenderer();
             mPrimitiveRenderer.Setup(mGraphics.GraphicsDevice);
@@ -82,7 +84,7 @@ namespace Ranitas
 
             mFrogRenderer = new FrogRenderer();
 
-            mFlyRenderer = new FlyRenderer(mSim.FlySim);
+            //mFlyRenderer = new FlyRenderer(mSim.FlySim);
         }
 
         protected override void UnloadContent()
@@ -92,28 +94,24 @@ namespace Ranitas
 
         protected override void Update(GameTime gameTime)
         {
-            foreach (var playerIndex in sSuportedPlayers)
+            for (int i = 0; i < kSuportedPlayers; ++i)
             {
-                if (mPlayerBindings[playerIndex] == null)
-                {
-                    if (GamePad.GetState(playerIndex).Buttons.Start == ButtonState.Pressed)
-                    {
-                        FrogSimState frog = mPond.SpawnFrog(mFrogPrototype, mFrogSpawns, playerIndex);
-                        mFrogs.Add(frog);
-                        mPlayerBindings[playerIndex] = new PlayerBinding(playerIndex, frog);
-                    }
-                }
-                else
-                {
-                    mInputProcessor.ProcessInput(playerIndex);
-                }
-                if ((GamePad.GetState(playerIndex).Buttons.Back == ButtonState.Pressed) || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                if ((GamePad.GetState(i).Buttons.Back == ButtonState.Pressed) || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 {
                     Exit();
                 }
+                if (!mSPawnedPlayers[i])
+                {
+                    if (GamePad.GetState(i).Buttons.Start == ButtonState.Pressed)
+                    {
+                        mSim.SpawnPlayer(i);  //TODO: Make a player ID type?
+                        mSPawnedPlayers[i] = true;
+                    }
+                }
             }
 
-            mSim.Update(mInputProcessor.Inputs);
+            mSim.Update();
+            //mSim.Update(mInputProcessor.Inputs);
 
             base.Update(gameTime);
         }
@@ -121,12 +119,16 @@ namespace Ranitas
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.DimGray);
-            mPondRenderer.RenderPond(mPond, mPrimitiveRenderer);
-            foreach (var frog in mFrogs)
-            {
-                mFrogRenderer.RenderFrog(frog, mPrimitiveRenderer);
-            }
-            mFlyRenderer.Render(mPrimitiveRenderer);
+
+            //WIP WIP WIP
+            //mPondRenderer.RenderPond(mPond, mPrimitiveRenderer);
+            //WIP WIP WIP
+
+            //foreach (var frog in mFrogs)
+            //{
+            //    mFrogRenderer.RenderFrog(frog, mPrimitiveRenderer);
+            //}
+            //mFlyRenderer.Render(mPrimitiveRenderer);
             mPrimitiveRenderer.Render();
             base.Draw(gameTime);
         }

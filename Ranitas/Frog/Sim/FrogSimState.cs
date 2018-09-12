@@ -2,7 +2,6 @@
 using Ranitas.Core;
 using Ranitas.Data;
 using System;
-using static Ranitas.Frog.Sim.FrogSim;
 
 namespace Ranitas.Frog.Sim
 {

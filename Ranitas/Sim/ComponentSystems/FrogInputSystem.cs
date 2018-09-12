@@ -10,6 +10,12 @@ namespace Ranitas.Sim
 {
     public struct FrogJumpData
     {
+        public FrogJumpData(Data.FrogData data)
+        {
+            JumpPrepareTime = data.MovementData.JumpPrepareTime;
+            JumpSpeed = data.MovementData.JumpVelocity;
+        }
+
         public float JumpPrepareTime;
         public float JumpSpeed;
     }
@@ -34,6 +40,12 @@ namespace Ranitas.Sim
                 sBlessedDirections[index] = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle));
                 ++index;
             }
+        }
+
+        public FrogInputSystem(FrameTime time, Data.FrogData frogData)
+        {
+            mTime = time;
+            mJumpData = new FrogJumpData(frogData);
         }
 
         private FrameTime mTime;

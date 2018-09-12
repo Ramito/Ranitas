@@ -82,16 +82,11 @@
     <Compile Include="Sim\ComponentSystems\Velocity\Velocity.cs" />
     <Compile Include="Sim\ECSSim.cs" />
     <Compile Include="Frog\Sim\FrogControlState.cs" />
-    <Compile Include="Frog\Sim\FrogControlUpdater.cs" />
-    <Compile Include="Input\FrogInput.cs" />
     <Compile Include="Frog\FrogRenderer.cs" />
-    <Compile Include="Frog\Sim\FrogSim.cs" />
     <Compile Include="Frog\Sim\FrogSimState.cs" />
     <Compile Include="Frog\Sim\FrogToungue.cs" />
     <Compile Include="Frog\Sim\RigidBodyState.cs" />
     <Compile Include="Game1.cs" />
-    <Compile Include="Input\InputProcessor.cs" />
-    <Compile Include="PlayerBinding.cs" />
     <Compile Include="Insects\FlyRenderer.cs" />
     <Compile Include="Insects\FlySim.cs" />
     <Compile Include="Insects\FlySimState.cs" />

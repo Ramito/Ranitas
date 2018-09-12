@@ -2,7 +2,7 @@
 using Ranitas.Core.EventSystem;
 using Ranitas.Data;
 using Ranitas.Frog.Sim;
-using Ranitas.Input;
+//using Ranitas.Input;
 using Ranitas.Insects;
 using Ranitas.Pond;
 using System.Collections.Generic;
@@ -15,46 +15,48 @@ namespace Ranitas.Sim
 
         private PondSimState mPondState;
         public FlySim FlySim;
-        public FrogSim FrogSim;
+        //public FrogSim FrogSim;
 
         private FixedTimeStepDynamics mDynamics;    //TODO: Shareable service!
 
-        public RanitasSim(FlyData flyData, PondSimState pondState, List<FrogSimState> frogStates, float fixedTimeStep, PlayerBinding[] bindings)
+        public RanitasSim(FlyData flyData, PondSimState pondState, List<FrogSimState> frogStates, float fixedTimeStep)
         {
             mEventSystem = new EventSystem();
             mPondState = pondState;
             mDynamics = new FixedTimeStepDynamics(fixedTimeStep);
             FlySim = new FlySim(flyData, mPondState, mDynamics);
-            FrogSim = new FrogSim(fixedTimeStep, mEventSystem, bindings, frogStates);
+            //FrogSim = new FrogSim(fixedTimeStep, mEventSystem, bindings, frogStates);
         }
 
-        public void Update(FrogInput[] inputs)
+        public void Update()//(FrogInput[] inputs)
         {
-            FrogSim.Update(inputs);
-            FrogSim.UpdateFrogs(mPondState, mDynamics);
+            //FrogSim.Update(inputs);
+            //FrogSim.UpdateFrogs(mPondState, mDynamics);
             FlySim.Update();
-            UpdateFlyEating();
+            //WIP TODO WIP
+            //UpdateFlyEating();
+            //WIP TODO WIP
         }
 
-        public void UpdateFlyEating()
-        {
-            foreach (var frog in FrogSim.FrogStates)
-            {
-                if (!frog.Toungue.ToungueActive)
-                {
-                    continue;
-                }
-                Rect toungue = frog.GetToungueRect();
-                for (int i = FlySim.ActiveFlies.Count - 1; i >= 0; --i)
-                {
-                    var fly = FlySim.ActiveFlies[i];
-                    Rect flyRect = new Rect(fly.Position, fly.Width, fly.Height);
-                    if (flyRect.Intersects(toungue))
-                    {
-                        FlySim.DespawnFly(i);
-                    }
-                }
-            }
-        }
+        //public void UpdateFlyEating()
+        //{
+        //    foreach (var frog in FrogSim.FrogStates)
+        //    {
+        //        if (!frog.Toungue.ToungueActive)
+        //        {
+        //            continue;
+        //        }
+        //        Rect toungue = frog.GetToungueRect();
+        //        for (int i = FlySim.ActiveFlies.Count - 1; i >= 0; --i)
+        //        {
+        //            var fly = FlySim.ActiveFlies[i];
+        //            Rect flyRect = new Rect(fly.Position, fly.Width, fly.Height);
+        //            if (flyRect.Intersects(toungue))
+        //            {
+        //                FlySim.DespawnFly(i);
+        //            }
+        //        }
+        //    }
+        //}
     }
 }

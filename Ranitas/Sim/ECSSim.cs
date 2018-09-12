@@ -11,11 +11,17 @@ namespace Ranitas.Sim
         private EventSystem mEventSystem = new EventSystem();
 
         private List<ISystem> mSystems;
+        private PlayerFactory mFactory;
 
-        public ECSSim()
+        public ECSSim(RanitasDependencies dependencies)
         {
-            RanitasDependencies dependencies = RanitasSystems.MakeDependencies();
             mSystems = RanitasSystems.MakeSystems(dependencies);
+            mFactory = new PlayerFactory(mRegistry, dependencies.FrogData, dependencies.PondData);
+        }
+
+        public void SpawnPlayer(int index)
+        {
+            mFactory.MakePlayer(index);
         }
 
         public void Initialize()
@@ -37,15 +43,25 @@ namespace Ranitas.Sim
 
     public class RanitasDependencies
     {
+        public RanitasDependencies(float deltaTime, Data.PondData pondData, Data.FrogData frogData)
+        {
+            Time = new FrameTime(deltaTime);
+            FrogData = frogData;
+            PondData = pondData;
+            PondState = new Pond.PondSimState(pondData);
+        }
+
         public readonly FrameTime Time;
-        public readonly Pond.PondSimState Pond;
+        public readonly Data.FrogData FrogData;
+        public readonly Data.PondData PondData;
+        public readonly Pond.PondSimState PondState;
     }
 
     public static class RanitasSystems
     {
-        public static RanitasDependencies MakeDependencies()
+        public static RanitasDependencies MakeDependencies(float deltaTime, Data.PondData pondData, Data.FrogData frogData)
         {
-            RanitasDependencies dependencies = new RanitasDependencies();
+            RanitasDependencies dependencies = new RanitasDependencies(deltaTime, pondData, frogData);
             return dependencies;
         }
 
@@ -53,9 +69,9 @@ namespace Ranitas.Sim
         {
             List<ISystem> systems = new List<ISystem>()
             {
-                new FrogInputSystem(),
-                new WetDryFrogSystem(dependencies.Pond),
-                new FrogPhysicsSystem(dependencies.Time, dependencies.Pond),
+                new FrogInputSystem(dependencies.Time, dependencies.FrogData),
+                new WetDryFrogSystem(dependencies.PondState),
+                new FrogPhysicsSystem(dependencies.Time, dependencies.PondState),
             };
             return systems;
         }
