@@ -245,21 +245,29 @@ namespace Ranitas.Core.ECS
                 {
                     Tuple<IPublishingIndexSet, IValueInjector> tuple = matchedInjectorRequirements[i];
                     IPublishingIndexSet publisher = tuple.Item1;
-                    publisher.NewValue += TryAddValue;
-                    publisher.Removed += RemoveValue;
-
                     IValueInjector matchedInjector = tuple.Item2;
-                    publisher.ValueModified += (indexID) => matchedInjector.InjectExistingValue(indexID, mFilteredSet.GetPackedIndex(indexID));
+                    publisher.ValueModified += (indexID) =>
+                    {
+                        if (mFilteredSet.Contains(indexID))
+                        {
+                            matchedInjector.InjectExistingValue(indexID, mFilteredSet.GetPackedIndex(indexID));
+                        }
+                    };
 
                     looseRequirements.Add(publisher);
                     looseInjectors.Add(matchedInjector);
                 }
 
-                for (int i = 0; i < exclusions.Count; ++i)
+                foreach (IPublishingIndexSet requirement in looseRequirements)
                 {
-                    IPublishingIndexSet publisher = exclusions[i];
-                    publisher.NewValue += RemoveValue;
-                    publisher.Removed += TryAddValue;
+                    requirement.NewValue += TryAddValue;
+                    requirement.Removed += RemoveValue;
+                }
+
+                foreach (IPublishingIndexSet exclusion in exclusions)
+                {
+                    exclusion.NewValue += RemoveValue;
+                    exclusion.Removed += TryAddValue;
                 }
 
                 IReadonlyIndexSet[] reqArray = ArrayCastedType(looseRequirements);
