@@ -120,7 +120,7 @@ namespace Ranitas.Sim
             for (int i = 0; i < frogCount; ++i)
             {
                 Vector2 feetPosition = CommonFrogProperties.FrogFeetPosition(mWaterborneFrogs.Positions[i], mWaterborneFrogs.Shapes[i]);
-                if (feetPosition.Y < mPond.WaterLevel)
+                if (feetPosition.Y > mPond.WaterLevel)
                 {
                     mSplashingOutFrogs.Add(mWaterborneFrogs.Entities[i]);
                 }

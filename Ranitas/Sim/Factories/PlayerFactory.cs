@@ -61,6 +61,7 @@ namespace Ranitas.Sim
 
             //Shape
             RectShape rectShape = new RectShape(mFrogData.Width, mFrogData.Height);
+            mRegistry.AddComponent(frogEntity, rectShape);
 
             //Airborne - Spawned in the air!
             Airborne airborne = new Airborne();

@@ -75,6 +75,7 @@ namespace Ranitas
             //mSim = new RanitasSim(flyData, mPond, mFrogs, (float)TargetElapsedTime.TotalSeconds, mPlayerBindings);
             RanitasDependencies dependencies = new RanitasDependencies((float)TargetElapsedTime.TotalSeconds, pondData, frogData);
             mSim = new ECSSim(dependencies);
+            mSim.Initialize();
 
             mPrimitiveRenderer = new PrimitiveRenderer();
             mPrimitiveRenderer.Setup(mGraphics.GraphicsDevice);
