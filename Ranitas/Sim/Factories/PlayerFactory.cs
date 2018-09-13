@@ -16,6 +16,12 @@ namespace Ranitas.Sim
             mRegistry.SetupSlice(ref mPlayersSlice);
         }
 
+        private struct PlayersSlice
+        {
+            public SliceRequirementOutput<Player> Player;
+        }
+        private PlayersSlice mPlayersSlice;
+
         private readonly EntityRegistry mRegistry;
         private readonly FrogData mFrogData;
         private readonly PondData mPondData;
@@ -83,31 +89,5 @@ namespace Ranitas.Sim
                 Debug.Assert(mPlayersSlice.Player[i].Index != index);
             }
         }
-
-        private struct PlayersSlice
-        {
-            public SliceRequirementOutput<Player> Player;
-        }
-        private PlayersSlice mPlayersSlice;
-    }
-
-    public struct Player
-    {
-        public Player(int index)
-        {
-            Index = index;
-        }
-
-        public int Index;
-    }
-
-    public struct ControlledEntity
-    {
-        public ControlledEntity(Entity controlledEntity)
-        {
-            Entity = controlledEntity;
-        }
-
-        public Entity Entity;
     }
 }

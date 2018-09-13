@@ -70,17 +70,19 @@
     <Compile Include="Core\StateMachine\PooledState.cs" />
     <Compile Include="Core\StateMachine\State.cs" />
     <Compile Include="Core\StateMachine\StateMachine.cs" />
-    <Compile Include="Sim\ComponentSystems\FrogControlState.cs" />
-    <Compile Include="Sim\ComponentSystems\FrogInputSystem.cs" />
-    <Compile Include="Sim\ComponentSystems\FrogPhysics\CommonFrogProperties.cs" />
-    <Compile Include="Sim\ComponentSystems\FrogPhysics\FrogPhysicsSystem.cs" />
-    <Compile Include="Sim\ComponentSystems\FrogPhysics\FrogSwimData.cs" />
-    <Compile Include="Sim\ComponentSystems\FrogPhysics\Landed.cs" />
-    <Compile Include="Sim\ComponentSystems\RectShape\RectShape.cs" />
-    <Compile Include="Sim\ComponentSystems\Position\Position.cs" />
-    <Compile Include="Sim\ComponentSystems\FrogPhysics\Airborne.cs" />
-    <Compile Include="Sim\ComponentSystems\FrogPhysics\Waterborne.cs" />
-    <Compile Include="Sim\ComponentSystems\Velocity\Velocity.cs" />
+    <Compile Include="Sim\ComponentSystems\Components\ControlledEntity.cs" />
+    <Compile Include="Sim\ComponentSystems\Components\FrogControlState.cs" />
+    <Compile Include="Sim\ComponentSystems\Components\Player.cs" />
+    <Compile Include="Sim\ComponentSystems\Systems\FrogInputSystem.cs" />
+    <Compile Include="Sim\ComponentSystems\CommonFrogProperties.cs" />
+    <Compile Include="Sim\ComponentSystems\Systems\FrogPhysicsSystem.cs" />
+    <Compile Include="Sim\ComponentSystems\Components\FrogSwimData.cs" />
+    <Compile Include="Sim\ComponentSystems\Components\Landed.cs" />
+    <Compile Include="Sim\ComponentSystems\Components\RectShape.cs" />
+    <Compile Include="Sim\ComponentSystems\Components\Position.cs" />
+    <Compile Include="Sim\ComponentSystems\Components\Airborne.cs" />
+    <Compile Include="Sim\ComponentSystems\Components\Waterborne.cs" />
+    <Compile Include="Sim\ComponentSystems\Components\Velocity.cs" />
     <Compile Include="Sim\ECSSim.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Insects\FlyRenderer.cs" />
@@ -93,7 +95,7 @@
     <Compile Include="Sim\Factories\PlayerFactory.cs" />
     <Compile Include="Sim\FrameTime.cs" />
     <Compile Include="Core\ECS\ISystem.cs" />
-    <Compile Include="Sim\ComponentSystems\FrogPhysics\WetDryFrogSystem.cs" />
+    <Compile Include="Sim\ComponentSystems\Systems\WetDryFrogSystem.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="MonoGame.Framework">
