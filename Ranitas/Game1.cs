@@ -3,10 +3,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Ranitas.Core.Render;
 using Ranitas.Data;
-using Ranitas.Frog;
-using Ranitas.Frog.Sim;
 using Ranitas.Insects;
 using Ranitas.Pond;
+using Ranitas.Render;
 using Ranitas.Sim;
 using System.Collections.Generic;
 
@@ -21,20 +20,6 @@ namespace Ranitas
 
         private GraphicsDeviceManager mGraphics;
 
-        //private FrogData mFrogPrototype;
-        private float[] mFrogSpawns;
-
-        //private PondSimState mPond;
-        private PondRenderer mPondRenderer;
-
-        //private InputProcessor mInputProcessor = new InputProcessor(sSuportedPlayers.Length);
-
-        //private List<FrogSimState> mFrogs;
-        private FrogRenderer mFrogRenderer;
-        //private FlyRenderer mFlyRenderer;
-        private PrimitiveRenderer mPrimitiveRenderer;
-
-        //private RanitasSim mSim;
         private ECSSim mSim;
 
         private bool[] mSPawnedPlayers = new bool[kSuportedPlayers];
@@ -66,26 +51,16 @@ namespace Ranitas
             FrogData frogData = Content.Load<FrogData>("Frog");
             PondData pondData = Content.Load<PondData>("Pond");
             FlyData flyData = Content.Load<FlyData>("Fly"); //WIP TODO WIP
-            mFrogSpawns = pondData.FrogSpawns;
 
-            //mPond = new PondSimState(pondData);
-            //mFrogs = new List<FrogSimState>(sSuportedPlayers.Length);
+            SetupCamera(mGraphics.GraphicsDevice, pondData);
+
+            PrimitiveRenderer primitiveRenderer = new PrimitiveRenderer();
+            primitiveRenderer.Setup(mGraphics.GraphicsDevice);
 
             System.Diagnostics.Debug.Assert(IsFixedTimeStep);
-            //mSim = new RanitasSim(flyData, mPond, mFrogs, (float)TargetElapsedTime.TotalSeconds, mPlayerBindings);
-            RanitasDependencies dependencies = new RanitasDependencies((float)TargetElapsedTime.TotalSeconds, pondData, frogData);
+            RanitasDependencies dependencies = new RanitasDependencies((float)TargetElapsedTime.TotalSeconds, pondData, frogData, primitiveRenderer);
             mSim = new ECSSim(dependencies);
             mSim.Initialize();
-
-            mPrimitiveRenderer = new PrimitiveRenderer();
-            mPrimitiveRenderer.Setup(mGraphics.GraphicsDevice);
-
-            mPondRenderer = new PondRenderer();
-            mPondRenderer.Setup(mGraphics.GraphicsDevice, pondData);
-
-            mFrogRenderer = new FrogRenderer();
-
-            //mFlyRenderer = new FlyRenderer(mSim.FlySim);
         }
 
         protected override void UnloadContent()
@@ -112,25 +87,26 @@ namespace Ranitas
             }
 
             mSim.Update();
-            //mSim.Update(mInputProcessor.Inputs);
 
             base.Update(gameTime);
+        }
+
+        private void SetupCamera(GraphicsDevice device, PondData pondData)
+        {
+            float ponWidth = pondData.Width;
+            float ponHeight = pondData.Height;
+            float aspectRatio = device.Adapter.CurrentDisplayMode.AspectRatio;
+            BasicEffect effect = new BasicEffect(device);
+            effect.VertexColorEnabled = true;
+            effect.World = Matrix.CreateTranslation(-ponWidth * 0.5f, -ponHeight * 0.5f, 0f);
+            effect.View = Matrix.CreateOrthographic(aspectRatio * ponHeight, ponHeight, -100, 100);
+            effect.CurrentTechnique.Passes[0].Apply();
         }
 
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.DimGray);
-
-            //WIP WIP WIP
-            //mPondRenderer.RenderPond(mPond, mPrimitiveRenderer);
-            //WIP WIP WIP
-
-            //foreach (var frog in mFrogs)
-            //{
-            //    mFrogRenderer.RenderFrog(frog, mPrimitiveRenderer);
-            //}
-            //mFlyRenderer.Render(mPrimitiveRenderer);
-            mPrimitiveRenderer.Render();
+            mSim.Render();
             base.Draw(gameTime);
         }
     }

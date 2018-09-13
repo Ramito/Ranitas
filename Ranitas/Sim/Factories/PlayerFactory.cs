@@ -67,6 +67,10 @@ namespace Ranitas.Sim
             Airborne airborne = new Airborne();
             mRegistry.AddComponent(frogEntity, airborne);
 
+            //Color
+            Color color = Color.YellowGreen;
+            mRegistry.AddComponent(frogEntity, color);
+
             return frogEntity;
         }
 

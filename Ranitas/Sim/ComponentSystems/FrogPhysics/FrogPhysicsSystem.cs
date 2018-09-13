@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Ranitas.Core;
 using Ranitas.Core.ECS;
-using Ranitas.Core.EventSystem;
 using Ranitas.Pond;
 using System;
 using System.Diagnostics;
@@ -109,8 +108,10 @@ namespace Ranitas.Sim
                 Vector2 bouyancyAcceleration = GetBouyancyAcceleration(i);
                 Vector2 totalAcceleration = swimAcceleration + bouyancyAcceleration;
 
-                Vector2 position = mWetFrogs.Position[i].Value;
-                Vector2 velocity = mWetFrogs.Velocity[i].Value;
+                Vector2 originalPosition = mWetFrogs.Position[i].Value;
+                Vector2 position = originalPosition;
+                Vector2 originalVelocity = mWetFrogs.Velocity[i].Value;
+                Vector2 velocity = originalVelocity;
 
                 Vector2 positionDelta = Vector2.Zero;
                 Vector2 velocityDelta = Vector2.Zero;
@@ -121,19 +122,23 @@ namespace Ranitas.Sim
                     //No vertical drag!
                     Vector2 verticalVelocity = new Vector2(0f, velocity.Y);
                     Vector2 verticalAcceleration = new Vector2(0f, totalAcceleration.Y);
+
+                    //NOTE: BUG: If goping up, but swimming down, the acceleration is incorrectly applied(?)
+
                     positionDelta = FramePositionDelta(verticalVelocity, verticalAcceleration);
                     velocityDelta = FrameVelocityDelta(verticalAcceleration);
 
                     velocity = new Vector2(velocity.X, 0f);
                     totalAcceleration = new Vector2(totalAcceleration.X, 0f);
+                    //BUG: Vertical deltas lost!
                 }
 
                 float drag = mWetFrogs.SwimData[i].WaterDrag;
                 positionDelta += FrameLinearDragPositionDelta(velocity, drag, totalAcceleration);
                 velocityDelta += FrameLinearDragVelocityDelta(velocity, drag, totalAcceleration);
 
-                position = position + positionDelta;
-                velocity = velocity + velocityDelta;
+                position = originalPosition + positionDelta;
+                velocity = originalVelocity + velocityDelta;
 
                 //TODO: Deferred registry commands?
                 registry.SetComponent(mWetFrogs.Entities[i], new Position(position));

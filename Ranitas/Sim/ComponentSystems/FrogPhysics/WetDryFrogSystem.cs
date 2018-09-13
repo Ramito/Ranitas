@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Ranitas.Core;
 using Ranitas.Core.ECS;
-using Ranitas.Core.EventSystem;
 using Ranitas.Pond;
 using System.Collections.Generic;
 
@@ -21,7 +20,7 @@ namespace Ranitas.Sim
         private struct AirborneFrogs
         {
             public SliceEntityOutput Entities;
-            public SliceRequirement<Airborne> Airborne;
+            public SliceExclusion<Waterborne> NotWet;
             public SliceRequirementOutput<Position> Positions;
             public SliceRequirementOutput<Velocity> Velocities;
             public SliceRequirementOutput<RectShape> Shapes;
@@ -80,14 +79,22 @@ namespace Ranitas.Sim
             int airborneFrogCount = mAirborneFogs.Entities.Count;
             for (int i = 0; i < airborneFrogCount; ++i)
             {
-                if (mAirborneFogs.Velocities[i].Value.Y < 0f)
+                if (mAirborneFogs.Velocities[i].Value.Y <= 0f)
                 {
                     Rect frogRect = CommonFrogProperties.FrogRect(mAirborneFogs.Positions[i], mAirborneFogs.Shapes[i]);
                     foreach (LilyPadSimState lilypad in mPond.Lilies)
                     {
                         if (frogRect.Intersects(lilypad.Rect))
                         {
-                            mLandingFrogs.Add(mAirborneFogs.Entities[i]);
+                            Entity landingFrog = mAirborneFogs.Entities[i];
+                            if (registry.HasComponent<Airborne>(landingFrog))
+                            {
+                                mLandingFrogs.Add(landingFrog);
+                            }
+                            registry.SetComponent(landingFrog, new Velocity());
+                            Vector2 landedPosition = mAirborneFogs.Positions[i].Value;
+                            landedPosition.Y = lilypad.Rect.MaxY + (mAirborneFogs.Shapes[i].Height * 0.5f);
+                            registry.SetComponent(landingFrog, new Position(landedPosition));
                             break;
                         }
                     }
@@ -107,7 +114,7 @@ namespace Ranitas.Sim
             for (int i = 0; i < frogCount; ++i)
             {
                 Vector2 feetPosition = CommonFrogProperties.FrogFeetPosition(mAirborneFogs.Positions[i], mAirborneFogs.Shapes[i]);
-                if (feetPosition.Y < mPond.WaterLevel)
+                if (feetPosition.Y <= mPond.WaterLevel)
                 {
                     mSplashingInFrogs.Add(mAirborneFogs.Entities[i]);
                 }

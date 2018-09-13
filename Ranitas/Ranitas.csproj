@@ -66,6 +66,7 @@
     <Compile Include="Core\Math\MathExtensions.cs" />
     <Compile Include="Core\Math\Rect.cs" />
     <Compile Include="Core\Render\PrimitiveRenderer.cs" />
+    <Compile Include="Render\RenderSystem.cs" />
     <Compile Include="Core\StateMachine\PooledState.cs" />
     <Compile Include="Core\StateMachine\State.cs" />
     <Compile Include="Core\StateMachine\StateMachine.cs" />
@@ -81,24 +82,17 @@
     <Compile Include="Sim\ComponentSystems\FrogPhysics\Waterborne.cs" />
     <Compile Include="Sim\ComponentSystems\Velocity\Velocity.cs" />
     <Compile Include="Sim\ECSSim.cs" />
-    <Compile Include="Frog\Sim\FrogControlState.cs" />
-    <Compile Include="Frog\FrogRenderer.cs" />
-    <Compile Include="Frog\Sim\FrogSimState.cs" />
-    <Compile Include="Frog\Sim\FrogToungue.cs" />
-    <Compile Include="Frog\Sim\RigidBodyState.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Insects\FlyRenderer.cs" />
     <Compile Include="Insects\FlySim.cs" />
     <Compile Include="Insects\FlySimState.cs" />
     <Compile Include="Pond\LilyPadSimState.cs" />
     <Compile Include="Pond\PondSimState.cs" />
-    <Compile Include="Pond\PondRenderer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sim\Factories\PlayerFactory.cs" />
     <Compile Include="Sim\FrameTime.cs" />
     <Compile Include="Core\ECS\ISystem.cs" />
-    <Compile Include="Sim\Sim.cs" />
     <Compile Include="Sim\ComponentSystems\FrogPhysics\WetDryFrogSystem.cs" />
   </ItemGroup>
   <ItemGroup>

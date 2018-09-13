@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Input;
 using Ranitas.Core;
 using Ranitas.Core.ECS;
-using Ranitas.Core.EventSystem;
 using System;
 using System.Collections.Generic;
 
@@ -143,6 +142,7 @@ namespace Ranitas.Sim
             foreach (Entity frog in mJumpingFrogs)
             {
                 registry.RemoveComponent<Landed>(frog);
+                registry.AddComponent(frog, new Airborne());
             }
             mJumpingFrogs.Clear();
         }
