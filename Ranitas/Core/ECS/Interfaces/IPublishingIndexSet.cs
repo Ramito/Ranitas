@@ -4,8 +4,10 @@
 
     public interface IPublishingIndexSet : IReadonlyIndexSet
     {
-        event IndexedValueHandler NewValue;
+        event IndexedValueHandler PreNewValue;
+        event IndexedValueHandler PostNewValue;
         event IndexedValueHandler ValueModified;
-        event IndexedValueHandler Removed;
+        event IndexedValueHandler PreRemoved;
+        event IndexedValueHandler PostRemoved;
     }
 }

@@ -1,7 +1,6 @@
-﻿using Ranitas.Core.ECS;
-using Ranitas.Core.EventSystem;
+﻿using Ranitas.Core;
 
-namespace Ranitas.Sim
+namespace Ranitas.Core.ECS
 {
     public interface ISystem
     {

@@ -260,14 +260,14 @@ namespace Ranitas.Core.ECS
 
                 foreach (IPublishingIndexSet requirement in looseRequirements)
                 {
-                    requirement.NewValue += TryAddValue;
-                    requirement.Removed += RemoveValue;
+                    requirement.PostNewValue += TryAddValue;
+                    requirement.PreRemoved += RemoveValue;
                 }
 
                 foreach (IPublishingIndexSet exclusion in exclusions)
                 {
-                    exclusion.NewValue += RemoveValue;
-                    exclusion.Removed += TryAddValue;
+                    exclusion.PreNewValue += RemoveValue;
+                    exclusion.PostRemoved += TryAddValue;
                 }
 
                 IReadonlyIndexSet[] reqArray = ArrayCastedType(looseRequirements);

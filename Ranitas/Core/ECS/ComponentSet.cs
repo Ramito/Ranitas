@@ -9,14 +9,17 @@
 
         private readonly IndexedSet<TValue> mIndexedSet;
 
-        public event IndexedValueHandler NewValue;
+        public event IndexedValueHandler PreNewValue;
+        public event IndexedValueHandler PostNewValue;
         public event IndexedValueHandler ValueModified;
-        public event IndexedValueHandler Removed;
+        public event IndexedValueHandler PreRemoved;
+        public event IndexedValueHandler PostRemoved;
 
         public void Add(TValue value, int indexID)
         {
+            PreNewValue?.Invoke(indexID);
             mIndexedSet.Add(value, indexID);
-            NewValue?.Invoke(indexID);
+            PostNewValue?.Invoke(indexID);
         }
 
         public void AddOrReplace(TValue value, int indexID)
@@ -41,8 +44,9 @@
 
         public void Remove(int atIndex)
         {
-            Removed?.Invoke(atIndex);
+            PreRemoved?.Invoke(atIndex);
             mIndexedSet.Remove(atIndex);
+            PostRemoved?.Invoke(atIndex);
         }
 
         public void Replace(TValue newValue, int indexID)
