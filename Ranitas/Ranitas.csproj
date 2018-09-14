@@ -72,6 +72,7 @@
     <Compile Include="Core\StateMachine\StateMachine.cs" />
     <Compile Include="Sim\ComponentSystems\Components\ControlledEntity.cs" />
     <Compile Include="Sim\ComponentSystems\Components\FrogControlState.cs" />
+    <Compile Include="Sim\ComponentSystems\Components\JumpData.cs" />
     <Compile Include="Sim\ComponentSystems\Components\Player.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\FrogInputSystem.cs" />
     <Compile Include="Sim\ComponentSystems\CommonFrogProperties.cs" />
