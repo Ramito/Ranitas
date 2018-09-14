@@ -9,14 +9,16 @@ namespace Ranitas.Sim
 {
     public sealed class FrogPhysicsSystem : ISystem
     {
-        public FrogPhysicsSystem(FrameTime frameTime, PondSimState pond)
+        public FrogPhysicsSystem(FrameTime frameTime, PondSimState pond, Data.FrogData frogData)
         {
             mTime = frameTime;
             mPond = pond;
+            mSwimData = new FrogSwimData(frogData);
         }
 
         private FrameTime mTime;    //Currently a class, but should this be it's own copy?
         private PondSimState mPond;
+        private FrogSwimData mSwimData;
 
         private struct DryFrogs
         {
@@ -32,7 +34,6 @@ namespace Ranitas.Sim
         {
             public SliceEntityOutput Entities;
             public SliceRequirementOutput<Waterborne> Waterborne;
-            public SliceRequirementOutput<FrogSwimData> SwimData;   //TODO: Shared data/prototypes!
             public SliceRequirementOutput<FrogControlState> Control;
             public SliceRequirementOutput<Position> Position;
             public SliceRequirementOutput<RectShape> RectShape;
@@ -133,7 +134,7 @@ namespace Ranitas.Sim
                     //BUG: Vertical deltas lost!
                 }
 
-                float drag = mWetFrogs.SwimData[i].WaterDrag;
+                float drag = mSwimData.WaterDrag;
                 positionDelta += FrameLinearDragPositionDelta(velocity, drag, totalAcceleration);
                 velocityDelta += FrameLinearDragVelocityDelta(velocity, drag, totalAcceleration);
 
@@ -151,7 +152,7 @@ namespace Ranitas.Sim
             Position position = mWetFrogs.Position[iterationIndex];
             RectShape rectShape = mWetFrogs.RectShape[iterationIndex];
             Rect rect = CommonFrogProperties.FrogRect(position, rectShape); //TODO: System to condense these two into a single coponent?
-            float density = mWetFrogs.SwimData[iterationIndex].Density;
+            float density = mSwimData.Density;
             return CommonFrogProperties.ComputeBuouyancyAcceleration(rect, density, mPond);
         }
 
@@ -161,11 +162,9 @@ namespace Ranitas.Sim
             float swimKickPhase = mWetFrogs.Waterborne[iterationIndex].SwimKickPhase;
             if ((swimKickPhase > 0f) && (mWetFrogs.Control[iterationIndex].InputDirection != Vector2.Zero))
             {
-                FrogSwimData swimData = mWetFrogs.SwimData[iterationIndex];
-                float accelerationModule = swimData.SwimKickVelocity * swimData.WaterDrag;  //TODO: replace kick velocity for this product?
                 swimAcceleration = mWetFrogs.Control[iterationIndex].InputDirection;
                 swimAcceleration.Normalize();
-                swimAcceleration = accelerationModule * swimAcceleration;
+                swimAcceleration = mSwimData.SwimAccelerationModule * swimAcceleration;
             }
             return swimAcceleration;
         }

@@ -45,10 +45,6 @@ namespace Ranitas.Sim
         {
             Entity frogEntity = mRegistry.Create();
 
-            //Swim data
-            FrogSwimData swimData = new FrogSwimData(mFrogData.SwimKickDuration, mFrogData.SwimKickRecharge, mFrogData.SwimKickVelocity, mFrogData.WaterDrag, mFrogData.FrogDensity);
-            mRegistry.AddComponent(frogEntity, swimData);
-
             //Controller state
             FrogControlState controlState = new FrogControlState();
             mRegistry.AddComponent(frogEntity, controlState);

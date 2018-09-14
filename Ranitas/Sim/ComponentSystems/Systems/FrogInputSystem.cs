@@ -33,10 +33,12 @@ namespace Ranitas.Sim
         {
             mTime = time;
             mJumpData = new FrogJumpData(frogData);
+            mSwimData = new FrogSwimData(frogData);
         }
 
         private FrameTime mTime;
         private FrogJumpData mJumpData;
+        private FrogSwimData mSwimData;
 
         private struct PlayersSlice
         {
@@ -51,14 +53,13 @@ namespace Ranitas.Sim
             public SliceRequirementOutput<Landed> Landed;
             public SliceRequirementOutput<FrogControlState> ControlState;
         }
-        private LandedFrogs mGroundedFrogs;
+        private LandedFrogs mLandedFrogs;
         private List<Entity> mJumpingFrogs = new List<Entity>(4);
 
         private struct WaterborneFrogs
         {
             public SliceEntityOutput Frogs;
             public SliceRequirementOutput<Waterborne> Waterborne;
-            public SliceRequirementOutput<FrogSwimData> SwimData;
             public SliceRequirementOutput<FrogControlState> ControlState;
         }
         private WaterborneFrogs mWaterborneFrogs;
@@ -66,7 +67,7 @@ namespace Ranitas.Sim
         public void Initialize(EntityRegistry registry, EventSystem eventSystem)
         {
             registry.SetupSlice(ref mPlayersSlice);
-            registry.SetupSlice(ref mGroundedFrogs);
+            registry.SetupSlice(ref mLandedFrogs);
             registry.SetupSlice(ref mWaterborneFrogs);
         }
 
@@ -107,12 +108,12 @@ namespace Ranitas.Sim
 
         private void UpdateLandedFrogs(EntityRegistry registry)
         {
-            int count = mGroundedFrogs.Frogs.Count;
+            int count = mLandedFrogs.Frogs.Count;
             for (int i = 0; i < count; ++i)
             {
-                Entity frog = mGroundedFrogs.Frogs[i];
-                Landed landed = mGroundedFrogs.Landed[i];
-                FrogControlState controlState = mGroundedFrogs.ControlState[i];
+                Entity frog = mLandedFrogs.Frogs[i];
+                Landed landed = mLandedFrogs.Landed[i];
+                FrogControlState controlState = mLandedFrogs.ControlState[i];
                 if (controlState.InputDirection.X != 0)
                 {
                     landed.FacingDirection = Math.Sign(controlState.InputDirection.X);
@@ -151,28 +152,35 @@ namespace Ranitas.Sim
             int count = mWaterborneFrogs.Frogs.Count;
             for (int i = 0; i < count; ++i)
             {
-                FrogSwimData swimData = mWaterborneFrogs.SwimData[i];
                 float swimKickPhase = mWaterborneFrogs.Waterborne[i].SwimKickPhase;
                 if (swimKickPhase < 0f)
                 {
                     swimKickPhase = swimKickPhase + mTime.DeltaTime;
                     if (swimKickPhase >= 0f)
                     {
-                        swimKickPhase = swimData.SwimKickDuration;
+                        swimKickPhase = mSwimData.SwimKickDuration;
                     }
                 }
                 else if ((swimKickPhase > 0f) && (mWaterborneFrogs.ControlState[i].InputDirection != Vector2.Zero))
                 {
                     swimKickPhase = Math.Max(0f, swimKickPhase - mTime.DeltaTime);
                 }
-                else if ((swimKickPhase != swimData.SwimKickDuration) && (mWaterborneFrogs.ControlState[i].InputDirection == Vector2.Zero))
+                else if ((swimKickPhase != mSwimData.SwimKickDuration) && (mWaterborneFrogs.ControlState[i].InputDirection == Vector2.Zero))
                 {
-                    swimKickPhase = -swimData.SwimKickRecharge;
+                    swimKickPhase = -mSwimData.SwimKickRecharge;
                 }
                 //TODO: Worth to validate the data changed?
                 Waterborne waterBorne = new Waterborne(swimKickPhase);
                 registry.SetComponent(mWaterborneFrogs.Frogs[i], waterBorne);
             }
+        }
+
+        private void UpdateFrogShape(int iterationIndex)
+        {
+            float relativeSquish = mLandedFrogs.Landed[iterationIndex].RelativeJumpPower;
+            //float scale = relativeSquish * frog.Prototype.MovementData.JumpSquish + (1f - relativeSquish);
+            //frog.RigidBodyState.Height = scale * frog.Prototype.Height;
+            //frog.RigidBodyState.Width = frog.Prototype.Width / scale;
         }
 
         private static Vector2 BestBlessedDirection(Vector2 direction, int defaultDirection)
