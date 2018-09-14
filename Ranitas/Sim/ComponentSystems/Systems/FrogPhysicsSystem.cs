@@ -176,7 +176,7 @@ namespace Ranitas.Sim
                 swimAcceleration.Normalize();
                 swimAcceleration = accelerationModule * swimAcceleration;
             }
-            else if (swimKickPhase != swimData.SwimKickDuration)
+            else if ((swimKickPhase != swimData.SwimKickDuration) && (mWetFrogs.Control[iterationIndex].InputDirection == Vector2.Zero))
             {
                 swimKickPhase = -swimData.SwimKickRecharge;
             }
