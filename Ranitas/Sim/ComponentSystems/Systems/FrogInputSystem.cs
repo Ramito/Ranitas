@@ -175,14 +175,6 @@ namespace Ranitas.Sim
             }
         }
 
-        private void UpdateFrogShape(int iterationIndex)
-        {
-            float relativeSquish = mLandedFrogs.Landed[iterationIndex].RelativeJumpPower;
-            //float scale = relativeSquish * frog.Prototype.MovementData.JumpSquish + (1f - relativeSquish);
-            //frog.RigidBodyState.Height = scale * frog.Prototype.Height;
-            //frog.RigidBodyState.Width = frog.Prototype.Width / scale;
-        }
-
         private static Vector2 BestBlessedDirection(Vector2 direction, int defaultDirection)
         {
             Vector2 absDirection = new Vector2(Math.Abs(direction.X), Math.Abs(direction.Y));

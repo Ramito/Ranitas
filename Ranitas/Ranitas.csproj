@@ -74,7 +74,8 @@
     <Compile Include="Sim\ComponentSystems\Components\FrogControlState.cs" />
     <Compile Include="Sim\ComponentSystems\Data\FrogJumpData.cs" />
     <Compile Include="Sim\ComponentSystems\Components\Player.cs" />
-    <Compile Include="Sim\ComponentSystems\Data\ShapeDeformationData.cs" />
+    <Compile Include="Sim\ComponentSystems\Data\FrogShapeDeformationData.cs" />
+    <Compile Include="Sim\ComponentSystems\Systems\FrogShapeDeformationSystem.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\FrogInputSystem.cs" />
     <Compile Include="Sim\ComponentSystems\CommonFrogProperties.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\FrogPhysicsSystem.cs" />

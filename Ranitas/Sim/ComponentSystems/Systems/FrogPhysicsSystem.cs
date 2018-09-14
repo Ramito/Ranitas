@@ -131,7 +131,6 @@ namespace Ranitas.Sim
 
                     velocity = new Vector2(velocity.X, 0f);
                     totalAcceleration = new Vector2(totalAcceleration.X, 0f);
-                    //BUG: Vertical deltas lost!
                 }
 
                 float drag = mSwimData.WaterDrag;
