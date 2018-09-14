@@ -54,16 +54,27 @@ namespace Ranitas.Sim
         private LandedFrogs mGroundedFrogs;
         private List<Entity> mJumpingFrogs = new List<Entity>(4);
 
+        private struct WaterborneFrogs
+        {
+            public SliceEntityOutput Frogs;
+            public SliceRequirementOutput<Waterborne> Waterborne;
+            public SliceRequirementOutput<FrogSwimData> SwimData;
+            public SliceRequirementOutput<FrogControlState> ControlState;
+        }
+        private WaterborneFrogs mWaterborneFrogs;
+
         public void Initialize(EntityRegistry registry, EventSystem eventSystem)
         {
             registry.SetupSlice(ref mPlayersSlice);
             registry.SetupSlice(ref mGroundedFrogs);
+            registry.SetupSlice(ref mWaterborneFrogs);
         }
 
         public void Update(EntityRegistry registry, EventSystem eventSystem)
         {
             UpdateControlState(registry);
             UpdateLandedFrogs(registry);
+            UpdateSwimingFrogs(registry);
         }
 
         private void UpdateControlState(EntityRegistry registry)
@@ -96,7 +107,7 @@ namespace Ranitas.Sim
 
         private void UpdateLandedFrogs(EntityRegistry registry)
         {
-            int count = mGroundedFrogs.Landed.Count;
+            int count = mGroundedFrogs.Frogs.Count;
             for (int i = 0; i < count; ++i)
             {
                 Entity frog = mGroundedFrogs.Frogs[i];
@@ -133,6 +144,35 @@ namespace Ranitas.Sim
                 registry.AddComponent(frog, new Airborne());
             }
             mJumpingFrogs.Clear();
+        }
+
+        private void UpdateSwimingFrogs(EntityRegistry registry)
+        {
+            int count = mWaterborneFrogs.Frogs.Count;
+            for (int i = 0; i < count; ++i)
+            {
+                FrogSwimData swimData = mWaterborneFrogs.SwimData[i];
+                float swimKickPhase = mWaterborneFrogs.Waterborne[i].SwimKickPhase;
+                if (swimKickPhase < 0f)
+                {
+                    swimKickPhase = swimKickPhase + mTime.DeltaTime;
+                    if (swimKickPhase >= 0f)
+                    {
+                        swimKickPhase = swimData.SwimKickDuration;
+                    }
+                }
+                else if ((swimKickPhase > 0f) && (mWaterborneFrogs.ControlState[i].InputDirection != Vector2.Zero))
+                {
+                    swimKickPhase = Math.Max(0f, swimKickPhase - mTime.DeltaTime);
+                }
+                else if ((swimKickPhase != swimData.SwimKickDuration) && (mWaterborneFrogs.ControlState[i].InputDirection == Vector2.Zero))
+                {
+                    swimKickPhase = -swimData.SwimKickRecharge;
+                }
+                //TODO: Worth to validate the data changed?
+                Waterborne waterBorne = new Waterborne(swimKickPhase);
+                registry.SetComponent(mWaterborneFrogs.Frogs[i], waterBorne);
+            }
         }
 
         private static Vector2 BestBlessedDirection(Vector2 direction, int defaultDirection)

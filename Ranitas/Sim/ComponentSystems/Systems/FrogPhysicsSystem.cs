@@ -157,32 +157,16 @@ namespace Ranitas.Sim
 
         private Vector2 UpdateFrogSwimAndGetAcceleration(EntityRegistry registry, int iterationIndex)
         {
-            FrogSwimData swimData = mWetFrogs.SwimData[iterationIndex];
             Vector2 swimAcceleration = Vector2.Zero;
             float swimKickPhase = mWetFrogs.Waterborne[iterationIndex].SwimKickPhase;
-            if (swimKickPhase < 0f)
+            if ((swimKickPhase > 0f) && (mWetFrogs.Control[iterationIndex].InputDirection != Vector2.Zero))
             {
-                swimKickPhase = swimKickPhase + mTime.DeltaTime;
-                if (swimKickPhase >= 0f)
-                {
-                    swimKickPhase = swimData.SwimKickDuration;
-                }
-            }
-            else if ((swimKickPhase > 0f) && (mWetFrogs.Control[iterationIndex].InputDirection != Vector2.Zero))
-            {
-                swimKickPhase = Math.Max(0f, swimKickPhase - mTime.DeltaTime);
+                FrogSwimData swimData = mWetFrogs.SwimData[iterationIndex];
                 float accelerationModule = swimData.SwimKickVelocity * swimData.WaterDrag;  //TODO: replace kick velocity for this product?
                 swimAcceleration = mWetFrogs.Control[iterationIndex].InputDirection;
                 swimAcceleration.Normalize();
                 swimAcceleration = accelerationModule * swimAcceleration;
             }
-            else if ((swimKickPhase != swimData.SwimKickDuration) && (mWetFrogs.Control[iterationIndex].InputDirection == Vector2.Zero))
-            {
-                swimKickPhase = -swimData.SwimKickRecharge;
-            }
-            //TODO: Worth to validate the data changed?
-            Waterborne waterBorne = new Waterborne(swimKickPhase);
-            registry.SetComponent(mWetFrogs.Entities[iterationIndex], waterBorne);
             return swimAcceleration;
         }
     }
