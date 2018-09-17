@@ -3,11 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Ranitas.Core.Render;
 using Ranitas.Data;
-using Ranitas.Insects;
-using Ranitas.Pond;
-using Ranitas.Render;
 using Ranitas.Sim;
-using System.Collections.Generic;
+using System;
 
 namespace Ranitas
 {
@@ -29,6 +26,7 @@ namespace Ranitas
             mGraphics = new GraphicsDeviceManager(this);
             MatchCurrentResolution(mGraphics);
             Content.RootDirectory = "Content";
+            TargetElapsedTime = TimeSpan.FromSeconds(1d / 120d);
         }
 
         private static void MatchCurrentResolution(GraphicsDeviceManager graphics)

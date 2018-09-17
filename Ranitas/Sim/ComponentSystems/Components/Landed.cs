@@ -2,13 +2,11 @@
 {
     public struct Landed
     {
-        public Landed(float relativeJumpPower, int facingDirection)
+        public Landed(float relativeJumpPower)
         {
             RelativeJumpPower = relativeJumpPower;
-            FacingDirection = facingDirection;  //TODO: Should be on a different component?
         }
 
         public float RelativeJumpPower;
-        public int FacingDirection;
     }
 }

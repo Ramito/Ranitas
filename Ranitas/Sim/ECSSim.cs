@@ -7,7 +7,7 @@ namespace Ranitas.Sim
 {
     public sealed class ECSSim  //Working name only!
     {
-        private const int kMaxEntities = 2000;
+        private const int kMaxEntities = 200;
         private EntityRegistry mRegistry = new EntityRegistry(kMaxEntities);
         private EventSystem mEventSystem = new EventSystem();
 
@@ -84,6 +84,9 @@ namespace Ranitas.Sim
                 new FrogShapeDeformationSystem(dependencies.FrogData),
                 new FrogPhysicsSystem(dependencies.Time, dependencies.PondState, dependencies.FrogData),
                 new WetDryFrogSystem(dependencies.PondState),
+                new ToungueSystem(dependencies.FrogData, dependencies.Time),
+                new ToungueShapeSystem(dependencies.FrogData),
+                new TounguePositionSystem(dependencies.FrogData),
             };
             return systems;
         }

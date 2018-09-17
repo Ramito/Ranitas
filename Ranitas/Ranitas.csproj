@@ -71,10 +71,15 @@
     <Compile Include="Core\StateMachine\State.cs" />
     <Compile Include="Core\StateMachine\StateMachine.cs" />
     <Compile Include="Sim\ComponentSystems\Components\ControlledEntity.cs" />
+    <Compile Include="Sim\ComponentSystems\Components\Facing.cs" />
     <Compile Include="Sim\ComponentSystems\Components\FrogControlState.cs" />
+    <Compile Include="Sim\ComponentSystems\Components\ParentEntity.cs" />
+    <Compile Include="Sim\ComponentSystems\Components\ToungueState.cs" />
     <Compile Include="Sim\ComponentSystems\Data\FrogJumpData.cs" />
     <Compile Include="Sim\ComponentSystems\Components\Player.cs" />
     <Compile Include="Sim\ComponentSystems\Data\FrogShapeDeformationData.cs" />
+    <Compile Include="Sim\ComponentSystems\Data\ToungueData.cs" />
+    <Compile Include="Sim\ComponentSystems\Data\ToungueShapeData.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\FrogShapeDeformationSystem.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\FrogInputSystem.cs" />
     <Compile Include="Sim\ComponentSystems\CommonFrogProperties.cs" />
@@ -86,6 +91,9 @@
     <Compile Include="Sim\ComponentSystems\Components\Airborne.cs" />
     <Compile Include="Sim\ComponentSystems\Components\Waterborne.cs" />
     <Compile Include="Sim\ComponentSystems\Components\Velocity.cs" />
+    <Compile Include="Sim\ComponentSystems\Systems\TounguePositionSystem.cs" />
+    <Compile Include="Sim\ComponentSystems\Systems\ToungueShapeSystem.cs" />
+    <Compile Include="Sim\ComponentSystems\Systems\ToungueSystem.cs" />
     <Compile Include="Sim\ECSSim.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Insects\FlyRenderer.cs" />

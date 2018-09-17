@@ -57,6 +57,10 @@ namespace Ranitas.Sim
             Position spawnPosition = new Position(positionValue);
             mRegistry.AddComponent(frogEntity, spawnPosition);
 
+            //Facing
+            Facing facing = new Facing();
+            mRegistry.AddComponent(frogEntity, facing);
+
             //Velocity
             Velocity velocity = new Velocity();
             mRegistry.AddComponent(frogEntity, velocity);

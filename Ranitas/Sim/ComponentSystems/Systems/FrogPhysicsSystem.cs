@@ -158,12 +158,9 @@ namespace Ranitas.Sim
         private Vector2 UpdateFrogSwimAndGetAcceleration(EntityRegistry registry, int iterationIndex)
         {
             Vector2 swimAcceleration = Vector2.Zero;
-            float swimKickPhase = mWetFrogs.Waterborne[iterationIndex].SwimKickPhase;
-            if ((swimKickPhase > 0f) && (mWetFrogs.Control[iterationIndex].InputDirection != Vector2.Zero))
+            if (mWetFrogs.Waterborne[iterationIndex].SwimKickPhase > 0f)
             {
-                swimAcceleration = mWetFrogs.Control[iterationIndex].InputDirection;
-                swimAcceleration.Normalize();
-                swimAcceleration = mSwimData.SwimAccelerationModule * swimAcceleration;
+                swimAcceleration = mSwimData.SwimAccelerationModule * mWetFrogs.Control[iterationIndex].InputDirection;
             }
             return swimAcceleration;
         }

@@ -50,11 +50,21 @@ namespace Ranitas.Sim
         private struct LandedFrogs
         {
             public SliceEntityOutput Frogs;
+            public SliceRequirementOutput<Facing> Facing;   //Better to get from registry if rare or add it here?
             public SliceRequirementOutput<Landed> Landed;
             public SliceRequirementOutput<FrogControlState> ControlState;
         }
         private LandedFrogs mLandedFrogs;
         private List<Entity> mJumpingFrogs = new List<Entity>(4);
+
+        private struct NoToungueFrogs
+        {
+            public SliceEntityOutput Frogs;
+            public SliceRequirementOutput<Facing> Facing;
+            public SliceRequirementOutput<FrogControlState> ControlState;
+            public SliceExclusion<ControlledEntity> NoToungue;
+        }
+        private NoToungueFrogs mNoToungueFrogs;
 
         private struct WaterborneFrogs
         {
@@ -68,12 +78,14 @@ namespace Ranitas.Sim
         {
             registry.SetupSlice(ref mPlayersSlice);
             registry.SetupSlice(ref mLandedFrogs);
+            registry.SetupSlice(ref mNoToungueFrogs);
             registry.SetupSlice(ref mWaterborneFrogs);
         }
 
         public void Update(EntityRegistry registry, EventSystem eventSystem)
         {
             UpdateControlState(registry);
+            UpdateNoToungueFrogs(registry);
             UpdateLandedFrogs(registry);
             UpdateSwimingFrogs(registry);
         }
@@ -106,6 +118,24 @@ namespace Ranitas.Sim
             }
         }
 
+        private void UpdateNoToungueFrogs(EntityRegistry registry)
+        {
+            int count = mNoToungueFrogs.Frogs.Count;
+            for (int i = 0; i < count; ++i)
+            {
+                FrogControlState controlState = mNoToungueFrogs.ControlState[i];
+                if (controlState.InputDirection.X != 0)
+                {
+                    Facing facing = mNoToungueFrogs.Facing[i];
+                    int sign = Math.Sign(controlState.InputDirection.X);
+                    if (sign != facing.CurrentFacing)
+                    {
+                        registry.SetComponent(mNoToungueFrogs.Frogs[i], new Facing(sign));
+                    }
+                }
+            }
+        }
+
         private void UpdateLandedFrogs(EntityRegistry registry)
         {
             int count = mLandedFrogs.Frogs.Count;
@@ -114,10 +144,6 @@ namespace Ranitas.Sim
                 Entity frog = mLandedFrogs.Frogs[i];
                 Landed landed = mLandedFrogs.Landed[i];
                 FrogControlState controlState = mLandedFrogs.ControlState[i];
-                if (controlState.InputDirection.X != 0)
-                {
-                    landed.FacingDirection = Math.Sign(controlState.InputDirection.X);
-                }
                 if (controlState.InputDirection.Y >= 0f)
                 {
                     if (controlState.JumpSignal)
@@ -127,7 +153,8 @@ namespace Ranitas.Sim
                     }
                     else if (landed.RelativeJumpPower != 0f)
                     {
-                        Vector2 blessedDirection = BestBlessedDirection(controlState.InputDirection, landed.FacingDirection);
+                        Facing facing = mLandedFrogs.Facing[i]; //For rare cases, should I fetch this from the registry instead?
+                        Vector2 blessedDirection = BestBlessedDirection(controlState.InputDirection, facing.CurrentFacing);
                         Vector2 jumpVelocity = (landed.RelativeJumpPower * mJumpData.JumpSpeed) * blessedDirection;
                         registry.SetComponent(frog, new Velocity(jumpVelocity));
                         mJumpingFrogs.Add(frog);
