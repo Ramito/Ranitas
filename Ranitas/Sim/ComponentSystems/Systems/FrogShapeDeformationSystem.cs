@@ -26,14 +26,11 @@ namespace Ranitas.Sim
             for (int i = 0; i < count; ++i)
             {
                 float relativeSquish = mLandedFrogs.Landed[i].RelativeJumpPower;
-                if (relativeSquish != 0)
-                {
-                    float scale = relativeSquish * mDeformationData.JumpSquish + (1f - relativeSquish);
-                    float height = scale * mOriginalFrogShape.Height;
-                    float width = mOriginalFrogShape.Width / scale;
-                    RectShape newShape = new RectShape(width, height);
-                    registry.SetComponent(mLandedFrogs.Frog[i], newShape);
-                }
+                float scale = relativeSquish * mDeformationData.JumpSquish + (1f - relativeSquish);
+                float height = scale * mOriginalFrogShape.Height;
+                float width = mOriginalFrogShape.Width / scale;
+                RectShape newShape = new RectShape(width, height);
+                registry.SetComponent(mLandedFrogs.Frog[i], newShape);
             }
             count = mAirborneFrogs.Frog.Count;
             for (int i = 0; i < count; ++i)
