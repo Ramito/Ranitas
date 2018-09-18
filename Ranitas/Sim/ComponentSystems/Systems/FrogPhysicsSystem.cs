@@ -26,6 +26,7 @@ namespace Ranitas.Sim
             public SliceExclusion<Waterborne> NotWet;
             public SliceRequirementOutput<Position> Positions;
             public SliceRequirementOutput<Velocity> Velocities;
+            public SliceRequirement<FrogControlState> IsFrog;   //TODO: Markup components!
         }
         private DryFrogs mDryFrogs = new DryFrogs();
 

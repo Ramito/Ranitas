@@ -56,7 +56,7 @@ namespace Ranitas
             primitiveRenderer.Setup(mGraphics.GraphicsDevice);
 
             System.Diagnostics.Debug.Assert(IsFixedTimeStep);
-            RanitasDependencies dependencies = new RanitasDependencies((float)TargetElapsedTime.TotalSeconds, pondData, frogData, primitiveRenderer);
+            RanitasDependencies dependencies = new RanitasDependencies((float)TargetElapsedTime.TotalSeconds, pondData, frogData, flyData, primitiveRenderer);
             mSim = new ECSSim(dependencies);
             mSim.Initialize();
         }

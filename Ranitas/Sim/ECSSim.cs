@@ -52,11 +52,12 @@ namespace Ranitas.Sim
 
     public class RanitasDependencies
     {
-        public RanitasDependencies(float deltaTime, Data.PondData pondData, Data.FrogData frogData, PrimitiveRenderer renderer)
+        public RanitasDependencies(float deltaTime, Data.PondData pondData, Data.FrogData frogData, Data.FlyData flyData, PrimitiveRenderer renderer)
         {
             Time = new FrameTime(deltaTime);
             FrogData = frogData;
             PondData = pondData;
+            FlyData = flyData;
             PondState = new Pond.PondSimState(pondData);
             Renderer = renderer;
         }
@@ -64,18 +65,13 @@ namespace Ranitas.Sim
         public readonly FrameTime Time;
         public readonly Data.FrogData FrogData;
         public readonly Data.PondData PondData;
+        public readonly Data.FlyData FlyData;
         public readonly Pond.PondSimState PondState;
         public readonly PrimitiveRenderer Renderer; //TODO: Separate sim vs render dependencies?
     }
 
     public static class RanitasSystems
     {
-        public static RanitasDependencies MakeDependencies(float deltaTime, Data.PondData pondData, Data.FrogData frogData, PrimitiveRenderer renderer)
-        {
-            RanitasDependencies dependencies = new RanitasDependencies(deltaTime, pondData, frogData, renderer);
-            return dependencies;
-        }
-
         public static List<ISystem> MakeSystems(RanitasDependencies dependencies)
         {
             List<ISystem> systems = new List<ISystem>()
@@ -87,6 +83,7 @@ namespace Ranitas.Sim
                 new ToungueSystem(dependencies.FrogData, dependencies.Time),
                 new ToungueShapeSystem(dependencies.FrogData),
                 new TounguePositionSystem(dependencies.FrogData),
+                new FlySystem(dependencies.Time, dependencies.PondState, dependencies.FlyData),
             };
             return systems;
         }

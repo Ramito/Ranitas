@@ -6,7 +6,7 @@
         {
             Length = frogData.ToungueLength;
             Thickness = frogData.ToungueThickness;
-            RelativeVerticalOffset = 0.25f;  //TODO: Data drive!
+            RelativeVerticalOffset = frogData.ToungueRelativeVerticalOffset;
         }
 
         public float Length;

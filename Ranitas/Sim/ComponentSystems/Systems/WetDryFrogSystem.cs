@@ -24,6 +24,7 @@ namespace Ranitas.Sim
             public SliceRequirementOutput<Position> Positions;
             public SliceRequirementOutput<Velocity> Velocities;
             public SliceRequirementOutput<RectShape> Shapes;
+            public SliceRequirement<FrogControlState> IsFrog;   //TODO: Markup components!
         }
         private AirborneFrogs mAirborneFogs = new AirborneFrogs();
 
