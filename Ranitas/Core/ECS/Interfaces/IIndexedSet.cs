@@ -1,6 +1,6 @@
 ﻿namespace Ranitas.Core.ECS
 {
-    public interface IIndexedSet<TValue> : IReadonlyIndexedSet<TValue>, IReadonlyIndexSet, IUntypedIndexedSet where TValue : struct
+    public interface IIndexedSet<TValue> : IReadonlyIndexedSet<TValue>, IUntypedIndexedSet where TValue : struct
     {
         void Add(TValue value, int indexID);
         void AddOrReplace(TValue value, int indexID);
