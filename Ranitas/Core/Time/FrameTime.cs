@@ -1,4 +1,4 @@
-﻿namespace Ranitas.Sim
+﻿namespace Ranitas.Core
 {
     public class FrameTime
     {

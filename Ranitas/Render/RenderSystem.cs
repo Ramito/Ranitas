@@ -20,9 +20,7 @@ namespace Ranitas.Render
 
         private struct ColoredRectSlice
         {
-            //TODO: System to convert rect shapes and positions into readily made rects!
-            public SliceRequirementOutput<Position> Position;
-            public SliceRequirementOutput<RectShape> RectShape;
+            public SliceRequirementOutput<Rect> Rect;
             public SliceRequirementOutput<Color> Color;
         }
         ColoredRectSlice mColoredRectSlice;
@@ -35,16 +33,10 @@ namespace Ranitas.Render
         public void Update(EntityRegistry registry, EventSystem eventSystem)
         {
             RenderPond();
-            int count = mColoredRectSlice.Position.Count;
+            int count = mColoredRectSlice.Rect.Count;
             for (int i = 0; i < count; ++i)
             {
-                Vector2 centerOfMass = mColoredRectSlice.Position[i].Value;
-                RectShape shape = mColoredRectSlice.RectShape[i];
-                float width = shape.Width;
-                float height = shape.Height;
-
-                Rect rect = new Rect(centerOfMass, width, height);
-                mRenderer.PushRect(rect, mColoredRectSlice.Color[i]);
+                mRenderer.PushRect(mColoredRectSlice.Rect[i], mColoredRectSlice.Color[i]);
             }
             mRenderer.Render();
         }

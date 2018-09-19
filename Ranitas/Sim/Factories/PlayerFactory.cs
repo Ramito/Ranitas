@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Ranitas.Core;
 using Ranitas.Core.ECS;
 using Ranitas.Data;
 using System.Diagnostics;
@@ -69,9 +70,12 @@ namespace Ranitas.Sim
             RectShape rectShape = new RectShape(mFrogData.Width, mFrogData.Height);
             mRegistry.AddComponent(frogEntity, rectShape);
 
-            //Airborne - Spawned in the air!
-            Airborne airborne = new Airborne();
-            mRegistry.AddComponent(frogEntity, airborne);
+            //Rect - Added automatically by the RectUpkeepSystem, but I don't want to worry about the first frame this being missing
+            Rect rect = new Rect(spawnPosition.Value, rectShape.Width, rectShape.Height);
+
+            //Gravity - Spawned in the air!
+            Gravity gravity = new Gravity();
+            mRegistry.AddComponent(frogEntity, gravity);
 
             //Color
             Color color = Color.YellowGreen;

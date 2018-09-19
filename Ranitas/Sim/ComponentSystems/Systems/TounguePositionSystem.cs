@@ -23,11 +23,11 @@ namespace Ranitas.Sim
             for (int i = 0; i < count; ++i)
             {
                 Entity parentFrog = mTounguesWithPosition.ParentFrog[i].Parent;
+                //TODO: The following could be done with a frog slice if there was a clean way to fetch random entities from the slice. Entity output could do that.
                 Debug.Assert(registry.IsValid(parentFrog));
-                Debug.Assert(registry.HasComponent<Position>(parentFrog));
-                Debug.Assert(registry.HasComponent<RectShape>(parentFrog));
                 Debug.Assert(registry.HasComponent<Facing>(parentFrog));
-                Rect frogRect = CommonFrogProperties.FrogRect(registry.GetComponent<Position>(parentFrog), registry.GetComponent<RectShape>(parentFrog));
+                Debug.Assert(registry.HasComponent<Rect>(parentFrog));
+                Rect frogRect = registry.GetComponent<Rect>(parentFrog);
                 int facing = registry.GetComponent<Facing>(parentFrog).CurrentFacing;
                 Vector2 extendDirection;
                 Vector2 anchor;

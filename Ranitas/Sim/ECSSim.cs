@@ -76,14 +76,18 @@ namespace Ranitas.Sim
         {
             List<ISystem> systems = new List<ISystem>()
             {
+                new FlySystem(dependencies.Time, dependencies.PondState, dependencies.FlyData),
                 new FrogInputSystem(dependencies.Time, dependencies.FrogData),
-                new FrogShapeDeformationSystem(dependencies.FrogData),
-                new FrogPhysicsSystem(dependencies.Time, dependencies.PondState, dependencies.FrogData),
+                new FrogShapeDeformationSystem(dependencies.FrogData),  //MODIFIES SHAPE
+                new GravityPhysicsSystem(dependencies.Time),    //MODIFIES POSITION -> Shape
+                new SwimingFrogPhysicsSystem(dependencies.Time, dependencies.PondState, dependencies.FrogData), //MODIFIES POSITION -> Shape
                 new WetDryFrogSystem(dependencies.PondState),
+                new RectUpkeepSystem(),
+                new LilyCollisionSystem(dependencies.PondState),    //Updates rects
                 new ToungueSystem(dependencies.FrogData, dependencies.Time),
                 new ToungueShapeSystem(dependencies.FrogData),
                 new TounguePositionSystem(dependencies.FrogData),
-                new FlySystem(dependencies.Time, dependencies.PondState, dependencies.FlyData),
+                new RectUpkeepSystem(), //WIP TODO: The separate rect system is problematic, I need to replace it or add a parented rect system
             };
             return systems;
         }

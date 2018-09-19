@@ -54,7 +54,8 @@ namespace Ranitas.Sim
         {
             public SliceEntityOutput Frog;
             public SliceRequirementOutput<RectShape> Shape;
-            public SliceRequirement<Airborne> AreAirborne;
+            public SliceRequirement<Gravity> Flying;
+            public SliceExclusion<Landed> NotLanded;
         }
         private AirborneFrogs mAirborneFrogs;
     }

@@ -169,7 +169,6 @@ namespace Ranitas.Sim
             foreach (Entity frog in mJumpingFrogs)
             {
                 registry.RemoveComponent<Landed>(frog);
-                registry.AddComponent(frog, new Airborne());
             }
             mJumpingFrogs.Clear();
         }
