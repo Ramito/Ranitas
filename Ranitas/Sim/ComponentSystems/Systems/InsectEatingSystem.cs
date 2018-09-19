@@ -33,7 +33,7 @@ namespace Ranitas.Sim
             {
                 Rect toungueRect = mToungueSlice.Rect[toungueIndex];
                 int insectCount = mInsectSlice.Entity.Count;
-                for (int insectIndex = insectCount - 1; insectCount >= 0; --insectCount)
+                for (int insectIndex = insectCount - 1; insectIndex >= 0; --insectIndex)
                 {
                     Rect insectRect = mInsectSlice.Rect[insectIndex];
                     if (toungueRect.Intersects(insectRect))
