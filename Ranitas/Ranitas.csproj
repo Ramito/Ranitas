@@ -83,6 +83,7 @@
     <Compile Include="Sim\ComponentSystems\Data\ToungueData.cs" />
     <Compile Include="Sim\ComponentSystems\Data\ToungueShapeData.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\FlySystem.cs" />
+    <Compile Include="Sim\ComponentSystems\Systems\InsectEatingSystem.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\LilyCollisionSystem.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\GravityPhysicsSystem.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\FrogShapeDeformationSystem.cs" />

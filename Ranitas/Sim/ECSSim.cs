@@ -88,6 +88,7 @@ namespace Ranitas.Sim
                 new ToungueShapeSystem(dependencies.FrogData),
                 new TounguePositionSystem(dependencies.FrogData),
                 new RectUpkeepSystem(), //WIP TODO: The separate rect system is problematic, I need to replace it or add a parented rect system
+                new InsectEatingSystem(),
             };
             return systems;
         }
