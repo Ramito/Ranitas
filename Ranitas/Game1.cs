@@ -3,13 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Ranitas.Core.Render;
 using Ranitas.Data;
-using Ranitas.Frog;
-using Ranitas.Frog.Sim;
-using Ranitas.Input;
-using Ranitas.Insects;
-using Ranitas.Pond;
 using Ranitas.Sim;
-using System.Collections.Generic;
+using System;
 
 namespace Ranitas
 {
@@ -18,32 +13,20 @@ namespace Ranitas
     /// </summary>
     public class Game1 : Game
     {
-        private static readonly int[] sSuportedPlayers = new[] { 0, 1, 2, 3 };
+        private static readonly int kSuportedPlayers = 4;
 
         private GraphicsDeviceManager mGraphics;
 
-        private FrogData mFrogPrototype;
-        private float[] mFrogSpawns;
+        private ECSSim mSim;
 
-        private PondSimState mPond;
-        private PondRenderer mPondRenderer;
-
-        private InputProcessor mInputProcessor = new InputProcessor(sSuportedPlayers.Length);
-
-        private List<FrogSimState> mFrogs;
-        private FrogRenderer mFrogRenderer;
-        private FlyRenderer mFlyRenderer;
-        private PrimitiveRenderer mPrimitiveRenderer;
-
-        private RanitasSim mSim;
-
-        private PlayerBinding[] mPlayerBindings = new PlayerBinding[sSuportedPlayers.Length];
+        private bool[] mSPawnedPlayers = new bool[kSuportedPlayers];
         
         public Game1()
         {
             mGraphics = new GraphicsDeviceManager(this);
             MatchCurrentResolution(mGraphics);
             Content.RootDirectory = "Content";
+            TargetElapsedTime = TimeSpan.FromSeconds(1d / 120d);
         }
 
         private static void MatchCurrentResolution(GraphicsDeviceManager graphics)
@@ -63,26 +46,19 @@ namespace Ranitas
 
         protected override void LoadContent()
         {
-            mFrogPrototype = Content.Load<FrogData>("Frog");
+            FrogData frogData = Content.Load<FrogData>("Frog");
             PondData pondData = Content.Load<PondData>("Pond");
-            FlyData flyData = Content.Load<FlyData>("Fly");
-            mFrogSpawns = pondData.FrogSpawns;
+            FlyData flyData = Content.Load<FlyData>("Fly"); //WIP TODO WIP
 
-            mPond = new PondSimState(pondData);
-            mFrogs = new List<FrogSimState>(sSuportedPlayers.Length);
+            SetupCamera(mGraphics.GraphicsDevice, pondData);
+
+            PrimitiveRenderer primitiveRenderer = new PrimitiveRenderer();
+            primitiveRenderer.Setup(mGraphics.GraphicsDevice);
 
             System.Diagnostics.Debug.Assert(IsFixedTimeStep);
-            mSim = new RanitasSim(flyData, mPond, mFrogs, (float)TargetElapsedTime.TotalSeconds, mPlayerBindings);
-
-            mPrimitiveRenderer = new PrimitiveRenderer();
-            mPrimitiveRenderer.Setup(mGraphics.GraphicsDevice);
-
-            mPondRenderer = new PondRenderer();
-            mPondRenderer.Setup(mGraphics.GraphicsDevice, pondData);
-
-            mFrogRenderer = new FrogRenderer();
-
-            mFlyRenderer = new FlyRenderer(mSim.FlySim);
+            RanitasDependencies dependencies = new RanitasDependencies((float)TargetElapsedTime.TotalSeconds, pondData, frogData, flyData, primitiveRenderer);
+            mSim = new ECSSim(dependencies);
+            mSim.Initialize();
         }
 
         protected override void UnloadContent()
@@ -92,42 +68,43 @@ namespace Ranitas
 
         protected override void Update(GameTime gameTime)
         {
-            foreach (var playerIndex in sSuportedPlayers)
+            for (int i = 0; i < kSuportedPlayers; ++i)
             {
-                if (mPlayerBindings[playerIndex] == null)
-                {
-                    if (GamePad.GetState(playerIndex).Buttons.Start == ButtonState.Pressed)
-                    {
-                        FrogSimState frog = mPond.SpawnFrog(mFrogPrototype, mFrogSpawns, playerIndex);
-                        mFrogs.Add(frog);
-                        mPlayerBindings[playerIndex] = new PlayerBinding(playerIndex, frog);
-                    }
-                }
-                else
-                {
-                    mInputProcessor.ProcessInput(playerIndex);
-                }
-                if ((GamePad.GetState(playerIndex).Buttons.Back == ButtonState.Pressed) || Keyboard.GetState().IsKeyDown(Keys.Escape))
+                if ((GamePad.GetState(i).Buttons.Back == ButtonState.Pressed) || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 {
                     Exit();
                 }
+                if (!mSPawnedPlayers[i])
+                {
+                    if (GamePad.GetState(i).Buttons.Start == ButtonState.Pressed)
+                    {
+                        mSim.SpawnPlayer(i);  //TODO: Make a player ID type?
+                        mSPawnedPlayers[i] = true;
+                    }
+                }
             }
 
-            mSim.Update(mInputProcessor.Inputs);
+            mSim.Update();
 
             base.Update(gameTime);
+        }
+
+        private void SetupCamera(GraphicsDevice device, PondData pondData)
+        {
+            float ponWidth = pondData.Width;
+            float ponHeight = pondData.Height;
+            float aspectRatio = device.Adapter.CurrentDisplayMode.AspectRatio;
+            BasicEffect effect = new BasicEffect(device);
+            effect.VertexColorEnabled = true;
+            effect.World = Matrix.CreateTranslation(-ponWidth * 0.5f, -ponHeight * 0.5f, 0f);
+            effect.View = Matrix.CreateOrthographic(aspectRatio * ponHeight, ponHeight, -100, 100);
+            effect.CurrentTechnique.Passes[0].Apply();
         }
 
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.DimGray);
-            mPondRenderer.RenderPond(mPond, mPrimitiveRenderer);
-            foreach (var frog in mFrogs)
-            {
-                mFrogRenderer.RenderFrog(frog, mPrimitiveRenderer);
-            }
-            mFlyRenderer.Render(mPrimitiveRenderer);
-            mPrimitiveRenderer.Render();
+            mSim.Render();
             base.Draw(gameTime);
         }
     }

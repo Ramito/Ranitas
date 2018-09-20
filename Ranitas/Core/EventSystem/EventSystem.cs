@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Ranitas.Core.EventSystem
+namespace Ranitas.Core
 {
     public sealed class EventSystem
     {

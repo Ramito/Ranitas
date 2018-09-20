@@ -1,11 +1,12 @@
 ﻿namespace Ranitas.Core.ECS
 {
-    public delegate void IndexedValueHandler(int indexID);
+    public delegate void SetIndexHandler(int indexID);
 
     public interface IPublishingIndexSet : IReadonlyIndexSet
     {
-        event IndexedValueHandler NewValue;
-        event IndexedValueHandler ValueModified;
-        event IndexedValueHandler Removed;
+        event SetIndexHandler PreNewValue;
+        event SetIndexHandler PostNewValue;
+        event SetIndexHandler PreRemoved;
+        event SetIndexHandler PostRemoved;
     }
 }

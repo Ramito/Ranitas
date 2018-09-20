@@ -16,6 +16,7 @@
 
         public float ToungueLength;
         public float ToungueThickness;
+        public float ToungueRelativeVerticalOffset;
         public float ToungueExtendTime;
         public float ToungueFullyExtendedTime;
         public float ToungueRetractTime;

@@ -1,13 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Ranitas.Data;
-using Ranitas.Frog.Sim;
 using System.Collections.Generic;
 
 namespace Ranitas.Pond
 {
     public sealed class PondSimState
     {
-        public readonly static Vector2 kGravity = new Vector2(0f, -980f);    //TODO: Data drive!
+        public readonly static Vector2 kGravity = new Vector2(0f, -982f);    //TODO: Data drive!
 
         public float Width;
         public float Height;
@@ -29,16 +28,6 @@ namespace Ranitas.Pond
                     Lilies.Add(lilyState);
                 }
             }
-        }
-
-        public FrogSimState SpawnFrog(FrogData frogData, float[] frogSpawns, int spawnIndex)
-        {
-            spawnIndex %= frogSpawns.Length;
-            FrogSimState frogSimState = new FrogSimState(frogData);
-            float spawnX = frogSpawns[spawnIndex];
-            float spawnY = FindSpawnY(spawnX) + 500;
-            frogSimState.RigidBodyState.FeetPosition = new Vector2(spawnX, spawnY);
-            return frogSimState;
         }
 
         private float FindSpawnY(float forX)
