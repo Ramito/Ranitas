@@ -1,14 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
 using Ranitas.Core;
 using Ranitas.Core.ECS;
-using System;
 using System.Collections.Generic;
 
 namespace Ranitas.Sim
 {
-    public sealed class RectUpkeepSystem : ISystem
+    public sealed class MainRectUpkeepSystem : ISystem
     {
-        public RectUpkeepSystem() { }
+        public MainRectUpkeepSystem() { }
 
         public void Initialize(EntityRegistry registry, EventSystem eventSystem)
         {
@@ -70,6 +69,7 @@ namespace Ranitas.Sim
             public SliceRequirementOutput<RectShape> RectShape;
             public SliceRequirementOutput<Position> Position;
             public SliceRequirement<Rect> HasRect;
+            public SliceExclusion<ParentEntity> NoParents;
         }
         private ShapePositionRectSlice mHasRect;
     }

@@ -88,6 +88,7 @@
     <Compile Include="Sim\ComponentSystems\Systems\GravityPhysicsSystem.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\FrogShapeDeformationSystem.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\FrogInputSystem.cs" />
+    <Compile Include="Sim\ComponentSystems\Systems\ParentedRectUpkeepSystem.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\SwimingFrogPhysicsSystem.cs" />
     <Compile Include="Sim\ComponentSystems\Data\FrogSwimData.cs" />
     <Compile Include="Sim\ComponentSystems\Components\Landed.cs" />
@@ -95,7 +96,7 @@
     <Compile Include="Sim\ComponentSystems\Components\Position.cs" />
     <Compile Include="Sim\ComponentSystems\Components\Waterborne.cs" />
     <Compile Include="Sim\ComponentSystems\Components\Velocity.cs" />
-    <Compile Include="Sim\ComponentSystems\Systems\RectUpkeepSystem.cs" />
+    <Compile Include="Sim\ComponentSystems\Systems\MainRectUpkeepSystem.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\TounguePositionSystem.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\ToungueShapeSystem.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\ToungueSystem.cs" />
