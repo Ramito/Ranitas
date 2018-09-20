@@ -9,11 +9,14 @@
 
         private readonly IndexedSet<TValue> mIndexedSet;
 
-        public event IndexedValueHandler PreNewValue;
-        public event IndexedValueHandler PostNewValue;
+        public event SetIndexHandler PreNewValue;
+        public event SetIndexHandler PostNewValue;
+        public event SetIndexHandler PreRemoved;
+        public event SetIndexHandler PostRemoved;
+
+
+        public delegate void IndexedValueHandler(int indexID, TValue value);
         public event IndexedValueHandler ValueModified;
-        public event IndexedValueHandler PreRemoved;
-        public event IndexedValueHandler PostRemoved;
 
         public void Add(TValue value, int indexID)
         {
@@ -52,7 +55,7 @@
         public void Replace(TValue newValue, int indexID)
         {
             mIndexedSet.Replace(newValue, indexID);
-            ValueModified?.Invoke(indexID);
+            ValueModified?.Invoke(indexID, newValue);
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Ranitas.Sim
         private PondSimState mPond;
         private readonly List<Entity> mLandingFrogs;
         private readonly List<Vector2> mLandingPositions;
-        private readonly List<Rect> mLandingRects;  //We are using the rect position to compute l;anding, so we need to update the rect it self if we update the position!
+        private readonly List<Rect> mLandingRects;  //We are using the rect position to compute landing, so we need to update the rect it self if we update the position!
 
         private struct FallingEntities
         {
@@ -76,7 +76,7 @@ namespace Ranitas.Sim
             mLandingFrogs.Clear();
             mLandingPositions.Clear();
             mLandingRects.Clear();
-            //TODO: CHECK LANDING FROMGS THAT NO LONGER TOUCH THE LILLY!!
+            //TODO: CHECK LANDING FROGS THAT NO LONGER TOUCH THE LILLY!!
         }
     }
 }
