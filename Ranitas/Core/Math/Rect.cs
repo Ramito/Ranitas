@@ -63,5 +63,11 @@ namespace Ranitas.Core
                 && (MinY <= otherRect.MaxY)
                 && (MaxY >= otherRect.MinY);
         }
+
+        public Rect Inflated(float amount)
+        {
+            Vector2 offset = amount * Vector2.One;
+            return new Rect(MinCorner - offset, MaxCorner + offset);
+        }
     }
 }
