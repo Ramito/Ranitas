@@ -1,18 +1,22 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Ranitas.Data;
+using Ranitas.Sim;
 
 namespace Ranitas.Core.Render
 {
     public sealed class FrogRenderer
     {
+        private float mSpriteOffset;
+        private Texture2D mFrogSprite;
         private VertexBuffer mVertexBuffer;
         private AlphaTestEffect mAlphaTestEffect;
         private VertexPositionTexture[] mVertexBufferData;
         private int mCurrentIndex = -1;
-        private Texture2D mFrogSprite;
 
-        public void Setup(GraphicsDevice device, Texture2D frogSprite)
+        public void Setup(GraphicsDevice device, Texture2D frogSprite, FrogAnimationData data)
         {
+            mSpriteOffset = data.SpriteCornerOffset;
             mFrogSprite = frogSprite;
             SetupVertexBuffer(device);
             SetupEffect(device);
@@ -34,11 +38,11 @@ namespace Ranitas.Core.Render
             }
         }
 
-        public void PushFrog(Rect frogRect, int facing, bool jumping)
+        public void PushFrog(Rect frogRect, AnimationState animationState)
         {
-            const float kDepth = 0f;
+            const float kDepth = 1f;
 
-            frogRect = frogRect.Inflated(16.5f);
+            frogRect = frogRect.Inflated(mSpriteOffset);
 
             mVertexBufferData[mCurrentIndex].Position = new Vector3(frogRect.MaxCorner, kDepth);
             mVertexBufferData[mCurrentIndex + 1].Position = new Vector3(frogRect.MaxCorner, kDepth);
@@ -47,29 +51,15 @@ namespace Ranitas.Core.Render
             mVertexBufferData[mCurrentIndex + 4].Position = new Vector3(frogRect.MinCorner, kDepth);
             mVertexBufferData[mCurrentIndex + 5].Position = new Vector3(frogRect.MinCorner, kDepth);
 
-            float frameOffset = 0f;
-            if (jumping)
-            {
-                frameOffset = -0.5f;
-            }
-            float maxX = 1f + frameOffset;
-            float minX = 0.5f + frameOffset;
-            if (facing < 0)
-            {
-                float swap = maxX;
-                maxX = minX;
-                minX = swap;
-            }
-
             float topY = 0f;
             float bottomY = 1f;
 
-            mVertexBufferData[mCurrentIndex].TextureCoordinate = new Vector2(maxX, topY);
-            mVertexBufferData[mCurrentIndex + 1].TextureCoordinate = new Vector2(maxX, topY);
-            mVertexBufferData[mCurrentIndex + 2].TextureCoordinate = new Vector2(maxX, bottomY);
-            mVertexBufferData[mCurrentIndex + 3].TextureCoordinate = new Vector2(minX, topY);
-            mVertexBufferData[mCurrentIndex + 4].TextureCoordinate = new Vector2(minX, bottomY);
-            mVertexBufferData[mCurrentIndex + 5].TextureCoordinate = new Vector2(minX, bottomY);
+            mVertexBufferData[mCurrentIndex].TextureCoordinate = new Vector2(animationState.MaxX, topY);
+            mVertexBufferData[mCurrentIndex + 1].TextureCoordinate = new Vector2(animationState.MaxX, topY);
+            mVertexBufferData[mCurrentIndex + 2].TextureCoordinate = new Vector2(animationState.MaxX, bottomY);
+            mVertexBufferData[mCurrentIndex + 3].TextureCoordinate = new Vector2(animationState.MinX, topY);
+            mVertexBufferData[mCurrentIndex + 4].TextureCoordinate = new Vector2(animationState.MinX, bottomY);
+            mVertexBufferData[mCurrentIndex + 5].TextureCoordinate = new Vector2(animationState.MinX, bottomY);
 
             mCurrentIndex += 6;
         }

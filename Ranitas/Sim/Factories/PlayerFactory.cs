@@ -77,9 +77,9 @@ namespace Ranitas.Sim
             Gravity gravity = new Gravity();
             mRegistry.AddComponent(frogEntity, gravity);
 
-            //Color
-            Color color = Color.YellowGreen;
-            mRegistry.AddComponent(frogEntity, color);
+            //Animation
+            AnimationState animation = new AnimationState();
+            mRegistry.AddComponent(frogEntity, animation);
 
             return frogEntity;
         }

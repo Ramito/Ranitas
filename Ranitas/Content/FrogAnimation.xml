@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<XnaContent xmlns:Data="Ranitas.Data">
+  <Asset Type="Data:FrogAnimationData">
+    <SpriteCornerOffset>16.5</SpriteCornerOffset>
+    <LandedFrame>2</LandedFrame>
+    <JumpingFrame>0</JumpingFrame>
+    <FloatingFrame>1</FloatingFrame>
+    <SwimingFrame>3</SwimingFrame>
+  </Asset>
+</XnaContent>

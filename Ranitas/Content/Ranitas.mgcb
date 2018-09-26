@@ -30,7 +30,12 @@
 /processor:PassThroughProcessor
 /build:Fly.xml
 
-#begin Ranita3.png
+#begin FrogAnimation.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:FrogAnimation.xml
+
+#begin Ranita.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -40,5 +45,5 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:Ranita3.png
+/build:Ranita.png
 

@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Ranitas.Core;
 using Ranitas.Core.ECS;
 using Ranitas.Core.Render;
+using Ranitas.Data;
 using Ranitas.Pond;
 using Ranitas.Sim;
 
@@ -10,13 +11,13 @@ namespace Ranitas.Render
 {
     public sealed class RenderSystem : ISystem
     {
-        public RenderSystem(GraphicsDevice graphicsDevice, PondSimState pond, Texture2D frogSprite)
+        public RenderSystem(GraphicsDevice graphicsDevice, PondSimState pond, Texture2D frogSprite, FrogAnimationData animationData)
         {
             mRenderer = new PrimitiveRenderer();
             mRenderer.Setup(graphicsDevice);
 
             mFrogRenderer = new FrogRenderer();
-            mFrogRenderer.Setup(graphicsDevice, frogSprite);
+            mFrogRenderer.Setup(graphicsDevice, frogSprite, animationData);
 
             mPond = pond;
             mDevice = graphicsDevice;
@@ -38,16 +39,13 @@ namespace Ranitas.Render
         {
             public SliceRequirementOutput<Rect> Rect;
             public SliceRequirementOutput<Color> Color;
-            public SliceExclusion<FrogControlState> NotFrogs;
         }
         ColoredRectSlice mColoredRectSlice;
 
         private struct FrogRectSlice
         {
-            public SliceEntityOutput Entity;
             public SliceRequirementOutput<Rect> Rect;
-            public SliceRequirementOutput<Facing> Facing;
-            public SliceRequirement<FrogControlState> IsFrog;
+            public SliceRequirementOutput<AnimationState> Animation;
         }
         FrogRectSlice mFrogRectSlice;
 
@@ -71,7 +69,7 @@ namespace Ranitas.Render
             int frogCount = mFrogRectSlice.Rect.Count;
             for (int i = 0; i < frogCount; ++i)
             {
-                mFrogRenderer.PushFrog(mFrogRectSlice.Rect[i], mFrogRectSlice.Facing[i].CurrentFacing, !registry.HasComponent<Landed>(mFrogRectSlice.Entity[i]));
+                mFrogRenderer.PushFrog(mFrogRectSlice.Rect[i], mFrogRectSlice.Animation[i]);
             }
             mFrogRenderer.Render(mCameraMatrix, mDevice);
         }

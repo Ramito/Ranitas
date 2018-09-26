@@ -49,10 +49,11 @@ namespace Ranitas
             FrogData frogData = Content.Load<FrogData>("Frog");
             PondData pondData = Content.Load<PondData>("Pond");
             FlyData flyData = Content.Load<FlyData>("Fly");
-            Texture2D frogSprite = Content.Load<Texture2D>("Ranita3");
+            FrogAnimationData animationData = Content.Load<FrogAnimationData>("FrogAnimation");
+            Texture2D frogSprite = Content.Load<Texture2D>("Ranita");
 
             System.Diagnostics.Debug.Assert(IsFixedTimeStep);
-            RanitasDependencies dependencies = new RanitasDependencies((float)TargetElapsedTime.TotalSeconds, pondData, frogData, flyData, frogSprite, mGraphics.GraphicsDevice);
+            RanitasDependencies dependencies = new RanitasDependencies((float)TargetElapsedTime.TotalSeconds, pondData, frogData, flyData, animationData, frogSprite, mGraphics.GraphicsDevice);
             mSim = new ECSSim(dependencies);
             mSim.Initialize();
         }
