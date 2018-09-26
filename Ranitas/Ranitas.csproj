@@ -70,6 +70,7 @@
     <Compile Include="Core\StateMachine\PooledState.cs" />
     <Compile Include="Core\StateMachine\State.cs" />
     <Compile Include="Core\StateMachine\StateMachine.cs" />
+    <Compile Include="Render\FrogRenderer.cs" />
     <Compile Include="Sim\ComponentSystems\Components\ControlledEntity.cs" />
     <Compile Include="Sim\ComponentSystems\Components\Facing.cs" />
     <Compile Include="Sim\ComponentSystems\Components\FrogControlState.cs" />

@@ -1,6 +1,6 @@
-﻿using Ranitas.Core;
+﻿using Microsoft.Xna.Framework.Graphics;
+using Ranitas.Core;
 using Ranitas.Core.ECS;
-using Ranitas.Core.Render;
 using System.Collections.Generic;
 
 namespace Ranitas.Sim
@@ -19,7 +19,7 @@ namespace Ranitas.Sim
         {
             mFactory = new PlayerFactory(mRegistry, dependencies.FrogData, dependencies.PondData);
             mSystems = RanitasSystems.MakeSystems(dependencies);
-            mRenderSystem = new Render.RenderSystem(dependencies.Renderer, dependencies.PondState);
+            mRenderSystem = new Render.RenderSystem(dependencies.GraphicsDevice, dependencies.PondState, dependencies.FrogSprite);
         }
 
         public void SpawnPlayer(int index)
@@ -52,14 +52,15 @@ namespace Ranitas.Sim
 
     public class RanitasDependencies
     {
-        public RanitasDependencies(float deltaTime, Data.PondData pondData, Data.FrogData frogData, Data.FlyData flyData, PrimitiveRenderer renderer)
+        public RanitasDependencies(float deltaTime, Data.PondData pondData, Data.FrogData frogData, Data.FlyData flyData, Texture2D frogSprite, GraphicsDevice graphicsDevice)
         {
             Time = new FrameTime(deltaTime);
             FrogData = frogData;
             PondData = pondData;
             FlyData = flyData;
             PondState = new Pond.PondSimState(pondData);
-            Renderer = renderer;
+            GraphicsDevice = graphicsDevice;
+            FrogSprite = frogSprite;
         }
 
         public readonly FrameTime Time;
@@ -67,7 +68,8 @@ namespace Ranitas.Sim
         public readonly Data.PondData PondData;
         public readonly Data.FlyData FlyData;
         public readonly Pond.PondSimState PondState;
-        public readonly PrimitiveRenderer Renderer; //TODO: Separate sim vs render dependencies?
+        public readonly GraphicsDevice GraphicsDevice; //TODO: Separate sim vs render dependencies?
+        public readonly Texture2D FrogSprite;
     }
 
     public static class RanitasSystems

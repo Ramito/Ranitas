@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <XnaContent xmlns:Data="Ranitas.Data">
   <Asset Type="Data:FrogData">
-    <Width>15</Width>
-    <Height>15</Height>
+    <Width>24</Width>
+    <Height>24</Height>
     <MovementData>
       <JumpVelocity>790</JumpVelocity>
       <JumpPrepareTime>0.775</JumpPrepareTime>
@@ -14,8 +14,8 @@
     <SwimKickRecharge>0.22</SwimKickRecharge>
     <SwimKickVelocity>605</SwimKickVelocity>
     <ToungueLength>30</ToungueLength>
-    <ToungueThickness>5</ToungueThickness>
-    <ToungueRelativeVerticalOffset>1.2</ToungueRelativeVerticalOffset>
+    <ToungueThickness>4</ToungueThickness>
+    <ToungueRelativeVerticalOffset>2</ToungueRelativeVerticalOffset>
     <ToungueExtendTime>0.02</ToungueExtendTime>
     <ToungueFullyExtendedTime>0.5</ToungueFullyExtendedTime>
     <ToungueRetractTime>0.05</ToungueRetractTime>

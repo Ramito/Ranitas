@@ -5,27 +5,29 @@ namespace Ranitas.Core.Render
 {
     public sealed class PrimitiveRenderer
     {
-        public GraphicsDevice Device { get; private set; }
+        private BasicEffect mEffect;
         private VertexBuffer mVertexBuffer;
         private VertexPositionColor[] mVertexBufferData;
         private int mCurrentIndex = -1;
 
         public void Setup(GraphicsDevice device)
         {
-            //TODO: Where should the basic effect live??
-            Device = device;
-            SetupVertexBuffer();
+            SetupVertexBuffer(device);
+            SetupEffect(device);
         }
 
-        public void Render()
+        public void Render(Matrix camera, GraphicsDevice device)
         {
             if (mCurrentIndex > 0)
             {
-                Device.SetVertexBuffer(mVertexBuffer);
-                Device.DepthStencilState = DepthStencilState.DepthRead;
+                mEffect.View = camera;
+                mEffect.CurrentTechnique.Passes[0].Apply();
+
+                device.SetVertexBuffer(mVertexBuffer);
+                device.DepthStencilState = DepthStencilState.DepthRead;
                 mVertexBuffer.SetData(mVertexBufferData, 0, mCurrentIndex);
                 int triangleCount = mCurrentIndex - 2;
-                Device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, triangleCount);
+                device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, triangleCount);
                 mCurrentIndex = 0;
             }
         }
@@ -51,12 +53,21 @@ namespace Ranitas.Core.Render
             mCurrentIndex += 6;
         }
 
-        private void SetupVertexBuffer()
+        private void SetupVertexBuffer(GraphicsDevice device)
         {
             const int kVertexCount = 250 * 6;
-            mVertexBuffer = new VertexBuffer(Device, typeof(VertexPositionColor), kVertexCount, BufferUsage.WriteOnly);
+            mVertexBuffer = new VertexBuffer(device, typeof(VertexPositionColor), kVertexCount, BufferUsage.WriteOnly);
             mVertexBufferData = new VertexPositionColor[kVertexCount];
             mCurrentIndex = 0;
+        }
+
+        private void SetupEffect(GraphicsDevice device)
+        {
+            mEffect = new BasicEffect(device);
+            mEffect.VertexColorEnabled = true;
+            mEffect.World = Matrix.Identity;
+            mEffect.Alpha = 1;
+            mEffect.TextureEnabled = false;
         }
     }
 }

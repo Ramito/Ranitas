@@ -48,15 +48,11 @@ namespace Ranitas
         {
             FrogData frogData = Content.Load<FrogData>("Frog");
             PondData pondData = Content.Load<PondData>("Pond");
-            FlyData flyData = Content.Load<FlyData>("Fly"); //WIP TODO WIP
-
-            SetupCamera(mGraphics.GraphicsDevice, pondData);
-
-            PrimitiveRenderer primitiveRenderer = new PrimitiveRenderer();
-            primitiveRenderer.Setup(mGraphics.GraphicsDevice);
+            FlyData flyData = Content.Load<FlyData>("Fly");
+            Texture2D frogSprite = Content.Load<Texture2D>("Ranita3");
 
             System.Diagnostics.Debug.Assert(IsFixedTimeStep);
-            RanitasDependencies dependencies = new RanitasDependencies((float)TargetElapsedTime.TotalSeconds, pondData, frogData, flyData, primitiveRenderer);
+            RanitasDependencies dependencies = new RanitasDependencies((float)TargetElapsedTime.TotalSeconds, pondData, frogData, flyData, frogSprite, mGraphics.GraphicsDevice);
             mSim = new ECSSim(dependencies);
             mSim.Initialize();
         }
@@ -89,21 +85,8 @@ namespace Ranitas
             base.Update(gameTime);
         }
 
-        private void SetupCamera(GraphicsDevice device, PondData pondData)
-        {
-            float ponWidth = pondData.Width;
-            float ponHeight = pondData.Height;
-            float aspectRatio = device.Adapter.CurrentDisplayMode.AspectRatio;
-            BasicEffect effect = new BasicEffect(device);
-            effect.VertexColorEnabled = true;
-            effect.World = Matrix.CreateTranslation(-ponWidth * 0.5f, -ponHeight * 0.5f, 0f);
-            effect.View = Matrix.CreateOrthographic(aspectRatio * ponHeight, ponHeight, -100, 100);
-            effect.CurrentTechnique.Passes[0].Apply();
-        }
-
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.DimGray);
             mSim.Render();
             base.Draw(gameTime);
         }
