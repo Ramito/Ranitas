@@ -1,4 +1,5 @@
-﻿using Ranitas.Core;
+﻿using Microsoft.Xna.Framework;
+using Ranitas.Core;
 using Ranitas.Core.ECS;
 using Ranitas.Data;
 
@@ -33,6 +34,7 @@ namespace Ranitas.Sim
         {
             public SliceEntityOutput Entity;
             public SliceRequirementOutput<Waterborne> Waterborne;
+            public SliceRequirementOutput<FrogControlState> Control;
             public SliceRequirement<AnimationState> HasAnimation;
         }
         private SwimingFrogSlice mSwimingFrogSlice;
@@ -87,7 +89,8 @@ namespace Ranitas.Sim
             {
                 Waterborne waterBorne = mSwimingFrogSlice.Waterborne[i];
                 int frame;
-                if (waterBorne.SwimKickPhase <= 0)
+                bool kicking = (waterBorne.SwimKickPhase >= 0) && (mSwimingFrogSlice.Control[i].InputDirection != Vector2.Zero);
+                if (kicking)
                 {
                     frame = mData.SwimingFrame;
                 }

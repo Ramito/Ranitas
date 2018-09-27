@@ -3,11 +3,11 @@
   <Asset Type="Data:FlyData">
     <MaxActiveFlies>100</MaxActiveFlies>
     <FliesPerSecond>0.6</FliesPerSecond>
-    <Width>3.5</Width>
-    <Height>3.5</Height>
-    <MinHeight>20</MinHeight>
+    <Width>4</Width>
+    <Height>4</Height>
+    <MinHeight>17</MinHeight>
     <MaxHeight>325</MaxHeight>
-    <MinSpeed>1.5</MinSpeed>
-    <MaxSpeed>25</MaxSpeed>
+    <MinSpeed>5</MinSpeed>
+    <MaxSpeed>60</MaxSpeed>
   </Asset>
 </XnaContent>

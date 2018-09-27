@@ -14,7 +14,7 @@ namespace Ranitas.Sim
         private const float kRangeNormalizer = 1f / (kMaxMagnitude - kMinMagnitude);
         //TODO: Data drive ^^^
 
-        private static double[] sBlessedAngles = new double[] { Math.PI / 3d, (Math.PI / 3d) + (Math.PI / 24d), (Math.PI / 3d) + (2 * Math.PI / 24d), (Math.PI / 3d) + (3 * Math.PI / 24d) };
+        private static double[] sBlessedAngles = new double[] { Math.PI / 3d, (Math.PI / 3d) + (Math.PI / 8d) };
         private static readonly Vector2[] sBlessedDirections;
 
         static FrogInputSystem()

@@ -4,15 +4,15 @@
     <Width>24</Width>
     <Height>24</Height>
     <MovementData>
-      <JumpVelocity>790</JumpVelocity>
-      <JumpPrepareTime>0.775</JumpPrepareTime>
-      <JumpSquish>0.7</JumpSquish>
+      <JumpVelocity>1150</JumpVelocity>
+      <JumpPrepareTime>0.7</JumpPrepareTime>
+      <JumpSquish>0.75</JumpSquish>
     </MovementData>
-    <WaterDrag>3.825</WaterDrag>
-    <FrogDensity>0.925</FrogDensity>
-    <SwimKickDuration>0.22</SwimKickDuration>
-    <SwimKickRecharge>0.22</SwimKickRecharge>
-    <SwimKickVelocity>605</SwimKickVelocity>
+    <WaterDrag>3.83</WaterDrag>
+    <FrogDensity>0.95</FrogDensity>
+    <SwimKickDuration>0.275</SwimKickDuration>
+    <SwimKickRecharge>0.35</SwimKickRecharge>
+    <SwimKickVelocity>610</SwimKickVelocity>
     <ToungueLength>30</ToungueLength>
     <ToungueThickness>4</ToungueThickness>
     <ToungueRelativeVerticalOffset>2</ToungueRelativeVerticalOffset>
