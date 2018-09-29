@@ -31,6 +31,7 @@ namespace Ranitas.Core.Render
 
                 device.SetVertexBuffer(mVertexBuffer);
                 device.DepthStencilState = DepthStencilState.DepthRead;
+                device.SamplerStates[0] = SamplerState.PointClamp;
                 mVertexBuffer.SetData(mVertexBufferData, 0, mCurrentIndex);
                 int triangleCount = mCurrentIndex - 2;
                 device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, triangleCount);
