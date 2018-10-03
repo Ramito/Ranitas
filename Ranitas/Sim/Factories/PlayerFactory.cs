@@ -1,97 +1,63 @@
-﻿using Microsoft.Xna.Framework;
-using Ranitas.Core;
-using Ranitas.Core.ECS;
-using Ranitas.Data;
+﻿using Ranitas.Core.ECS;
 using System.Diagnostics;
 
 namespace Ranitas.Sim
 {
-    public class PlayerFactory
+    public sealed class PlayerFactory
     {
-        public PlayerFactory(EntityRegistry registry, FrogData frogData, PondData pondData)
+        public PlayerFactory(FrogFactory frogFactory)
         {
-            mRegistry = registry;
-            mFrogData = frogData;
-            mPondData = pondData;
+            mFrogFactory = frogFactory;
+        }
+        
+        private readonly FrogFactory mFrogFactory;
 
-            mRegistry.SetupSlice(ref mPlayersSlice);
+        public void Initialize(EntityRegistry registry)
+        {
+            SetupDebugSlice(registry);
         }
 
+        public Entity MakePlayer(int index, EntityRegistry registry)
+        {
+            AssertIndexIsNotUsed(index);
+
+            Entity playerEntity = registry.Create();
+            registry.AddComponent(playerEntity, new Player(index));
+
+            Entity frogEntity = mFrogFactory.MakeFrog(index, registry);
+
+            ControlledEntity controlledEntity = new ControlledEntity(frogEntity);
+            registry.AddComponent(playerEntity, controlledEntity);
+
+            return playerEntity;
+        }
+
+#if DEBUG
         private struct PlayersSlice
         {
             public SliceRequirementOutput<Player> Player;
         }
         private PlayersSlice mPlayersSlice;
+#endif
 
-        private readonly EntityRegistry mRegistry;
-        private readonly FrogData mFrogData;
-        private readonly PondData mPondData;
-
-        public Entity MakePlayer(int index)
+        [Conditional("DEBUG")]
+        private void SetupDebugSlice(EntityRegistry registry)
         {
-            AssertIndexIsNotUsed(index);
-
-            Entity playerEntity = mRegistry.Create();
-            mRegistry.AddComponent(playerEntity, new Player(index));
-
-            Entity frogEntity = MakeFrog(index);
-
-            ControlledEntity controlledEntity = new ControlledEntity(frogEntity);
-            mRegistry.AddComponent(playerEntity, controlledEntity);
-
-            return playerEntity;
+#if DEBUG
+            registry.SetupSlice(ref mPlayersSlice);
+#endif
         }
 
-        private Entity MakeFrog(int index)
-        {
-            Entity frogEntity = mRegistry.Create();
-
-            //Controller state
-            FrogControlState controlState = new FrogControlState();
-            mRegistry.AddComponent(frogEntity, controlState);
-
-            //Position Component
-            int spawnIndex = index % mPondData.FrogSpawns.Length;
-            float spawnX = mPondData.FrogSpawns[spawnIndex];
-            float spawnY = mPondData.Height + mFrogData.Height;
-            Vector2 positionValue = new Vector2(spawnX, spawnY);
-            Position spawnPosition = new Position(positionValue);
-            mRegistry.AddComponent(frogEntity, spawnPosition);
-
-            //Facing
-            Facing facing = new Facing();
-            mRegistry.AddComponent(frogEntity, facing);
-
-            //Velocity
-            Velocity velocity = new Velocity();
-            mRegistry.AddComponent(frogEntity, velocity);
-
-            //Shape
-            RectShape rectShape = new RectShape(mFrogData.Width, mFrogData.Height);
-            mRegistry.AddComponent(frogEntity, rectShape);
-
-            //Rect - Added automatically by the RectUpkeepSystem, but I don't want to worry about the first frame this being missing
-            Rect rect = new Rect(spawnPosition.Value, rectShape.Width, rectShape.Height);
-
-            //Gravity - Spawned in the air!
-            Gravity gravity = new Gravity();
-            mRegistry.AddComponent(frogEntity, gravity);
-
-            //Animation
-            AnimationState animation = new AnimationState();
-            mRegistry.AddComponent(frogEntity, animation);
-
-            return frogEntity;
-        }
-
-        [Conditional("Debug")]
+        [Conditional("DEBUG")]
         private void AssertIndexIsNotUsed(int index)
         {
+#if DEBUG
             int count = mPlayersSlice.Player.Count;
             for (int i = 0; i < count; ++i)
             {
                 Debug.Assert(mPlayersSlice.Player[i].Index != index);
             }
+#endif
         }
     }
 }

@@ -110,6 +110,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sim\Factories\FlyFactory.cs" />
+    <Compile Include="Sim\Factories\FrogFactory.cs" />
     <Compile Include="Sim\Factories\PlayerFactory.cs" />
     <Compile Include="Core\Time\FrameTime.cs" />
     <Compile Include="Core\ECS\ISystem.cs" />

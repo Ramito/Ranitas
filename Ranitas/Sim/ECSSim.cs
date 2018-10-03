@@ -18,18 +18,20 @@ namespace Ranitas.Sim
 
         public ECSSim(RanitasDependencies dependencies)
         {
-            mFactory = new PlayerFactory(mRegistry, dependencies.FrogData, dependencies.PondData);
+            FrogFactory frogFactory = new FrogFactory(dependencies.FrogData, dependencies.PondData);
+            mFactory = new PlayerFactory(frogFactory);
             mSystems = RanitasSystems.MakeSimSystems(dependencies);
             mRenderingSystems = RanitasSystems.MakeRenderSystems(dependencies);
         }
 
         public void SpawnPlayer(int index)
         {
-            mFactory.MakePlayer(index);
+            mFactory.MakePlayer(index, mRegistry);
         }
 
         public void Initialize()
         {
+            mFactory.Initialize(mRegistry);
             foreach (ISystem system in mSystems)
             {
                 system.Initialize(mRegistry, mEventSystem);
