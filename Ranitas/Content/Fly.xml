@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <XnaContent xmlns:Data="Ranitas.Data">
   <Asset Type="Data:FlyData">
-    <MaxActiveFlies>100</MaxActiveFlies>
-    <FliesPerSecond>0.6</FliesPerSecond>
+    <MaxActiveFlies>120</MaxActiveFlies>
+    <FliesPerSecond>0.3</FliesPerSecond>
     <Width>4</Width>
     <Height>4</Height>
     <MinHeight>17</MinHeight>
     <MaxHeight>325</MaxHeight>
-    <MinSpeed>5</MinSpeed>
-    <MaxSpeed>60</MaxSpeed>
+    <MinSpeed>80</MinSpeed>
+    <MaxSpeed>125</MaxSpeed>
   </Asset>
 </XnaContent>

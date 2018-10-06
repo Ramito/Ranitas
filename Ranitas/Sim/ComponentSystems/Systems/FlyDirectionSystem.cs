@@ -25,6 +25,8 @@ namespace Ranitas.Sim
         private struct WaitingToChange
         {
             public SliceEntityOutput Entity;
+            public SliceRequirementOutput<Position> Position;
+            public SliceRequirementOutput<Velocity> Velocity;
             public SliceRequirementOutput<ChangeDirectionTimer> ChangeTimer;
             public SliceRequirement<Insect> IsInsect;
         }
@@ -51,6 +53,16 @@ namespace Ranitas.Sim
             int waitingCount = mWaitingToChange.Entity.Count;
             for (int i = waitingCount - 1; i >= 0; --i)
             {
+                bool forceChange = (mWaitingToChange.Position[i].Value.Y < (mFlyData.MinHeight + mPond.WaterLevel)) && (mWaitingToChange.Velocity[i].Value.Y < 0f);
+                forceChange = forceChange || ((mWaitingToChange.Position[i].Value.Y > (mFlyData.MaxHeight + mPond.WaterLevel)) && (mWaitingToChange.Velocity[i].Value.Y > 0f));
+                if (forceChange)
+                {
+                    registry.RemoveComponent<ChangeDirectionTimer>(mWaitingToChange.Entity[i]);
+                }
+            }
+            waitingCount = mWaitingToChange.Entity.Count;
+            for (int i = waitingCount - 1; i >= 0; --i)
+            {
                 float time = mWaitingToChange.ChangeTimer[i].TimeLeft - mTime.DeltaTime;
                 if (time <= 0f)
                 {
@@ -66,29 +78,36 @@ namespace Ranitas.Sim
             {
                 float heightAboveWater = mChanging.Position[i].Value.Y - mPond.WaterLevel;
                 Vector2 velocity = mChanging.Velocity[i].Value;
-                float speed = velocity.Length();
-                Vector2 newVelocity = speed * FlyDirection(heightAboveWater);
-                if (Math.Sign(velocity.X) < 0)
-                {
-                    newVelocity.X = -newVelocity.X;
-                }
+                Vector2 newVelocity = FlyDirection(heightAboveWater, velocity);
                 registry.SetComponent(mChanging.Entity[i], new Velocity(newVelocity));
             }
             for (int i = changingCount - 1; i >= 0; --i)
             {
-                const float rateOfChange = 1.5f;
+                const float rateOfChange = 2.75f;
                 registry.AddComponent(mChanging.Entity[i], new ChangeDirectionTimer(mRandom.NextPoissonTime(rateOfChange)));
             }
         }
 
-        private Vector2 FlyDirection(float heightAboveWater)
+        private Vector2 FlyDirection(float heightAboveWater, Vector2 currentVelocity)
         {
-            const float bottomAngle = (float)Math.PI / 3f;
-            const float topAngle = -bottomAngle;
-            const float halfRange = (float)Math.PI / 3f;
+            float angleToRotate = ComputeVelocityRotation(heightAboveWater);
+            if (currentVelocity.X < 0f)
+            {
+                angleToRotate = -angleToRotate;
+            }
+            float cos = (float)Math.Cos(angleToRotate);
+            float sin = (float)Math.Sin(angleToRotate);
+            float newX = cos * currentVelocity.X - sin * currentVelocity.Y;
+            float newY = sin * currentVelocity.X + cos * currentVelocity.Y;
+            return new Vector2(newX, newY);
+        }
+
+        private float ComputeVelocityRotation(float heightAboveWater)
+        {
+            const float halfRange = (float)Math.PI / 17f;
             float relativeHeight = MathExtensions.Clamp01((heightAboveWater - mFlyData.MinHeight) / (mFlyData.MaxHeight - mFlyData.MinHeight));
-            float resultingAngle = relativeHeight * (topAngle - bottomAngle) + bottomAngle + mRandom.GetRandomInRange(-halfRange, halfRange);
-            return new Vector2((float)Math.Cos(resultingAngle), (float)Math.Sin(resultingAngle));
+            float rangeOffset = halfRange * (-2f * relativeHeight + 1f);
+            return rangeOffset + mRandom.GetRandomInRange(-halfRange, halfRange);
         }
     }
 }
