@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FlyData.cs" />
+    <Compile Include="FlyDirectionChangeData.cs" />
     <Compile Include="FrogAnimationData.cs" />
     <Compile Include="FrogData.cs" />
     <Compile Include="PondData.cs" />

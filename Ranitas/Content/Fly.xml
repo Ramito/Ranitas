@@ -5,9 +5,9 @@
     <FliesPerSecond>0.3</FliesPerSecond>
     <Width>4</Width>
     <Height>4</Height>
-    <MinHeight>17</MinHeight>
+    <MinHeight>20</MinHeight>
     <MaxHeight>325</MaxHeight>
-    <MinSpeed>80</MinSpeed>
-    <MaxSpeed>125</MaxSpeed>
+    <MinSpeed>90</MinSpeed>
+    <MaxSpeed>150</MaxSpeed>
   </Asset>
 </XnaContent>

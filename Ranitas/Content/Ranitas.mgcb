@@ -47,3 +47,8 @@
 /processorParam:TextureFormat=Color
 /build:Ranita.png
 
+#begin DirectionChange.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:DirectionChange.xml
+

@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<XnaContent xmlns:Data="Ranitas.Data">
+  <Asset Type="Data:FlyDirectionChangeData">
+    <ChangeRate>4.25</ChangeRate>
+    <MaxDelta>0.36</MaxDelta>
+    <TurnAroundRate>11</TurnAroundRate>
+  </Asset>
+</XnaContent>

@@ -49,11 +49,12 @@ namespace Ranitas
             FrogData frogData = Content.Load<FrogData>("Frog");
             PondData pondData = Content.Load<PondData>("Pond");
             FlyData flyData = Content.Load<FlyData>("Fly");
+            FlyDirectionChangeData changeData = Content.Load<FlyDirectionChangeData>("DirectionChange");
             FrogAnimationData animationData = Content.Load<FrogAnimationData>("FrogAnimation");
             Texture2D frogSprite = Content.Load<Texture2D>("Ranita");
 
             System.Diagnostics.Debug.Assert(IsFixedTimeStep);
-            RanitasDependencies dependencies = new RanitasDependencies((float)TargetElapsedTime.TotalSeconds, pondData, frogData, flyData, animationData, frogSprite, mGraphics.GraphicsDevice);
+            RanitasDependencies dependencies = new RanitasDependencies((float)TargetElapsedTime.TotalSeconds, pondData, frogData, flyData, changeData, animationData, frogSprite, mGraphics.GraphicsDevice);
             mSim = new ECSSim(dependencies);
             mSim.Initialize();
         }
@@ -75,7 +76,7 @@ namespace Ranitas
                 {
                     if (GamePad.GetState(i).Buttons.Start == ButtonState.Pressed)
                     {
-                        mSim.SpawnPlayer(i);  //TODO: Make a player ID type?
+                        mSim.SpawnPlayer(i);
                         mSPawnedPlayers[i] = true;
                     }
                 }
