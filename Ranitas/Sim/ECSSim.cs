@@ -94,6 +94,7 @@ namespace Ranitas.Sim
                 new FlySpawnSystem(dependencies.Time, dependencies.PondState, dependencies.FlyData),
                 new FlyDirectionSystem(dependencies.Time, dependencies.PondState, dependencies.FlyData, dependencies.DirectionChangeData),
                 new FlyMoveSystem(dependencies.Time, dependencies.FlyData),
+                new FlyNoiseSystem(dependencies.Time, dependencies.FlyData),
                 new FrogInputSystem(dependencies.Time, dependencies.FrogData),
                 new FrogShapeDeformationSystem(dependencies.FrogData),
                 new GravityPhysicsSystem(dependencies.Time),

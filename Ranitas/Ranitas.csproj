@@ -87,6 +87,7 @@
     <Compile Include="Sim\ComponentSystems\Data\ToungueData.cs" />
     <Compile Include="Sim\ComponentSystems\Data\ToungueShapeData.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\FlyDirectionSystem.cs" />
+    <Compile Include="Sim\ComponentSystems\Systems\FlyNoiseSystem.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\FlySpawnSystem.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\FlyMoveSystem.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\FrogAnimationSystem.cs" />
