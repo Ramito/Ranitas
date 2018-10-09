@@ -52,3 +52,8 @@
 /processor:PassThroughProcessor
 /build:DirectionChange.xml
 
+#begin FlyNoise.xml
+/importer:XmlImporter
+/processor:PassThroughProcessor
+/build:FlyNoise.xml
+

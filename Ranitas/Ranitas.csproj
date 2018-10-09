@@ -76,6 +76,7 @@
     <Compile Include="Sim\ComponentSystems\Components\ChangeDirectionTimer.cs" />
     <Compile Include="Sim\ComponentSystems\Components\ControlledEntity.cs" />
     <Compile Include="Sim\ComponentSystems\Components\Facing.cs" />
+    <Compile Include="Sim\ComponentSystems\Components\FlyNoiseState.cs" />
     <Compile Include="Sim\ComponentSystems\Components\FrogControlState.cs" />
     <Compile Include="Sim\ComponentSystems\Components\Gravity.cs" />
     <Compile Include="Sim\ComponentSystems\Components\Insect.cs" />

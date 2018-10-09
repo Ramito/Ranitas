@@ -61,12 +61,13 @@ namespace Ranitas.Sim
 
     public class RanitasDependencies
     {
-        public RanitasDependencies(float deltaTime, Data.PondData pondData, Data.FrogData frogData, Data.FlyData flyData, Data.FlyDirectionChangeData directionChangeData, Data.FrogAnimationData animationData, Texture2D frogSprite, GraphicsDevice graphicsDevice)
+        public RanitasDependencies(float deltaTime, Data.PondData pondData, Data.FrogData frogData, Data.FlyData flyData, Data.FlyDirectionChangeData directionChangeData, Data.FlyNoiseData flyNoiseData, Data.FrogAnimationData animationData, Texture2D frogSprite, GraphicsDevice graphicsDevice)
         {
             Time = new FrameTime(deltaTime);
             FrogData = frogData;
             PondData = pondData;
             FlyData = flyData;
+            FlyNoiseData = flyNoiseData;
             DirectionChangeData = directionChangeData;
             AnimationData = animationData;
             PondState = new Pond.PondSimState(pondData);
@@ -78,6 +79,7 @@ namespace Ranitas.Sim
         public readonly Data.FrogData FrogData;
         public readonly Data.PondData PondData;
         public readonly Data.FlyData FlyData;
+        public readonly Data.FlyNoiseData FlyNoiseData;
         public readonly Data.FlyDirectionChangeData DirectionChangeData;
         public readonly Data.FrogAnimationData AnimationData;
         public readonly Pond.PondSimState PondState;
@@ -94,7 +96,7 @@ namespace Ranitas.Sim
                 new FlySpawnSystem(dependencies.Time, dependencies.PondState, dependencies.FlyData),
                 new FlyDirectionSystem(dependencies.Time, dependencies.PondState, dependencies.FlyData, dependencies.DirectionChangeData),
                 new FlyMoveSystem(dependencies.Time, dependencies.FlyData),
-                new FlyNoiseSystem(dependencies.Time, dependencies.FlyData),
+                new FlyNoiseSystem(dependencies.Time, dependencies.FlyData, dependencies.FlyNoiseData),
                 new FrogInputSystem(dependencies.Time, dependencies.FrogData),
                 new FrogShapeDeformationSystem(dependencies.FrogData),
                 new GravityPhysicsSystem(dependencies.Time),

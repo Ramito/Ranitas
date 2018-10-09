@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<XnaContent xmlns:Data="Ranitas.Data">
+  <Asset Type="Data:FlyNoiseData">
+    <OscilationModule>2.8</OscilationModule>
+    <ModulatorFrquency>0.55</ModulatorFrquency>
+    <OscilationFrequency>1.75</OscilationFrequency>
+  </Asset>
+</XnaContent>

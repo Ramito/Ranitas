@@ -9,39 +9,22 @@ namespace Ranitas.Sim
     public sealed class FlyNoiseSystem : ISystem
     {
         private const float kFrequencyNormalizer = (float)(2d *Math.PI);
-        private const float kModulatorFrquency = 0.65f;
-        private const float kOscilationFrequency = 9f;//6.5f;
-        private const float kOscilationModule = 6f;
-        const double GoldenRatio = 1.61803398874989484820458683436;
+        private const float kGoldenRatio = 1.61803398874989484820458683436f;    //Esoteric factor used to decouple horizontal and vertical frequencies
 
-        public FlyNoiseSystem(FrameTime time, FlyData flyData)
+        public FlyNoiseSystem(FrameTime time, FlyData flyData, FlyNoiseData noiseData)
         {
+            mFlyNoiseData = noiseData;
             mRandom = new Random();
             mTime = time;
             mNoiseStateBuffer = new FlyNoiseState[flyData.MaxActiveFlies];
             mPositionBuffer = new Position[flyData.MaxActiveFlies];
         }
 
+        private FlyNoiseData mFlyNoiseData;
         private Random mRandom; //TODO: These randoms could be a problem one day, maybe it is time to share them
         private FrameTime mTime;
         private FlyNoiseState[] mNoiseStateBuffer;
         private Position[] mPositionBuffer;
-
-        public struct FlyNoiseState
-        {
-            public FlyNoiseState(float xModule, float yModule, float xOscilation, float yOscilation)
-            {
-                XModulePhase = xModule;
-                YModulePhase = yModule;
-                XOscilationPhase = xOscilation;
-                YOscilationPhase = yOscilation;
-            }
-
-            public float XModulePhase;
-            public float YModulePhase;
-            public float XOscilationPhase;
-            public float YOscilationPhase;
-        }
 
         private struct NoNoiseFlies
         {
@@ -85,13 +68,13 @@ namespace Ranitas.Sim
                 float deltaTime = mTime.DeltaTime;
                 FlyNoiseState state = mNoisyFliesSlice.NoiseState[i];
 
-                float frequencyAdjust = kFrequencyNormalizer * kModulatorFrquency;
+                float frequencyAdjust = kFrequencyNormalizer * mFlyNoiseData.ModulatorFrquency;
                 state.XModulePhase += (frequencyAdjust * deltaTime);
-                state.YModulePhase += (frequencyAdjust * deltaTime);
+                state.YModulePhase += (frequencyAdjust * kGoldenRatio * deltaTime);
 
-                frequencyAdjust = kFrequencyNormalizer * kOscilationFrequency;
+                frequencyAdjust = kFrequencyNormalizer * mFlyNoiseData.OscilationFrequency;
                 state.XOscilationPhase += (frequencyAdjust * deltaTime);
-                state.YOscilationPhase += (frequencyAdjust * deltaTime);
+                state.YOscilationPhase += (frequencyAdjust * kGoldenRatio * deltaTime);
 
                 mNoiseStateBuffer[i] = state;
             }
@@ -102,11 +85,11 @@ namespace Ranitas.Sim
                 FlyNoiseState previousState = mNoisyFliesSlice.NoiseState[i];
                 FlyNoiseState currentState = mNoiseStateBuffer[i];
 
-                float xCurrent = (float)(kOscilationModule * Math.Cos(currentState.XModulePhase) * Math.Cos(currentState.XModulePhase));
-                float yCurrent = (float)(kOscilationModule * Math.Cos(currentState.YModulePhase * GoldenRatio) * Math.Cos(currentState.YModulePhase * GoldenRatio));
+                float xCurrent = (float)(mFlyNoiseData.OscilationModule * Math.Cos(currentState.XModulePhase) * Math.Cos(currentState.XOscilationPhase));
+                float yCurrent = (float)(mFlyNoiseData.OscilationModule * Math.Cos(currentState.YModulePhase) * Math.Cos(currentState.YOscilationPhase));
 
-                float xPrevious = (float)(kOscilationModule * Math.Cos(previousState.XModulePhase) * Math.Cos(previousState.XModulePhase));
-                float yPrevious = (float)(kOscilationModule * Math.Cos(previousState.YModulePhase * GoldenRatio) * Math.Cos(previousState.YModulePhase * GoldenRatio));
+                float xPrevious = (float)(mFlyNoiseData.OscilationModule * Math.Cos(previousState.XModulePhase) * Math.Cos(previousState.XOscilationPhase));
+                float yPrevious = (float)(mFlyNoiseData.OscilationModule * Math.Cos(previousState.YModulePhase) * Math.Cos(previousState.YOscilationPhase));
 
                 float xDelta = xCurrent - xPrevious;
                 float yDelta = yCurrent - yPrevious;
