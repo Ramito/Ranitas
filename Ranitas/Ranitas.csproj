@@ -76,6 +76,7 @@
     <Compile Include="Sim\ComponentSystems\Components\ChangeDirectionTimer.cs" />
     <Compile Include="Sim\ComponentSystems\Components\ControlledEntity.cs" />
     <Compile Include="Sim\ComponentSystems\Components\Facing.cs" />
+    <Compile Include="Sim\ComponentSystems\Components\FlyNoiseState.cs" />
     <Compile Include="Sim\ComponentSystems\Components\FrogControlState.cs" />
     <Compile Include="Sim\ComponentSystems\Components\Gravity.cs" />
     <Compile Include="Sim\ComponentSystems\Components\Insect.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="Sim\ComponentSystems\Data\ToungueData.cs" />
     <Compile Include="Sim\ComponentSystems\Data\ToungueShapeData.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\FlyDirectionSystem.cs" />
+    <Compile Include="Sim\ComponentSystems\Systems\FlyNoiseSystem.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\FlySpawnSystem.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\FlyMoveSystem.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\FrogAnimationSystem.cs" />

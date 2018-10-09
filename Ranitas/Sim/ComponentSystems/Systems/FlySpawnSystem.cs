@@ -42,11 +42,12 @@ namespace Ranitas.Sim
 
         public void Update(EntityRegistry registry, EventSystem eventSystem)
         {
+            const float kBuffer = 200;
             int flyCount = mFliesSlice.Entity.Count;
             for (int i = flyCount - 1; i >= 0; --i)
             {
                 Rect flyRect = mFliesSlice.FlyRect[i]; 
-                if ((flyRect.MaxX < 0f) || (flyRect.MinX > mPond.Width))
+                if ((flyRect.MaxX < -kBuffer) || (flyRect.MinX > mPond.Width + kBuffer))
                 {
                     registry.Destroy(mFliesSlice.Entity[i]);
                     --flyCount;
