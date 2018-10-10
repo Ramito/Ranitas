@@ -33,7 +33,6 @@ namespace Ranitas
         {
             graphics.PreferredBackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
             graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
-            //TODO: Toggling full screen makes debugging a pain
         }
 
         protected override void Initialize()
@@ -54,8 +53,10 @@ namespace Ranitas
             FrogAnimationData animationData = Content.Load<FrogAnimationData>("FrogAnimation");
             Texture2D frogSprite = Content.Load<Texture2D>("Ranita");
 
+            SpriteFont uiFont = Content.Load<SpriteFont>("GameUI");
+
             System.Diagnostics.Debug.Assert(IsFixedTimeStep);
-            RanitasDependencies dependencies = new RanitasDependencies((float)TargetElapsedTime.TotalSeconds, pondData, frogData, flyData, changeData, noiseData, animationData, frogSprite, mGraphics.GraphicsDevice);
+            RanitasDependencies dependencies = new RanitasDependencies((float)TargetElapsedTime.TotalSeconds, pondData, frogData, flyData, changeData, noiseData, animationData, frogSprite, mGraphics.GraphicsDevice, uiFont);
             mSim = new ECSSim(dependencies);
             mSim.Initialize();
         }

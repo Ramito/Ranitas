@@ -1,5 +1,6 @@
 ﻿using Ranitas.Core;
 using Ranitas.Core.ECS;
+using Ranitas.Sim.Events;
 
 namespace Ranitas.Sim
 {
@@ -16,6 +17,7 @@ namespace Ranitas.Sim
         private struct ToungueSlice
         {
             public SliceRequirementOutput<Rect> Rect;
+            public SliceRequirementOutput<ParentEntity> ToungueParent;
             public SliceRequirement<ToungueState> IsToungue;
         }
         private ToungueSlice mToungueSlice;
@@ -39,6 +41,7 @@ namespace Ranitas.Sim
                     if (toungueRect.Intersects(insectRect))
                     {
                         registry.Destroy(mInsectSlice.Entity[insectIndex]);
+                        eventSystem.PostMessage<AteInsect>(new AteInsect(mToungueSlice.ToungueParent[toungueIndex].Parent));
                     }
                 }
             }

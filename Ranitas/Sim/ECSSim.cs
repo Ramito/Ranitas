@@ -61,7 +61,7 @@ namespace Ranitas.Sim
 
     public class RanitasDependencies
     {
-        public RanitasDependencies(float deltaTime, Data.PondData pondData, Data.FrogData frogData, Data.FlyData flyData, Data.FlyDirectionChangeData directionChangeData, Data.FlyNoiseData flyNoiseData, Data.FrogAnimationData animationData, Texture2D frogSprite, GraphicsDevice graphicsDevice)
+        public RanitasDependencies(float deltaTime, Data.PondData pondData, Data.FrogData frogData, Data.FlyData flyData, Data.FlyDirectionChangeData directionChangeData, Data.FlyNoiseData flyNoiseData, Data.FrogAnimationData animationData, Texture2D frogSprite, GraphicsDevice graphicsDevice, SpriteFont uiFont)
         {
             Time = new FrameTime(deltaTime);
             FrogData = frogData;
@@ -73,6 +73,7 @@ namespace Ranitas.Sim
             PondState = new Pond.PondSimState(pondData);
             GraphicsDevice = graphicsDevice;
             FrogSprite = frogSprite;
+            UIFont = uiFont;
         }
 
         public readonly FrameTime Time;
@@ -85,6 +86,7 @@ namespace Ranitas.Sim
         public readonly Pond.PondSimState PondState;
         public readonly GraphicsDevice GraphicsDevice; //TODO: Separate sim vs render dependencies?
         public readonly Texture2D FrogSprite;
+        public readonly SpriteFont UIFont;
     }
 
     public static class RanitasSystems
@@ -109,6 +111,7 @@ namespace Ranitas.Sim
                 new TounguePositionSystem(dependencies.FrogData),
                 new ParentedRectUpkeepSystem(),
                 new InsectEatingSystem(),
+                new ScoreSystem(4),
             };
             return systems;
         }
@@ -118,7 +121,7 @@ namespace Ranitas.Sim
             List<ISystem> systems = new List<ISystem>()
             {
                 new FrogAnimationSystem(dependencies.AnimationData),
-                new RenderSystem(dependencies.GraphicsDevice, dependencies.PondState, dependencies.FrogSprite, dependencies.AnimationData),
+                new RenderSystem(dependencies.GraphicsDevice, dependencies.PondState, dependencies.FrogSprite, dependencies.UIFont, dependencies.AnimationData),
             };
             return systems;
         }

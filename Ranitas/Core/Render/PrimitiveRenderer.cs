@@ -22,14 +22,22 @@ namespace Ranitas.Core.Render
             {
                 mEffect.View = camera;
                 mEffect.CurrentTechnique.Passes[0].Apply();
-
-                device.SetVertexBuffer(mVertexBuffer);
-                device.DepthStencilState = DepthStencilState.DepthRead;
+                SetDeviceStates(device);
                 mVertexBuffer.SetData(mVertexBufferData, 0, mCurrentIndex);
                 int triangleCount = mCurrentIndex - 2;
                 device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, triangleCount);
                 mCurrentIndex = 0;
             }
+        }
+
+        private void SetDeviceStates(GraphicsDevice device)
+        {
+            device.SetVertexBuffer(mVertexBuffer);
+
+            device.DepthStencilState = DepthStencilState.DepthRead;
+            device.BlendState = BlendState.AlphaBlend;
+            device.RasterizerState = RasterizerState.CullClockwise;
+            device.SamplerStates[0] = SamplerState.PointClamp;
         }
 
         public void PushRect(Rect rect, Color color)

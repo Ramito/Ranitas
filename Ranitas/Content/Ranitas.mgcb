@@ -57,3 +57,10 @@
 /processor:PassThroughProcessor
 /build:FlyNoise.xml
 
+#begin GameUI.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:GameUI.spritefont
+

@@ -10,7 +10,7 @@ namespace Ranitas.Core.Render
         private float mSpriteOffset;
         private Texture2D mFrogSprite;
         private VertexBuffer mVertexBuffer;
-        private AlphaTestEffect mAlphaTestEffect;
+        public AlphaTestEffect mAlphaTestEffect;
         private VertexPositionTexture[] mVertexBufferData;
         private int mCurrentIndex = -1;
 
@@ -29,14 +29,23 @@ namespace Ranitas.Core.Render
                 mAlphaTestEffect.View = cameraMatrix;
                 mAlphaTestEffect.CurrentTechnique.Passes[0].Apply();
 
-                device.SetVertexBuffer(mVertexBuffer);
-                device.DepthStencilState = DepthStencilState.DepthRead;
-                device.SamplerStates[0] = SamplerState.PointClamp;
+                SetDeviceStates(device);
+
                 mVertexBuffer.SetData(mVertexBufferData, 0, mCurrentIndex);
                 int triangleCount = mCurrentIndex - 2;
                 device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, triangleCount);
                 mCurrentIndex = 0;
             }
+        }
+
+        private void SetDeviceStates(GraphicsDevice device)
+        {
+            device.SetVertexBuffer(mVertexBuffer);
+
+            device.DepthStencilState = DepthStencilState.DepthRead;
+            device.BlendState = BlendState.AlphaBlend;
+            device.RasterizerState = RasterizerState.CullClockwise;
+            device.SamplerStates[0] = SamplerState.PointClamp;
         }
 
         public void PushFrog(Rect frogRect, AnimationState animationState)

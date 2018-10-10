@@ -6,12 +6,13 @@ using Ranitas.Core.Render;
 using Ranitas.Data;
 using Ranitas.Pond;
 using Ranitas.Sim;
+using Ranitas.Sim.Events;
 
 namespace Ranitas.Render
 {
     public sealed class RenderSystem : ISystem
     {
-        public RenderSystem(GraphicsDevice graphicsDevice, PondSimState pond, Texture2D frogSprite, FrogAnimationData animationData)
+        public RenderSystem(GraphicsDevice graphicsDevice, PondSimState pond, Texture2D frogSprite, SpriteFont uiFont, FrogAnimationData animationData)
         {
             mRenderer = new PrimitiveRenderer();
             mRenderer.Setup(graphicsDevice);
@@ -19,18 +20,19 @@ namespace Ranitas.Render
             mFrogRenderer = new FrogRenderer();
             mFrogRenderer.Setup(graphicsDevice, frogSprite, animationData);
 
+            mUIFont = uiFont;
+
             mPond = pond;
             mDevice = graphicsDevice;
             SetupCamera(graphicsDevice, pond);
-        }
 
-        private void SetupDevice(GraphicsDevice graphicsDevice)
-        {
-            graphicsDevice.BlendState = BlendState.AlphaBlend;
+            mUISpriteBatch = new SpriteBatch(mDevice);
         }
 
         private PrimitiveRenderer mRenderer;
         private FrogRenderer mFrogRenderer;
+        private SpriteFont mUIFont;
+        private SpriteBatch mUISpriteBatch;
         private Matrix mCameraMatrix;
         private PondSimState mPond;    //TODO: Make lily pads entities so they can be rendered as the rest!
         private GraphicsDevice mDevice;
@@ -40,31 +42,34 @@ namespace Ranitas.Render
             public SliceRequirementOutput<Rect> Rect;
             public SliceRequirementOutput<Color> Color;
         }
-        ColoredRectSlice mColoredRectSlice;
+        private ColoredRectSlice mColoredRectSlice;
 
         private struct FrogRectSlice
         {
             public SliceRequirementOutput<Rect> Rect;
             public SliceRequirementOutput<AnimationState> Animation;
         }
-        FrogRectSlice mFrogRectSlice;
+        private FrogRectSlice mFrogRectSlice;
+
+        private struct PlayerSlice
+        {
+            public SliceRequirementOutput<Player> Player;
+            public SliceRequirementOutput<Score> Score;
+        }
+        private PlayerSlice mPlayerSlice;
 
         public void Initialize(EntityRegistry registry, EventSystem eventSystem)
         {
             registry.SetupSlice(ref mColoredRectSlice);
             registry.SetupSlice(ref mFrogRectSlice);
+            registry.SetupSlice(ref mPlayerSlice);
         }
 
         public void Update(EntityRegistry registry, EventSystem eventSystem)
         {
             mDevice.Clear(Color.DimGray);
-            int rectCount = mColoredRectSlice.Rect.Count;
-            for (int i = 0; i < rectCount; ++i)
-            {
-                mRenderer.PushRect(mColoredRectSlice.Rect[i], mColoredRectSlice.Color[i]);
-            }
-            mRenderer.Render(mCameraMatrix, mDevice);
-            RenderPond();
+
+            RenderLilies();
 
             int frogCount = mFrogRectSlice.Rect.Count;
             for (int i = 0; i < frogCount; ++i)
@@ -72,15 +77,26 @@ namespace Ranitas.Render
                 mFrogRenderer.PushFrog(mFrogRectSlice.Rect[i], mFrogRectSlice.Animation[i]);
             }
             mFrogRenderer.Render(mCameraMatrix, mDevice);
+
+            int rectCount = mColoredRectSlice.Rect.Count;
+            for (int i = 0; i < rectCount; ++i)
+            {
+                mRenderer.PushRect(mColoredRectSlice.Rect[i], mColoredRectSlice.Color[i]);
+            }
+
+            RenderWater();
+
+            mRenderer.Render(mCameraMatrix, mDevice);
+
+            RenderUI();
         }
 
-        private void RenderPond()
+        private void RenderLilies()
         {
             foreach (var lily in mPond.Lilies)
             {
                 mRenderer.PushRect(lily.Rect, Color.Green);
             }
-            RenderWater();
         }
 
         private void RenderWater()
@@ -90,6 +106,22 @@ namespace Ranitas.Render
             Color waterColor = Color.DarkBlue;
             waterColor.A = 1;
             mRenderer.PushRect(waterRect, waterColor);
+        }
+
+        private void RenderUI()
+        {
+            float playerAreaWidth = (float)(mDevice.DisplayMode.Width) / 4f;
+            int playerCount = mPlayerSlice.Player.Count;
+            mUISpriteBatch.Begin(depthStencilState: DepthStencilState.DepthRead);
+            for (int i = 0; i < playerCount; ++i)
+            {
+                float xPosition = mPlayerSlice.Player[i].Index * playerAreaWidth;
+                Vector2 position = new Vector2(xPosition + playerAreaWidth * 0.25f, playerAreaWidth * 0.25f);
+                //TODO: Can we avoid string allocations... does it even matter?
+                string scoreString = string.Format("Score: {0}", mPlayerSlice.Score[i].Value);
+                mUISpriteBatch.DrawString(mUIFont, scoreString, position, Color.BurlyWood);
+            }
+            mUISpriteBatch.End();
         }
 
         private void SetupCamera(GraphicsDevice device, PondSimState pond)
