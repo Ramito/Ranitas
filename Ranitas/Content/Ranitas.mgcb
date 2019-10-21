@@ -64,3 +64,9 @@
 /processorParam:TextureFormat=Compressed
 /build:GameUI.spritefont
 
+#begin Water.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Water.fx
+

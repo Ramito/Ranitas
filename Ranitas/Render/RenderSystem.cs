@@ -12,7 +12,7 @@ namespace Ranitas.Render
 {
     public sealed class RenderSystem : ISystem
     {
-        public RenderSystem(GraphicsDevice graphicsDevice, PondSimState pond, Texture2D frogSprite, SpriteFont uiFont, FrogAnimationData animationData)
+        public RenderSystem(GraphicsDevice graphicsDevice, PondSimState pond, Texture2D frogSprite, SpriteFont uiFont, FrogAnimationData animationData, Effect waterEffect)
         {
             mRenderer = new PrimitiveRenderer();
             mRenderer.Setup(graphicsDevice);
@@ -27,6 +27,8 @@ namespace Ranitas.Render
             SetupCamera(graphicsDevice, pond);
 
             mUISpriteBatch = new SpriteBatch(mDevice);
+
+            mWaterEffect = waterEffect;
         }
 
         private PrimitiveRenderer mRenderer;
@@ -36,6 +38,7 @@ namespace Ranitas.Render
         private Matrix mCameraMatrix;
         private PondSimState mPond;    //TODO: Make lily pads entities so they can be rendered as the rest!
         private GraphicsDevice mDevice;
+        private Effect mWaterEffect;
 
         private struct ColoredRectSlice
         {
@@ -67,7 +70,7 @@ namespace Ranitas.Render
 
         public void Update(EntityRegistry registry, EventSystem eventSystem)
         {
-            mDevice.Clear(Color.DimGray);
+            mDevice.Clear(Color.Black);
 
             RenderLilies();
 
@@ -84,9 +87,9 @@ namespace Ranitas.Render
                 mRenderer.PushRect(mColoredRectSlice.Rect[i], mColoredRectSlice.Color[i]);
             }
 
-            RenderWater();
-
             mRenderer.Render(mCameraMatrix, mDevice);
+
+            RenderWater();
 
             RenderUI();
         }
@@ -101,11 +104,12 @@ namespace Ranitas.Render
 
         private void RenderWater()
         {
+            mWaterEffect.Parameters["WorldViewProjection"].SetValue(mCameraMatrix);
             int wide = (int)mPond.Width;
             Rect waterRect = new Rect(new Vector2(-wide, 0f), new Vector2(wide, mPond.WaterLevel));
             Color waterColor = Color.DarkBlue;
-            waterColor.A = 1;
             mRenderer.PushRect(waterRect, waterColor);
+            mRenderer.Render(mDevice, mWaterEffect);
         }
 
         private void RenderUI()
@@ -119,7 +123,7 @@ namespace Ranitas.Render
                 Vector2 position = new Vector2(xPosition + playerAreaWidth * 0.25f, playerAreaWidth * 0.25f);
                 //TODO: Can we avoid string allocations... does it even matter?
                 string scoreString = string.Format("Score: {0}", mPlayerSlice.Score[i].Value);
-                mUISpriteBatch.DrawString(mUIFont, scoreString, position, Color.BurlyWood);
+                mUISpriteBatch.DrawString(mUIFont, scoreString, position, Color.White);
             }
             mUISpriteBatch.End();
         }

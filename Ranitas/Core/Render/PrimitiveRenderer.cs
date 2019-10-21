@@ -30,6 +30,19 @@ namespace Ranitas.Core.Render
             }
         }
 
+        public void Render(GraphicsDevice device, Effect effect)
+        {
+            if (mCurrentIndex > 0)
+            {
+                effect.CurrentTechnique.Passes[0].Apply();
+                SetDeviceStates(device);
+                mVertexBuffer.SetData(mVertexBufferData, 0, mCurrentIndex);
+                int triangleCount = mCurrentIndex - 2;
+                device.DrawPrimitives(PrimitiveType.TriangleStrip, 0, triangleCount);
+                mCurrentIndex = 0;
+            }
+        }
+
         private void SetDeviceStates(GraphicsDevice device)
         {
             device.SetVertexBuffer(mVertexBuffer);

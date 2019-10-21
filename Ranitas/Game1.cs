@@ -55,8 +55,10 @@ namespace Ranitas
 
             SpriteFont uiFont = Content.Load<SpriteFont>("GameUI");
 
+            Effect waterEffect = Content.Load<Effect>("Water");
+
             System.Diagnostics.Debug.Assert(IsFixedTimeStep);
-            RanitasDependencies dependencies = new RanitasDependencies((float)TargetElapsedTime.TotalSeconds, pondData, frogData, flyData, changeData, noiseData, animationData, frogSprite, mGraphics.GraphicsDevice, uiFont);
+            RanitasDependencies dependencies = new RanitasDependencies((float)TargetElapsedTime.TotalSeconds, pondData, frogData, flyData, changeData, noiseData, animationData, frogSprite, mGraphics.GraphicsDevice, uiFont, waterEffect);
             mSim = new ECSSim(dependencies);
             mSim.Initialize();
         }
@@ -80,6 +82,14 @@ namespace Ranitas
                     {
                         mSim.SpawnPlayer(i);
                         mSPawnedPlayers[i] = true;
+                    }
+                    else if (i == 0)
+                    {
+                        if (Keyboard.GetState().IsKeyDown(Keys.Enter))
+                        {
+                            mSim.SpawnPlayer(i);
+                            mSPawnedPlayers[i] = true;
+                        }
                     }
                 }
             }

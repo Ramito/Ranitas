@@ -182,7 +182,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="app.manifest" />
-    <None Include="Content\Ranitas.mgcb" />
+    <MonoGameContentReference Include="Content\Ranitas.mgcb" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RanitasData\RanitasData.csproj">
@@ -191,7 +191,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\Fly.xml" />
+    <Content Include="Content\Fly.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Content\Frog.xml" />
     <Content Include="Content\Pond.xml" />
   </ItemGroup>

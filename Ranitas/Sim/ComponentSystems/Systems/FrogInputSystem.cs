@@ -97,11 +97,36 @@ namespace Ranitas.Sim
             {
                 int playerIndex = mPlayersSlice.Player[i].Index;
                 GamePadState state = GamePad.GetState(playerIndex);
-
                 FrogControlState controlState = new FrogControlState();
-                controlState.JumpSignal = state.IsButtonDown(Buttons.A);
-                controlState.ToungueSignalState = state.IsButtonDown(Buttons.X);
-                Vector2 direction = state.ThumbSticks.Left;
+                Vector2 direction = Vector2.Zero;
+                if (state.IsConnected)
+                {
+                    controlState.JumpSignal = state.IsButtonDown(Buttons.A);
+                    controlState.ToungueSignalState = state.IsButtonDown(Buttons.X);
+                    direction = state.ThumbSticks.Left;
+                }
+                else
+                {
+                    KeyboardState keyboardState = Keyboard.GetState();
+                    if (keyboardState.IsKeyDown(Keys.Left))
+                    {
+                        direction.X -= 1.0f;
+                    }
+                    if (keyboardState.IsKeyDown(Keys.Right))
+                    {
+                        direction.X += 1.0f;
+                    }
+                    if (keyboardState.IsKeyDown(Keys.Down))
+                    {
+                        direction.Y -= 1.0f;
+                    }
+                    if (keyboardState.IsKeyDown(Keys.Up))
+                    {
+                        direction.Y += 1.0f;
+                    }
+                    controlState.JumpSignal = keyboardState.IsKeyDown(Keys.LeftControl);
+                    controlState.ToungueSignalState = keyboardState.IsKeyDown(Keys.Space);
+                }
                 float rawMagnitude = direction.Length();
                 if (rawMagnitude >= kMinMagnitude)
                 {
