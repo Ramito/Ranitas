@@ -48,7 +48,7 @@ namespace Ranitas.Core.Render
             device.SetVertexBuffer(mVertexBuffer);
 
             device.DepthStencilState = DepthStencilState.DepthRead;
-            device.BlendState = BlendState.AlphaBlend;
+            device.BlendState = BlendState.NonPremultiplied;
             device.RasterizerState = RasterizerState.CullClockwise;
             device.SamplerStates[0] = SamplerState.PointClamp;
         }

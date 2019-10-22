@@ -196,6 +196,7 @@
     </Content>
     <Content Include="Content\Frog.xml" />
     <Content Include="Content\Pond.xml" />
+    <Content Include="Content\Water.fx" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

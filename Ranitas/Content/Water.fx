@@ -7,6 +7,7 @@
 	#define PS_SHADERMODEL ps_4_0_level_9_1
 #endif
 
+float WaterLevel;
 matrix WorldViewProjection;
 
 struct VertexShaderInput
@@ -33,9 +34,9 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
 
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
-	float relativeY = input.Position.y / 1200.0;
+	float relativeY = input.Position.y / WaterLevel;
 	float4 baseColor = relativeY * input.Color;
-	float4 waterColor = {baseColor.r, baseColor.g, baseColor.b, (1.0 - relativeY) * (1.0 - relativeY)};
+	float4 waterColor = {baseColor.r, baseColor.g, baseColor.b, (1.0 - relativeY)};
 	return waterColor;
 }
 

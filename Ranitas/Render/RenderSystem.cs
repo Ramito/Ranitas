@@ -73,6 +73,7 @@ namespace Ranitas.Render
             mDevice.Clear(Color.Black);
 
             RenderLilies();
+            mRenderer.Render(mCameraMatrix, mDevice);
 
             int frogCount = mFrogRectSlice.Rect.Count;
             for (int i = 0; i < frogCount; ++i)
@@ -104,7 +105,9 @@ namespace Ranitas.Render
 
         private void RenderWater()
         {
+            mWaterEffect.Parameters["WaterLevel"].SetValue(mPond.WaterLevel + mPond.Height * 0.5f);
             mWaterEffect.Parameters["WorldViewProjection"].SetValue(mCameraMatrix);
+            
             int wide = (int)mPond.Width;
             Rect waterRect = new Rect(new Vector2(-wide, 0f), new Vector2(wide, mPond.WaterLevel));
             Color waterColor = Color.DarkBlue;
