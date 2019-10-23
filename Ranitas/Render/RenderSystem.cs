@@ -6,7 +6,6 @@ using Ranitas.Core.Render;
 using Ranitas.Data;
 using Ranitas.Pond;
 using Ranitas.Sim;
-using Ranitas.Sim.Events;
 
 namespace Ranitas.Render
 {
@@ -29,6 +28,8 @@ namespace Ranitas.Render
             mUISpriteBatch = new SpriteBatch(mDevice);
 
             mWaterEffect = waterEffect;
+            SetupWaterEffect();
+            SetupBasicEffect();
         }
 
         private PrimitiveRenderer mRenderer;
@@ -39,6 +40,23 @@ namespace Ranitas.Render
         private PondSimState mPond;    //TODO: Make lily pads entities so they can be rendered as the rest!
         private GraphicsDevice mDevice;
         private Effect mWaterEffect;
+        private BasicEffect mBasicEffect;
+
+        private void SetupBasicEffect()
+        {
+            mBasicEffect = new BasicEffect(mDevice);
+            mBasicEffect.View = mCameraMatrix;
+            mBasicEffect.VertexColorEnabled = true;
+            mBasicEffect.World = Matrix.Identity;
+            mBasicEffect.Alpha = 1;
+            mBasicEffect.TextureEnabled = false;
+        }
+
+        private void SetupWaterEffect()
+        {
+            mWaterEffect.Parameters["WaterLevel"].SetValue(mPond.WaterLevel + mPond.Height * 0.5f);
+            mWaterEffect.Parameters["WorldViewProjection"].SetValue(mCameraMatrix);
+        }
 
         private struct ColoredRectSlice
         {
@@ -73,7 +91,6 @@ namespace Ranitas.Render
             mDevice.Clear(Color.Black);
 
             RenderLilies();
-            mRenderer.Render(mCameraMatrix, mDevice);
 
             int frogCount = mFrogRectSlice.Rect.Count;
             for (int i = 0; i < frogCount; ++i)
@@ -87,8 +104,7 @@ namespace Ranitas.Render
             {
                 mRenderer.PushRect(mColoredRectSlice.Rect[i], mColoredRectSlice.Color[i]);
             }
-
-            mRenderer.Render(mCameraMatrix, mDevice);
+            mRenderer.RenderAndFlush(mDevice, mBasicEffect);
 
             RenderWater();
 
@@ -99,20 +115,18 @@ namespace Ranitas.Render
         {
             foreach (var lily in mPond.Lilies)
             {
-                mRenderer.PushRect(lily.Rect, Color.Green);
+                mRenderer.PushRect(lily.Rect, Color.LawnGreen);
             }
+            mRenderer.RenderAndFlush(mDevice, mBasicEffect);
         }
 
         private void RenderWater()
         {
-            mWaterEffect.Parameters["WaterLevel"].SetValue(mPond.WaterLevel + mPond.Height * 0.5f);
-            mWaterEffect.Parameters["WorldViewProjection"].SetValue(mCameraMatrix);
-            
             int wide = (int)mPond.Width;
             Rect waterRect = new Rect(new Vector2(-wide, 0f), new Vector2(wide, mPond.WaterLevel));
             Color waterColor = Color.DarkBlue;
             mRenderer.PushRect(waterRect, waterColor);
-            mRenderer.Render(mDevice, mWaterEffect);
+            mRenderer.RenderAndFlush(mDevice, mWaterEffect);
         }
 
         private void RenderUI()

@@ -36,7 +36,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR
 {
 	float relativeY = input.Position.y / WaterLevel;
 	float4 baseColor = relativeY * input.Color;
-	float4 waterColor = {baseColor.r, baseColor.g, baseColor.b, (1.0 - relativeY)};
+	float4 waterColor = {baseColor.r, baseColor.g, baseColor.b, (1.0 - relativeY) * (1.0 - relativeY)};
 	return waterColor;
 }
 
