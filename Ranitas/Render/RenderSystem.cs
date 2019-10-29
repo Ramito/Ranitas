@@ -122,11 +122,11 @@ namespace Ranitas.Render
 
         private void RenderLiliesAndWaterBackground()
         {
+            mRenderer.PushRect(new Rect(Vector2.Zero, new Vector2(mPond.Width, mPond.WaterLevel)), Color.RoyalBlue);
             foreach (var lily in mPond.Lilies)
             {
                 mRenderer.PushRect(lily.Rect, Color.LawnGreen);
             }
-            mRenderer.PushRect(new Rect(Vector2.Zero, new Vector2(mPond.Width, mPond.WaterLevel)), Color.RoyalBlue);
             mRenderer.RenderAndFlush(mDevice, mBasicEffect);
         }
 
