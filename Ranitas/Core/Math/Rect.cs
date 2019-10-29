@@ -21,15 +21,18 @@ namespace Ranitas.Core
         public Rect(Vector2 centerOfMass, float width, float height)
         {
             Vector2 halfDimensions = 0.5f * (new Vector2(width, height));
-            MinCorner = centerOfMass - halfDimensions;
-            MaxCorner = centerOfMass + halfDimensions;
+            Vector2 corner1 = centerOfMass - halfDimensions;
+            Vector2 corner2 = centerOfMass + halfDimensions;
+            MinMaxHelper(corner1.X, corner2.X, out float minX, out float maxX);
+            MinMaxHelper(corner1.Y, corner2.Y, out float minY, out float maxY);
+            MinCorner = new Vector2(minX, minY);
+            MaxCorner = new Vector2(maxX, maxY);
         }
 
         public Rect(Vector2 corner1, Vector2 corner2)
         {
             MinMaxHelper(corner1.X, corner2.X, out float minX, out float maxX);
             MinMaxHelper(corner1.Y, corner2.Y, out float minY, out float maxY);
-
             MinCorner = new Vector2(minX, minY);
             MaxCorner = new Vector2(maxX, maxY);
         }
@@ -68,6 +71,11 @@ namespace Ranitas.Core
         {
             Vector2 offset = amount * Vector2.One;
             return new Rect(MinCorner - offset, MaxCorner + offset);
+        }
+
+        public Rect Translated(Vector2 offset)
+        {
+            return new Rect(MinCorner + offset, MaxCorner + offset);
         }
     }
 }

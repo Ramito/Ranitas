@@ -20,7 +20,7 @@ namespace Ranitas.Sim
             mRegistry.AddComponent(fly, new Position(position));
             mRegistry.AddComponent(fly, new Velocity(velocity));
             mRegistry.AddComponent(fly, new RectShape(width, height));
-            mRegistry.AddComponent(fly, Color.Coral);
+            mRegistry.AddComponent(fly, Color.Black);
 
             return fly;
         }

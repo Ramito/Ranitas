@@ -23,7 +23,7 @@ namespace Ranitas.Render
 
             mPond = pond;
             mDevice = graphicsDevice;
-            SetupCamera(graphicsDevice, pond);
+            SetupCamera();
 
             mUISpriteBatch = new SpriteBatch(mDevice);
 
@@ -54,7 +54,16 @@ namespace Ranitas.Render
 
         private void SetupWaterEffect()
         {
-            mWaterEffect.Parameters["WaterLevel"].SetValue(mPond.WaterLevel + mPond.Height * 0.5f);
+            Vector3 waterLevel = new Vector3(0.0f, mPond.WaterLevel, 0.0f);
+            Vector3 transformedLevel = Vector3.Transform(waterLevel, mCameraMatrix);
+            Vector3 waterDepth = new Vector3(0.0f, 0.0f, 0.0f);
+            Vector3 transformedDepth = Vector3.Transform(waterDepth, mCameraMatrix);
+            Vector4 surfaceColor = Color.LightCyan.ToVector4();
+            surfaceColor.W = 0.1f;
+            Vector4 bottomColor = Color.MidnightBlue.ToVector4();
+            bottomColor.W = 0.95f;
+            mWaterEffect.Parameters["SurfaceColor"].SetValue(surfaceColor);
+            mWaterEffect.Parameters["BottomColor"].SetValue(bottomColor);
             mWaterEffect.Parameters["WorldViewProjection"].SetValue(mCameraMatrix);
         }
 
@@ -88,9 +97,9 @@ namespace Ranitas.Render
 
         public void Update(EntityRegistry registry, EventSystem eventSystem)
         {
-            mDevice.Clear(Color.Black);
+            mDevice.Clear(Color.SkyBlue);
 
-            RenderLilies();
+            RenderLiliesAndWaterBackground();
 
             int frogCount = mFrogRectSlice.Rect.Count;
             for (int i = 0; i < frogCount; ++i)
@@ -107,33 +116,53 @@ namespace Ranitas.Render
             mRenderer.RenderAndFlush(mDevice, mBasicEffect);
 
             RenderWater();
-
+            RenderLetterBox();
             RenderUI();
         }
 
-        private void RenderLilies()
+        private void RenderLiliesAndWaterBackground()
         {
             foreach (var lily in mPond.Lilies)
             {
                 mRenderer.PushRect(lily.Rect, Color.LawnGreen);
             }
+            mRenderer.PushRect(new Rect(Vector2.Zero, new Vector2(mPond.Width, mPond.WaterLevel)), Color.RoyalBlue);
             mRenderer.RenderAndFlush(mDevice, mBasicEffect);
         }
 
         private void RenderWater()
         {
-            int wide = (int)mPond.Width;
-            Rect waterRect = new Rect(new Vector2(-wide, 0f), new Vector2(wide, mPond.WaterLevel));
-            Color waterColor = Color.DarkBlue;
-            mRenderer.PushRect(waterRect, waterColor);
+            float width = mPond.Width;
+            float height = mPond.WaterLevel;
+
+            //Red channel is horizontal distance, Green channel is depth
+            mRenderer.StartShape();
+            mRenderer.ShapeVertex(new Vector2(width, height), new Color(1.0f, 0.0f, 0.0f, 1.0f));
+            mRenderer.ShapeVertex(new Vector2(width, 0.0f), new Color(1.0f, 1.0f, 0.0f, 1.0f));
+            mRenderer.ShapeVertex(new Vector2(0.0f, height), new Color(0.0f, 0.0f, 0.0f, 1.0f));
+            mRenderer.ShapeVertex(new Vector2(0.0f, 0.0f), new Color(0.0f, 1.0f, 0.0f, 1.0f));
+            mRenderer.EndShape();
+
             mRenderer.RenderAndFlush(mDevice, mWaterEffect);
+        }
+
+        private void RenderLetterBox()
+        {
+            float width = MathHelper.Min(mDevice.DisplayMode.Width, mPond.Width);
+            float aspectRatio = mDevice.Adapter.CurrentDisplayMode.AspectRatio;
+            float height = width / aspectRatio;
+            Rect bottomLetterBox = new Rect(new Vector2(0.0f, (mPond.Height - height) * 0.5f), new Vector2(width, 0.0f));
+            mRenderer.PushRect(bottomLetterBox, Color.Black);
+            Rect topLetterBox = bottomLetterBox.Translated(new Vector2(0.0f, mPond.Height + bottomLetterBox.Height));
+            mRenderer.PushRect(topLetterBox, Color.Black);
+            mRenderer.RenderAndFlush(mDevice, mBasicEffect);
         }
 
         private void RenderUI()
         {
             float playerAreaWidth = (float)(mDevice.DisplayMode.Width) / 4f;
             int playerCount = mPlayerSlice.Player.Count;
-            mUISpriteBatch.Begin(depthStencilState: DepthStencilState.DepthRead);
+            mUISpriteBatch.Begin(depthStencilState: DepthStencilState.Default);
             for (int i = 0; i < playerCount; ++i)
             {
                 float xPosition = mPlayerSlice.Player[i].Index * playerAreaWidth;
@@ -145,13 +174,13 @@ namespace Ranitas.Render
             mUISpriteBatch.End();
         }
 
-        private void SetupCamera(GraphicsDevice device, PondSimState pond)
+        private void SetupCamera()
         {
-            float pondWidth = pond.Width;
-            float pondHeight = pond.Height;
-            float aspectRatio = device.Adapter.CurrentDisplayMode.AspectRatio;
-            Matrix translation = Matrix.CreateTranslation(-aspectRatio * pondHeight * 0.5f, -pondHeight * 0.5f, 0f);
-            Matrix projectionMatrix = Matrix.CreateOrthographic(aspectRatio * pondHeight, pondHeight, -100, 100);
+            float width = MathHelper.Min(mDevice.DisplayMode.Width, mPond.Width);
+            float aspectRatio = mDevice.Adapter.CurrentDisplayMode.AspectRatio;
+            float height = width/aspectRatio;
+            Matrix translation = Matrix.CreateTranslation(-mPond.Width * 0.5f, -mPond.Height * 0.5f, 0f);
+            Matrix projectionMatrix = Matrix.CreateOrthographic(width, height, -100, 100);
             mCameraMatrix = translation * projectionMatrix;
         }
     }
