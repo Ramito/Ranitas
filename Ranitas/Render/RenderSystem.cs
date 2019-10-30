@@ -54,14 +54,11 @@ namespace Ranitas.Render
 
         private void SetupWaterEffect()
         {
-            Vector3 waterLevel = new Vector3(0.0f, mPond.WaterLevel, 0.0f);
-            Vector3 transformedLevel = Vector3.Transform(waterLevel, mCameraMatrix);
-            Vector3 waterDepth = new Vector3(0.0f, 0.0f, 0.0f);
-            Vector3 transformedDepth = Vector3.Transform(waterDepth, mCameraMatrix);
             Vector4 surfaceColor = Color.LightCyan.ToVector4();
-            surfaceColor.W = 0.1f;
+            surfaceColor.W = 0.05f;
             Vector4 bottomColor = Color.MidnightBlue.ToVector4();
-            bottomColor.W = 0.95f;
+            bottomColor *= 0.35f;
+            bottomColor.W = 0.99f;
             mWaterEffect.Parameters["SurfaceColor"].SetValue(surfaceColor);
             mWaterEffect.Parameters["BottomColor"].SetValue(bottomColor);
             mWaterEffect.Parameters["WorldViewProjection"].SetValue(mCameraMatrix);
@@ -122,7 +119,7 @@ namespace Ranitas.Render
 
         private void RenderLiliesAndWaterBackground()
         {
-            mRenderer.PushRect(new Rect(Vector2.Zero, new Vector2(mPond.Width, mPond.WaterLevel)), Color.RoyalBlue);
+            mRenderer.PushRect(new Rect(Vector2.Zero, new Vector2(mPond.Width, mPond.WaterLevel)), Color.CadetBlue);
             foreach (var lily in mPond.Lilies)
             {
                 mRenderer.PushRect(lily.Rect, Color.LawnGreen);

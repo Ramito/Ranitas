@@ -36,7 +36,7 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
 	float depth = input.Color.g;
-	float interpolation = pow(depth, 0.45);
+	float interpolation = pow(depth, 0.25);
 	float4 color = (1.0 - interpolation) * SurfaceColor + interpolation * BottomColor;
 	return color;
 }
