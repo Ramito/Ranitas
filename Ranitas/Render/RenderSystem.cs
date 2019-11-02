@@ -41,6 +41,7 @@ namespace Ranitas.Render
         private GraphicsDevice mDevice;
         private Effect mWaterEffect;
         private BasicEffect mBasicEffect;
+        private float mTime = 0.0f;
 
         private void SetupBasicEffect()
         {
@@ -129,6 +130,9 @@ namespace Ranitas.Render
 
         private void RenderWater()
         {
+            mTime += 1.0f / 120.0f;
+            mWaterEffect.Parameters["Time"].SetValue(mTime);
+
             float width = mPond.Width;
             float height = mPond.WaterLevel;
 
