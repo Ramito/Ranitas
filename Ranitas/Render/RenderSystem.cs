@@ -114,6 +114,15 @@ namespace Ranitas.Render
             mRenderer.RenderAndFlush(mDevice, mBasicEffect);
 
             RenderWater();
+
+            float dx = mPond.Width / mPond.WaterPositions.Length;
+            for (int i = 0; i < mPond.WaterPositions.Length; ++i)
+            {
+                Rect debugRect = new Rect(new Vector2(i * dx, mPond.WaterPositions[i]), 2.0f, 2.0f);
+                mRenderer.PushRect(debugRect, Color.Red);
+            }
+            mRenderer.RenderAndFlush(mDevice, mBasicEffect);
+
             RenderLetterBox();
             RenderUI();
         }

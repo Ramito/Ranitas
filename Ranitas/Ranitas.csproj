@@ -111,6 +111,7 @@
     <Compile Include="Sim\ComponentSystems\Systems\TounguePositionSystem.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\ToungueShapeSystem.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\ToungueSystem.cs" />
+    <Compile Include="Sim\ComponentSystems\Systems\WaterSystem.cs" />
     <Compile Include="Sim\ECSSim.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Pond\LilyPadSimState.cs" />
