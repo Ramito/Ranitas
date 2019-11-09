@@ -77,7 +77,7 @@ namespace Ranitas.Core.Render
 
         private void SetupVertexBuffer(GraphicsDevice device)
         {
-            const int kVertexCount = 250 * 6;
+            const int kVertexCount = 5000 * 6;
             mVertexBuffer = new VertexBuffer(device, typeof(VertexPositionColor), kVertexCount, BufferUsage.WriteOnly);
             mVertexBufferData = new VertexPositionColor[kVertexCount];
             mCurrentIndex = 0;

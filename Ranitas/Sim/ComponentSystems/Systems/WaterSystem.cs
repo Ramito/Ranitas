@@ -10,26 +10,24 @@ namespace Ranitas.Sim
     {
         public WaterSystem(FrameTime time, PondSimState pond)
         {
+            Random random = new Random();
             mPond = pond;
             mTime = time;
-            for (int i = 0; i < mWaterPositions.Length; ++i)
+            for (int i = 0; i < mWaterHeight.Length; ++i)
             {
-                mWaterPositions[i] = mPond.WaterLevel;
-                mWaterVelocities[i] = 0f;
+                mWaterHeight[i] = mPond.WaterLevel + 2.75f * RandomExtensions.GetRandomInRange(random, -1f, 1f);
+                mWaterFlow[i] = 0f;
             }
-            mPond.WaterPositions = mWaterPositions;
-            mPond.WaterVelocities = mWaterVelocities;
+            mPond.WaterPositions = mWaterHeight;
+            mPond.WaterVelocities = mWaterFlow;
             mWaterDX = mPond.Width / kWaterResolution;
         }
 
-        const int kWaterResolution = 2 * 1024;
-        const float kWaterSpring = 150.5f;
-        const float kWaterDiffusion = 7000f;
-        const float kWaterDamp = 0.125f;
-        const float kWaterViscosity = 8.5f;
+        const int kWaterResolution = 225;
+        const float kWaterViscosity = 0.75f;
         float mWaterDX;
-        private float[] mWaterPositions = new float[kWaterResolution];
-        private float[] mWaterVelocities = new float[kWaterResolution];
+        private float[] mWaterHeight = new float[kWaterResolution];
+        private float[] mWaterFlow = new float[kWaterResolution  + 1];
         private PondSimState mPond;
         private FrameTime mTime;
 
@@ -45,47 +43,63 @@ namespace Ranitas.Sim
             registry.SetupSlice(ref mSplashing);
         }
 
+        private void IntegrateHeight()
+        {
+            float previousHeight = mPond.WaterLevel;
+            float currentHeight = mWaterHeight[0];
+            for (int i = 0; i < mWaterHeight.Length; ++i)
+            {
+                bool lastIndex = (i == mWaterHeight.Length - 1);
+
+                float nextHeight = (lastIndex) ? mPond.WaterLevel : mWaterHeight[i + 1];
+                float leftFlow = mWaterFlow[i];
+                float leftHeight = (leftFlow > 0f) ? previousHeight : currentHeight;
+                float rightFlow = mWaterFlow[i + 1];
+                float rightHeight = (rightFlow > 0f) ? currentHeight : nextHeight;
+
+                float heightSpeed = ((leftHeight * leftFlow) - (rightHeight * rightFlow)) / mWaterDX;
+                mWaterHeight[i] = currentHeight + (heightSpeed * mTime.DeltaTime) * 0.022f;
+
+                previousHeight = currentHeight;
+                currentHeight = nextHeight;
+            }
+        }
+
+        private void IntegrateFlow()
+        {
+            float previousHeight = mPond.WaterLevel;
+            for (int i = 0; i < mWaterFlow.Length; ++i)
+            {
+                float currentHeight = (i < mWaterHeight.Length) ? mWaterHeight[i] : mPond.WaterLevel;
+                mWaterFlow[i] = (mWaterFlow[i] - 950f * (currentHeight - previousHeight) * (mTime.DeltaTime / mWaterDX)) * 0.9999975f;
+                previousHeight = currentHeight;
+            }
+        }
+
         private void IntegrateWater()
         {
-            float dampingFactor = (float)Math.Exp(-mTime.DeltaTime * kWaterDamp);
-            float previousPosition = mPond.WaterLevel;
-            for (int i = 0; i < mWaterPositions.Length - 1; ++i)
-            {
-                float currentPosition = mWaterPositions[i];
-                float nextPosition = mWaterPositions[i + 1];
-                float diffusion = (nextPosition - 2f * currentPosition + previousPosition) * kWaterDiffusion / (mWaterDX * mWaterDX);
-                float spring = (mPond.WaterLevel - currentPosition) * kWaterSpring;
-                mWaterVelocities[i] = (mWaterVelocities[i] + (spring + diffusion) * mTime.DeltaTime) * dampingFactor;
-                mWaterPositions[i] += mTime.DeltaTime * mWaterVelocities[i];
-                previousPosition = currentPosition;
-            }
-            {
-                int lastIndex = mWaterPositions.Length - 1;
-                float currentPosition = mWaterPositions[lastIndex];
-                float nextPosition = mPond.WaterLevel;
-                float diffusion = (nextPosition - 2f * currentPosition + previousPosition) * kWaterDiffusion / (mWaterDX * mWaterDX);
-                float spring = (mPond.WaterLevel - currentPosition) * kWaterSpring;
-                mWaterVelocities[lastIndex] = (mWaterVelocities[lastIndex] + (spring + diffusion) * mTime.DeltaTime) * dampingFactor;
-                mWaterPositions[lastIndex] += mTime.DeltaTime * mWaterVelocities[lastIndex];
-            }
+            IntegrateFlow();
+            IntegrateHeight();
         }
 
         public void Update(EntityRegistry registry, EventSystem eventSystem)
         {
             for (int iSplash = 0; iSplash < mSplashing.Rects.Count; ++iSplash)
             {
+                float horizontalSplashVelocity = mSplashing.Velocities[iSplash].Value.X;
+                float verticalSplashVelocity = mSplashing.Velocities[iSplash].Value.Y;
                 Rect splashingRect = mSplashing.Rects[iSplash];
                 int minWater = Math.Max((int)(splashingRect.MinX / mWaterDX), 0);
-                int maxWater = Math.Min((int)(splashingRect.MaxX / mWaterDX), mWaterPositions.Length);
+                int maxWater = Math.Min((int)(splashingRect.MaxX / mWaterDX), mWaterHeight.Length);
                 for (int iWater = minWater; iWater < maxWater; ++iWater)
                 {
-                    Vector2 waterPos = new Vector2(iWater * mWaterDX, mWaterPositions[iWater]);
+                    Vector2 waterPos = new Vector2(iWater * mWaterDX, mWaterHeight[iWater]);
                     if (splashingRect.Contains(waterPos))
                     {
-                        float verticalSplashVelocity = mSplashing.Velocities[iSplash].Value.Y;
-                        float velocityDifference = verticalSplashVelocity - mWaterVelocities[iSplash];
-                        float velocityChange = mTime.DeltaTime * velocityDifference * kWaterViscosity;
-                        mWaterVelocities[iWater] += velocityChange;
+                        float velocityChange = mTime.DeltaTime * verticalSplashVelocity * kWaterViscosity;
+                        mWaterHeight[iWater] += velocityChange;
+                        float flowChange = mTime.DeltaTime * (horizontalSplashVelocity - mWaterFlow[iWater]) * 15f * kWaterViscosity;
+                        mWaterFlow[iWater] += flowChange;
                     }
                 }
             }

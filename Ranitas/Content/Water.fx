@@ -46,7 +46,7 @@ float LightShaft(float2 position, float factor, float frequency) {
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
 	float depth = input.Color.g;
-	if (depth <= 0.0001)
+	if (depth <= 0.001)
 	{
 		float4 boundaryColor = SurfaceColor;
 		boundaryColor.a = 1.0;
