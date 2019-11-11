@@ -10,12 +10,11 @@ namespace Ranitas.Sim
     {
         public WaterSystem(FrameTime time, PondSimState pond)
         {
-            Random random = new Random();
             mPond = pond;
             mTime = time;
             for (int i = 0; i < mWaterHeight.Length; ++i)
             {
-                mWaterHeight[i] = mPond.WaterLevel + 2.75f * RandomExtensions.GetRandomInRange(random, -1f, 1f);
+                mWaterHeight[i] = mPond.WaterLevel;
                 mWaterFlow[i] = 0f;
             }
             mPond.WaterPositions = mWaterHeight;
@@ -24,7 +23,7 @@ namespace Ranitas.Sim
         }
 
         const int kWaterResolution = 225;
-        const float kWaterViscosity = 0.75f;
+        const float kWaterViscosity = 1.5f;
         float mWaterDX;
         private float[] mWaterHeight = new float[kWaterResolution];
         private float[] mWaterFlow = new float[kWaterResolution  + 1];
@@ -43,7 +42,7 @@ namespace Ranitas.Sim
             registry.SetupSlice(ref mSplashing);
         }
 
-        private void IntegrateHeight()
+        private void IntegrateHeight(float deltaTime)
         {
             float previousHeight = mPond.WaterLevel;
             float currentHeight = mWaterHeight[0];
@@ -58,28 +57,33 @@ namespace Ranitas.Sim
                 float rightHeight = (rightFlow > 0f) ? currentHeight : nextHeight;
 
                 float heightSpeed = ((leftHeight * leftFlow) - (rightHeight * rightFlow)) / mWaterDX;
-                mWaterHeight[i] = currentHeight + (heightSpeed * mTime.DeltaTime) * 0.022f;
+                mWaterHeight[i] = currentHeight + (heightSpeed * deltaTime) * 0.17477575f;
 
                 previousHeight = currentHeight;
                 currentHeight = nextHeight;
             }
         }
 
-        private void IntegrateFlow()
+        private void IntegrateFlow(float deltaTime)
         {
             float previousHeight = mPond.WaterLevel;
             for (int i = 0; i < mWaterFlow.Length; ++i)
             {
                 float currentHeight = (i < mWaterHeight.Length) ? mWaterHeight[i] : mPond.WaterLevel;
-                mWaterFlow[i] = (mWaterFlow[i] - 950f * (currentHeight - previousHeight) * (mTime.DeltaTime / mWaterDX)) * 0.9999975f;
+                mWaterFlow[i] = (mWaterFlow[i] - 760f * (currentHeight - previousHeight) * (deltaTime / mWaterDX)) * 0.99835225f;
                 previousHeight = currentHeight;
             }
         }
 
         private void IntegrateWater()
         {
-            IntegrateFlow();
-            IntegrateHeight();
+            const int iterations = 10;
+            float deltaTime = mTime.DeltaTime / iterations;
+            for (int i = 0; i < iterations; ++i)
+            {
+                IntegrateFlow(deltaTime);
+                IntegrateHeight(deltaTime);
+            }
         }
 
         public void Update(EntityRegistry registry, EventSystem eventSystem)
