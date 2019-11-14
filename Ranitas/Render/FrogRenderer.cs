@@ -42,24 +42,22 @@ namespace Ranitas.Core.Render
         {
             device.SetVertexBuffer(mVertexBuffer);
 
-            device.DepthStencilState = DepthStencilState.DepthRead;
+            device.DepthStencilState = DepthStencilState.Default;
             device.BlendState = BlendState.AlphaBlend;
             device.RasterizerState = RasterizerState.CullClockwise;
             device.SamplerStates[0] = SamplerState.PointClamp;
         }
 
-        public void PushFrog(Rect frogRect, AnimationState animationState)
+        public void PushFrog(Rect frogRect, float depth, AnimationState animationState)
         {
-            const float kDepth = 1f;
-
             frogRect = frogRect.Inflated(mSpriteOffset);
 
-            mVertexBufferData[mCurrentIndex].Position = new Vector3(frogRect.MaxCorner, kDepth);
-            mVertexBufferData[mCurrentIndex + 1].Position = new Vector3(frogRect.MaxCorner, kDepth);
-            mVertexBufferData[mCurrentIndex + 2].Position = new Vector3(frogRect.MaxMinCorner, kDepth);
-            mVertexBufferData[mCurrentIndex + 3].Position = new Vector3(frogRect.MinMaxCorner, kDepth);
-            mVertexBufferData[mCurrentIndex + 4].Position = new Vector3(frogRect.MinCorner, kDepth);
-            mVertexBufferData[mCurrentIndex + 5].Position = new Vector3(frogRect.MinCorner, kDepth);
+            mVertexBufferData[mCurrentIndex].Position = new Vector3(frogRect.MaxCorner, depth);
+            mVertexBufferData[mCurrentIndex + 1].Position = new Vector3(frogRect.MaxCorner, depth);
+            mVertexBufferData[mCurrentIndex + 2].Position = new Vector3(frogRect.MaxMinCorner, depth);
+            mVertexBufferData[mCurrentIndex + 3].Position = new Vector3(frogRect.MinMaxCorner, depth);
+            mVertexBufferData[mCurrentIndex + 4].Position = new Vector3(frogRect.MinCorner, depth);
+            mVertexBufferData[mCurrentIndex + 5].Position = new Vector3(frogRect.MinCorner, depth);
 
             float topY = 0f;
             float bottomY = 1f;
