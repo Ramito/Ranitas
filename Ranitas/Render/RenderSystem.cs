@@ -135,8 +135,16 @@ namespace Ranitas.Render
         private void PushWaterPrimitives(float depth, Color maxMaxColor, Color maxMinColor, Color minMaxColor, Color minMinColor)
         {
             const float kHorizontalOffset = 200f;
+
+            mRenderer.StartShape();
+            mRenderer.ShapeVertex(new Vector2(0f, mPond.WaterPositions[0]), depth, maxMaxColor);
+            mRenderer.ShapeVertex(new Vector2(kHorizontalOffset, 0f), depth, maxMinColor);
+            mRenderer.ShapeVertex(new Vector2(-kHorizontalOffset, mPond.WaterLevel), depth, minMaxColor);
+            mRenderer.ShapeVertex(new Vector2(0f, 0f), depth, minMinColor);
+            mRenderer.EndShape();
+
             float width = mPond.Width;
-            float dx = width / mPond.WaterPositions.Length;
+            float dx = width / (mPond.WaterPositions.Length - 1);
             for (int i = 0; i < mPond.WaterPositions.Length - 1; ++i)
             {
                 float fromX = i * dx;
