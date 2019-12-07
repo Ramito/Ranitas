@@ -34,42 +34,12 @@ VertexShaderOutput MainVS(in VertexShaderInput input)
 	return output;
 }
 
-float LightShaft(float2 position, float factor, float frequency) {
-	float2 direction = normalize(float2(0.8, -0.05));
-	float spaceEvaluationPoint = dot(position, direction);
-	float sinValue = sin(factor * frequency * spaceEvaluationPoint) * cos(frequency * Time);
-	float clamped = sinValue * float(sinValue > 0.6);
-	float intensity = pow(clamped, 7.5);
-	return intensity;
-}
-
 float4 MainPS(VertexShaderOutput input) : COLOR
 {
 	float depth = input.Color.g;
-	if (depth <= 0.0001)
-	{
-		float4 boundaryColor = SurfaceColor;
-		boundaryColor.a = 1.0;
-		return boundaryColor;
-	}
 
 	float ambientClamp = 0.2;
-	float interpolation = ambientClamp + pow(depth, 0.25) * (1.0 - ambientClamp);
-
-	float2 position = {input.Color.r, input.Color.g};
-	float lightIntensity = 0.0;
-	for (int i = 3; i <= 10; ++i)
-	{
-		lightIntensity += LightShaft(position, 22.0, i * 0.174);
-	}
-
-	float lostLight = pow(position.y, 0.0025);
-	lightIntensity = lightIntensity - lostLight;
-
-	float dim = pow(position.y, 0.02);
-	lightIntensity = saturate((1.0 - dim) * lightIntensity);
-
-	interpolation = (1.0 - lightIntensity) * interpolation;
+	float interpolation = ambientClamp + pow(depth, 1.0 / 3.0) * (1.0 - ambientClamp);
 
 	float4 color = (1.0 - interpolation) * SurfaceColor + interpolation * BottomColor;
 

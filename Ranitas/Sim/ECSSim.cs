@@ -108,6 +108,7 @@ namespace Ranitas.Sim
                 new WetDryFrogSystem(dependencies.PondState),
                 new MainRectUpkeepSystem(),
                 new LilyCollisionSystem(dependencies.PondState),
+                new WaterSystem(dependencies.Time, dependencies.PondState),
                 new ToungueSystem(dependencies.FrogData, dependencies.Time),
                 new ToungueShapeSystem(dependencies.FrogData),
                 new TounguePositionSystem(dependencies.FrogData),

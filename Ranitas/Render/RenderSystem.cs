@@ -41,7 +41,6 @@ namespace Ranitas.Render
         private GraphicsDevice mDevice;
         private Effect mWaterEffect;
         private BasicEffect mBasicEffect;
-        private float mTime = 0.0f;
 
         private void SetupBasicEffect()
         {
@@ -97,66 +96,98 @@ namespace Ranitas.Render
         {
             mDevice.Clear(Color.SkyBlue);
 
-            RenderLiliesAndWaterBackground();
-
+            const float kCharachterDepth = 10f;
             int frogCount = mFrogRectSlice.Rect.Count;
             for (int i = 0; i < frogCount; ++i)
             {
-                mFrogRenderer.PushFrog(mFrogRectSlice.Rect[i], mFrogRectSlice.Animation[i]);
+                mFrogRenderer.PushFrog(mFrogRectSlice.Rect[i], kCharachterDepth, mFrogRectSlice.Animation[i]);
             }
             mFrogRenderer.Render(mCameraMatrix, mDevice);
 
+            RenderLilies();
             int rectCount = mColoredRectSlice.Rect.Count;
             for (int i = 0; i < rectCount; ++i)
             {
-                mRenderer.PushRect(mColoredRectSlice.Rect[i], mColoredRectSlice.Color[i]);
+                mRenderer.PushRect(mColoredRectSlice.Rect[i], kCharachterDepth, mColoredRectSlice.Color[i]);
             }
+            RenderLetterBox();
+            RenderUI();
+            RenderWaterBackground();
             mRenderer.RenderAndFlush(mDevice, mBasicEffect);
 
             RenderWater();
-            RenderLetterBox();
-            RenderUI();
         }
 
-        private void RenderLiliesAndWaterBackground()
+        private void RenderLilies()
         {
-            mRenderer.PushRect(new Rect(Vector2.Zero, new Vector2(mPond.Width, mPond.WaterLevel)), Color.CadetBlue);
+            const float kLilyDepth = 0f;
             foreach (var lily in mPond.Lilies)
             {
-                mRenderer.PushRect(lily.Rect, Color.LawnGreen);
+                mRenderer.PushRect(lily.Rect, kLilyDepth, Color.LawnGreen);
             }
-            mRenderer.RenderAndFlush(mDevice, mBasicEffect);
+        }
+
+        private void PushWaterPrimitives(float depth, Color color)
+        {
+            PushWaterPrimitives(depth, color, color, color, color);
+        }
+
+        private void PushWaterPrimitives(float depth, Color maxMaxColor, Color maxMinColor, Color minMaxColor, Color minMinColor)
+        {
+            const float kHorizontalOffset = 200f;
+
+            mRenderer.StartShape();
+            mRenderer.ShapeVertex(new Vector2(0f, mPond.WaterPositions[0]), depth, maxMaxColor);
+            mRenderer.ShapeVertex(new Vector2(kHorizontalOffset, 0f), depth, maxMinColor);
+            mRenderer.ShapeVertex(new Vector2(-kHorizontalOffset, mPond.WaterLevel), depth, minMaxColor);
+            mRenderer.ShapeVertex(new Vector2(0f, 0f), depth, minMinColor);
+            mRenderer.EndShape();
+
+            float width = mPond.Width;
+            float dx = width / (mPond.WaterPositions.Length - 1);
+            for (int i = 0; i < mPond.WaterPositions.Length - 1; ++i)
+            {
+                float fromX = i * dx;
+                float toX = fromX + dx;
+                float fromY = mPond.WaterPositions[i];
+                float toY = mPond.WaterPositions[i + 1];
+                //Red channel is horizontal distance, Green channel is depth
+                mRenderer.StartShape();
+                mRenderer.ShapeVertex(new Vector2(toX, toY), depth, maxMaxColor);
+                mRenderer.ShapeVertex(new Vector2(toX + kHorizontalOffset, 0f), depth, maxMinColor);
+                mRenderer.ShapeVertex(new Vector2(fromX, fromY), depth, minMaxColor);
+                mRenderer.ShapeVertex(new Vector2(fromX + kHorizontalOffset, 0f), depth, minMinColor);
+                mRenderer.EndShape();
+            }
+        }
+
+        private void RenderWaterBackground()
+        {
+            const float kWaterBackgroundDepth = -100f;
+            PushWaterPrimitives(kWaterBackgroundDepth, Color.CadetBlue);
         }
 
         private void RenderWater()
         {
-            mTime += 1.0f / 120.0f;
-            mWaterEffect.Parameters["Time"].SetValue(mTime);
-
-            float width = mPond.Width;
-            float height = mPond.WaterLevel;
-
-            //Red channel is horizontal distance, Green channel is depth
-            mRenderer.StartShape();
-            mRenderer.ShapeVertex(new Vector2(width, height), new Color(1.0f, 0.0f, 0.0f, 1.0f));
-            mRenderer.ShapeVertex(new Vector2(width, 0.0f), new Color(1.0f, 1.0f, 0.0f, 1.0f));
-            mRenderer.ShapeVertex(new Vector2(0.0f, height), new Color(0.0f, 0.0f, 0.0f, 1.0f));
-            mRenderer.ShapeVertex(new Vector2(0.0f, 0.0f), new Color(0.0f, 1.0f, 0.0f, 1.0f));
-            mRenderer.EndShape();
-
+            const float kWaterDepth = 10f;
+            PushWaterPrimitives(kWaterDepth,
+                new Color(1.0f, 0.0f, 0.0f, 1.0f),
+                new Color(1.0f, 1.0f, 0.0f, 1.0f),
+                new Color(0.0f, 0.0f, 0.0f, 1.0f),
+                new Color(0.0f, 1.0f, 0.0f, 1.0f));
             mRenderer.RenderAndFlush(mDevice, mWaterEffect);
         }
 
         private void RenderLetterBox()
         {
+            const float kLetterBoxDepth = 100f;
             float width = MathHelper.Min(mDevice.DisplayMode.Width, mPond.Width);
             float aspectRatio = mDevice.Adapter.CurrentDisplayMode.AspectRatio;
             float height = width / aspectRatio;
             Rect bottomLetterBox = new Rect(new Vector2(0.0f, (mPond.Height - height) * 0.5f), new Vector2(width, 0.0f));
-            mRenderer.PushRect(bottomLetterBox, Color.Black);
+            mRenderer.PushRect(bottomLetterBox, kLetterBoxDepth, Color.Black);
             Rect topLetterBox = bottomLetterBox.Translated(new Vector2(0.0f, mPond.Height + bottomLetterBox.Height));
-            mRenderer.PushRect(topLetterBox, Color.Black);
-            mRenderer.RenderAndFlush(mDevice, mBasicEffect);
+            mRenderer.PushRect(topLetterBox, kLetterBoxDepth, Color.Black);
         }
 
         private void RenderUI()

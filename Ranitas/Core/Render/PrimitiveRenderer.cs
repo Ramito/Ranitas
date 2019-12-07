@@ -32,7 +32,7 @@ namespace Ranitas.Core.Render
         private void SetDeviceStates(GraphicsDevice device)
         {
             device.SetVertexBuffer(mVertexBuffer);
-            device.DepthStencilState = DepthStencilState.DepthRead;
+            device.DepthStencilState = DepthStencilState.Default;
             device.BlendState = BlendState.NonPremultiplied;
             device.RasterizerState = RasterizerState.CullClockwise;
             device.SamplerStates[0] = SamplerState.PointClamp;
@@ -44,16 +44,20 @@ namespace Ranitas.Core.Render
             ToggleShapeDrawingScope();
         }
 
-        public void ShapeVertex(Vector2 vertex, Color vertexColor)
+        public void ShapeVertex(Vector2 vertex, float depth, Color vertexColor)
+        {
+            ShapeVertex(new Vector3(vertex, depth), vertexColor);
+        }
+
+        public void ShapeVertex(Vector3 vertex, Color vertexColor)
         {
             ValidateShapeDrawingScope(true);
-            const float kDepth = 0f;
             if (mCurrentShapeBegin == mCurrentIndex)
             {
-                mVertexBufferData[mCurrentIndex] = new VertexPositionColor(new Vector3(vertex, kDepth), vertexColor);
+                mVertexBufferData[mCurrentIndex] = new VertexPositionColor(vertex, vertexColor);
                 ++mCurrentIndex;
             }
-            mVertexBufferData[mCurrentIndex] = new VertexPositionColor(new Vector3(vertex, kDepth), vertexColor);
+            mVertexBufferData[mCurrentIndex] = new VertexPositionColor(vertex, vertexColor);
             ++mCurrentIndex;
         }
 
@@ -65,19 +69,19 @@ namespace Ranitas.Core.Render
             ToggleShapeDrawingScope();
         }
 
-        public void PushRect(Rect rect, Color color)
+        public void PushRect(Rect rect, float depth, Color color)
         {
             StartShape();
-            ShapeVertex(rect.MaxCorner, color);
-            ShapeVertex(rect.MaxMinCorner, color);
-            ShapeVertex(rect.MinMaxCorner, color);
-            ShapeVertex(rect.MinCorner, color);
+            ShapeVertex(rect.MaxCorner, depth, color);
+            ShapeVertex(rect.MaxMinCorner, depth, color);
+            ShapeVertex(rect.MinMaxCorner, depth, color);
+            ShapeVertex(rect.MinCorner, depth, color);
             EndShape();
         }
 
         private void SetupVertexBuffer(GraphicsDevice device)
         {
-            const int kVertexCount = 250 * 6;
+            const int kVertexCount = 5000 * 6;
             mVertexBuffer = new VertexBuffer(device, typeof(VertexPositionColor), kVertexCount, BufferUsage.WriteOnly);
             mVertexBufferData = new VertexPositionColor[kVertexCount];
             mCurrentIndex = 0;

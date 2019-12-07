@@ -12,6 +12,9 @@ namespace Ranitas.Pond
         public float Height;
         public float WaterLevel;
 
+        public float[] WaterPositions;
+        public float[] WaterVelocities;
+
         public readonly List<LilyPadSimState> Lilies;
 
         public PondSimState(PondData data)
