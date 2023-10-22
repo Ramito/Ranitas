@@ -20,7 +20,7 @@ namespace Ranitas
         private ECSSim mSim;
 
         private bool[] mSPawnedPlayers = new bool[kSuportedPlayers];
-        
+
         public Game1()
         {
             mGraphics = new GraphicsDeviceManager(this);

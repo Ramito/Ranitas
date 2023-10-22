@@ -104,6 +104,25 @@ namespace Ranitas.Sim
                     controlState.JumpSignal = state.IsButtonDown(Buttons.A);
                     controlState.ToungueSignalState = state.IsButtonDown(Buttons.X);
                     direction = state.ThumbSticks.Left;
+                    if (direction == Vector2.Zero)
+                    {
+                        if (state.IsButtonDown(Buttons.DPadDown))
+                        {
+                            direction -= Vector2.UnitY;
+                        }
+                        if (state.IsButtonDown(Buttons.DPadUp))
+                        {
+                            direction += Vector2.UnitY;
+                        }
+                        if (state.IsButtonDown(Buttons.DPadLeft))
+                        {
+                            direction -= Vector2.UnitX;
+                        }
+                        if (state.IsButtonDown(Buttons.DPadRight))
+                        {
+                            direction += Vector2.UnitX;
+                        }
+                    }
                 }
                 else
                 {

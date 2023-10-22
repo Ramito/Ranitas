@@ -11,7 +11,7 @@ namespace Ranitas.Render
 {
     public sealed class RenderSystem : ISystem
     {
-        public RenderSystem(GraphicsDevice graphicsDevice, PondSimState pond, Texture2D frogSprite, SpriteFont uiFont, FrogAnimationData animationData, Effect waterEffect)
+        public RenderSystem(GraphicsDevice graphicsDevice, PondSimState pond, Texture2D frogSprite, SpriteFont uiFont, FrogAnimationData animationData, Effect waterEffect, FrameTime frameTime)
         {
             mRenderer = new PrimitiveRenderer();
             mRenderer.Setup(graphicsDevice);
@@ -30,6 +30,8 @@ namespace Ranitas.Render
             mWaterEffect = waterEffect;
             SetupWaterEffect();
             SetupBasicEffect();
+
+            mTime = frameTime;
         }
 
         private PrimitiveRenderer mRenderer;
@@ -41,6 +43,8 @@ namespace Ranitas.Render
         private GraphicsDevice mDevice;
         private Effect mWaterEffect;
         private BasicEffect mBasicEffect;
+        private FrameTime mTime;
+        private float mTotalTime = 0f;
 
         private void SetupBasicEffect()
         {
@@ -94,7 +98,24 @@ namespace Ranitas.Render
 
         public void Update(EntityRegistry registry, EventSystem eventSystem)
         {
-            mDevice.Clear(Color.SkyBlue);
+            const float totalGameTime = 3f * 60f * 0.5f;
+            if (mTotalTime < 2f)
+            {
+                mTotalTime += mTime.DeltaTime / totalGameTime;
+            }
+            else
+            {
+                mTotalTime = 2f;
+            }
+
+            float lerp = 0.5f * (1f + (float)System.Math.Cos(MathHelper.Pi * mTotalTime));
+
+            Color from = (mTotalTime < 1f) ? Color.SkyBlue : Color.MidnightBlue;
+            Color to = Color.DeepPink;
+
+            Color skyColor = Color.Lerp(to, from, lerp);
+
+            mDevice.Clear(skyColor);
 
             const float kCharachterDepth = 10f;
             int frogCount = mFrogRectSlice.Rect.Count;
@@ -210,7 +231,7 @@ namespace Ranitas.Render
         {
             float width = MathHelper.Min(mDevice.DisplayMode.Width, mPond.Width);
             float aspectRatio = mDevice.Adapter.CurrentDisplayMode.AspectRatio;
-            float height = width/aspectRatio;
+            float height = width / aspectRatio;
             Matrix translation = Matrix.CreateTranslation(-mPond.Width * 0.5f, -mPond.Height * 0.5f, 0f);
             Matrix projectionMatrix = Matrix.CreateOrthographic(width, height, -100, 100);
             mCameraMatrix = translation * projectionMatrix;
