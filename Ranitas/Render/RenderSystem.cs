@@ -59,10 +59,10 @@ namespace Ranitas.Render
         private void SetupWaterEffect()
         {
             Vector4 surfaceColor = Color.LightCyan.ToVector4();
-            surfaceColor.W = 0.05f;
+            surfaceColor.W = 0.025f;
             Vector4 bottomColor = Color.MidnightBlue.ToVector4();
             bottomColor *= 0.35f;
-            bottomColor.W = 0.99f;
+            bottomColor.W = 0.9f;
             mWaterEffect.Parameters["SurfaceColor"].SetValue(surfaceColor);
             mWaterEffect.Parameters["BottomColor"].SetValue(bottomColor);
             mWaterEffect.Parameters["WorldViewProjection"].SetValue(mCameraMatrix);
@@ -98,22 +98,26 @@ namespace Ranitas.Render
 
         public void Update(EntityRegistry registry, EventSystem eventSystem)
         {
-            const float totalGameTime = 3f * 60f * 0.5f;
-            if (mTotalTime < 2f)
+            const float totalGameTime = 0.5f * 60f * 0.5f;
+            mTotalTime += mTime.DeltaTime / totalGameTime;
+
+            float lerp2 = (1f + (float)System.Math.Cos(MathHelper.Pi * mTotalTime));
+
+            Color from;
+            Color to;
+            if (lerp2 >= 1f)
             {
-                mTotalTime += mTime.DeltaTime / totalGameTime;
+                lerp2 -= 1f;
+                from = Color.DeepPink;
+                to = Color.SkyBlue;
             }
             else
             {
-                mTotalTime = 2f;
+                to = Color.DeepPink;
+                from = Color.MidnightBlue;
             }
 
-            float lerp = 0.5f * (1f + (float)System.Math.Cos(MathHelper.Pi * mTotalTime));
-
-            Color from = (mTotalTime < 1f) ? Color.SkyBlue : Color.MidnightBlue;
-            Color to = Color.DeepPink;
-
-            Color skyColor = Color.Lerp(to, from, lerp);
+            Color skyColor = Color.Lerp(from, to, lerp2);
 
             mDevice.Clear(skyColor);
 
