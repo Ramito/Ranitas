@@ -67,6 +67,7 @@
     <Compile Include="Core\Math\Rect.cs" />
     <Compile Include="Core\Random\RandomExtensions.cs" />
     <Compile Include="Core\Render\PrimitiveRenderer.cs" />
+    <Compile Include="Render\FlyAnimationSystem.cs" />
     <Compile Include="Render\RenderSystem.cs" />
     <Compile Include="Core\StateMachine\PooledState.cs" />
     <Compile Include="Core\StateMachine\State.cs" />

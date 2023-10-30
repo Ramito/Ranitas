@@ -98,26 +98,26 @@ namespace Ranitas.Render
 
         public void Update(EntityRegistry registry, EventSystem eventSystem)
         {
-            const float totalGameTime = 0.5f * 60f * 0.5f;
+            const float totalGameTime = 0.5f * 60f * 2f;
             mTotalTime += mTime.DeltaTime / totalGameTime;
 
-            float lerp2 = (1f + (float)System.Math.Cos(MathHelper.Pi * mTotalTime));
+            float lerp = (float)System.Math.Cos(MathHelper.Pi * mTotalTime);
 
             Color from;
             Color to;
-            if (lerp2 >= 1f)
+            if (lerp >= 0f)
             {
-                lerp2 -= 1f;
                 from = Color.DeepPink;
                 to = Color.SkyBlue;
             }
             else
             {
-                to = Color.DeepPink;
-                from = Color.MidnightBlue;
+                lerp *= -1;
+                from = Color.DeepPink;
+                to = Color.MidnightBlue;
             }
 
-            Color skyColor = Color.Lerp(from, to, lerp2);
+            Color skyColor = Color.Lerp(from, to, lerp);
 
             mDevice.Clear(skyColor);
 
@@ -131,7 +131,7 @@ namespace Ranitas.Render
 
             RenderLilies();
             int rectCount = mColoredRectSlice.Rect.Count;
-            for (int i = 0; i < rectCount; ++i)
+            for (int i = rectCount - 1; i >= 0; --i)
             {
                 mRenderer.PushRect(mColoredRectSlice.Rect[i], kCharachterDepth, mColoredRectSlice.Color[i]);
             }
