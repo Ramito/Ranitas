@@ -11,6 +11,7 @@ namespace Ranitas.Sim
         private const int kMaxEntities = 200;
         private EntityRegistry mRegistry = new EntityRegistry(kMaxEntities);
         private EventSystem mEventSystem = new EventSystem();
+        private FrameTime mTime;
 
         private PlayerFactory mFactory;
         private List<ISystem> mSystems;
@@ -22,6 +23,7 @@ namespace Ranitas.Sim
             mFactory = new PlayerFactory(frogFactory);
             mSystems = RanitasSystems.MakeSimSystems(dependencies);
             mRenderingSystems = RanitasSystems.MakeRenderSystems(dependencies);
+            mTime = dependencies.Time;
         }
 
         public void SpawnPlayer(int index)
@@ -44,6 +46,7 @@ namespace Ranitas.Sim
 
         public void Update()
         {
+            mTime.CurrentGameTime += mTime.DeltaTime;
             foreach (ISystem system in mSystems)
             {
                 system.Update(mRegistry, mEventSystem);
@@ -114,6 +117,7 @@ namespace Ranitas.Sim
                 new TounguePositionSystem(dependencies.FrogData),
                 new ParentedRectUpkeepSystem(),
                 new InsectEatingSystem(),
+                new InsectWingsSystem(dependencies),
                 new ScoreSystem(4),
             };
             return systems;

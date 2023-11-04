@@ -6,9 +6,11 @@
         {
             DeltaTime = deltaTime;
             HalfDeltaSquaredTime = deltaTime * deltaTime * 0.5f;
+            CurrentGameTime = 0f;
         }
 
-        public float DeltaTime { get; private set; }
-        public float HalfDeltaSquaredTime { get; private set; }
+        public float DeltaTime;
+        public float HalfDeltaSquaredTime;
+        public float CurrentGameTime;
     }
 }

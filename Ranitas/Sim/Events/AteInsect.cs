@@ -1,14 +1,11 @@
-﻿using Ranitas.Core.ECS;
+﻿using Microsoft.Xna.Framework;
+using Ranitas.Core.ECS;
 
 namespace Ranitas.Sim.Events
 {
     public struct AteInsect
     {
-        public AteInsect(Entity eatenBy)
-        {
-            EatenBy = eatenBy;
-        }
-
         public Entity EatenBy;
+        public Vector2 InsectPosition;
     }
 }

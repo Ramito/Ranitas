@@ -41,7 +41,11 @@ namespace Ranitas.Sim
                     if (toungueRect.Intersects(insectRect))
                     {
                         registry.Destroy(mInsectSlice.Entity[insectIndex]);
-                        eventSystem.PostMessage<AteInsect>(new AteInsect(mToungueSlice.ToungueParent[toungueIndex].Parent));
+                        eventSystem.PostMessage(new AteInsect
+                        {
+                            EatenBy = mToungueSlice.ToungueParent[toungueIndex].Parent,
+                            InsectPosition = 0.5f * (insectRect.MaxCorner + insectRect.MinCorner)
+                        });
                     }
                 }
             }

@@ -94,6 +94,7 @@
     <Compile Include="Sim\ComponentSystems\Systems\FlySpawnSystem.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\FlyMoveSystem.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\FrogAnimationSystem.cs" />
+    <Compile Include="Sim\ComponentSystems\Systems\InsectWingsSystem.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\InsectEatingSystem.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\LilyCollisionSystem.cs" />
     <Compile Include="Sim\ComponentSystems\Systems\GravityPhysicsSystem.cs" />

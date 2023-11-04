@@ -35,6 +35,11 @@ namespace Ranitas
             graphics.PreferredBackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
             graphics.HardwareModeSwitch = false;
             graphics.IsFullScreen = true;
+#if DEBUG
+            graphics.PreferredBackBufferWidth = 2 * GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width / 3;
+            graphics.PreferredBackBufferHeight = 2 * GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height / 3;
+            graphics.IsFullScreen = false;
+#endif
         }
 
         protected override void Initialize()
