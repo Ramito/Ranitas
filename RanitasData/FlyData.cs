@@ -13,5 +13,7 @@
 
         public float MinSpeed = 10f;
         public float MaxSpeed = 600f;
+
+        public float WingSize = 1.75f;
     }
 }

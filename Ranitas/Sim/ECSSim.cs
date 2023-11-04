@@ -127,7 +127,7 @@ namespace Ranitas.Sim
         {
             List<ISystem> systems = new List<ISystem>()
             {
-                new FlyAnimationSystem(dependencies.Time),
+                new FlyAnimationSystem(dependencies),
                 new FrogAnimationSystem(dependencies.AnimationData),
                 new RenderSystem(dependencies.GraphicsDevice, dependencies.PondState, dependencies.FrogSprite, dependencies.UIFont, dependencies.AnimationData, dependencies.WaterEffect, dependencies.Time),
             };

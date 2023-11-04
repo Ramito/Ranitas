@@ -9,5 +9,6 @@
     <MaxHeight>325</MaxHeight>
     <MinSpeed>90</MinSpeed>
     <MaxSpeed>150</MaxSpeed>
+    <WingSize>1.75</WingSize>
   </Asset>
 </XnaContent>

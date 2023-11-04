@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Ranitas.Core;
 using Ranitas.Core.ECS;
+using Ranitas.Data;
 using Ranitas.Sim;
 using System.Collections.Generic;
 
@@ -9,14 +10,15 @@ namespace Ranitas.Render
     public sealed class FlyAnimationSystem : ISystem
     {
         private FrameTime mTime;
+        private FlyData mFlyData;
 
-        private float mTotalTime = 0f;
         private List<Entity> mWings = new List<Entity>();
         private List<WingPayload> mPayloads = new List<WingPayload>();
 
-        public FlyAnimationSystem(FrameTime time)
+        public FlyAnimationSystem(RanitasDependencies dependencies)
         {
-            mTime = time;
+            mTime = dependencies.Time;
+            mFlyData = dependencies.FlyData;
         }
 
         private struct FreshFlySlice
@@ -57,8 +59,6 @@ namespace Ranitas.Render
 
         public void Update(EntityRegistry registry, EventSystem eventSystem)
         {
-            mTotalTime += mTime.DeltaTime;
-
             foreach (Entity wing in mWings)
             {
                 registry.Destroy(wing);
@@ -67,24 +67,23 @@ namespace Ranitas.Render
 
             for (int i = 0; i < mFreshFlySlice.Entity.Count; ++i)
             {
-                registry.AddComponent(mFreshFlySlice.Entity[i], new WingTimeStamp { Time = mTotalTime });
+                registry.AddComponent(mFreshFlySlice.Entity[i], new WingTimeStamp { Time = mTime.CurrentGameTime });
             }
 
             for (int i = 0; i < mFlySlice.Entity.Count; ++i)
             {
-                float timeDelta = mTotalTime - mFlySlice.TimeStamp[i].Time;
+                float timeDelta = mTime.CurrentGameTime - mFlySlice.TimeStamp[i].Time;
                 if (timeDelta % 0.075f < 0.025f)
                 {
                     continue;
                 }
-                float wingSize = 1.75f;
-                float offsetX = wingSize;
+                float offsetX = mFlyData.WingSize;
                 if (mFlySlice.Velocity[i].Value.X < 0f)
                 {
                     offsetX *= -1f;
                 }
-                Vector2 offset = new Vector2(-offsetX, wingSize);
-                Rect wingRect = mFlySlice.Rect[i].Inflated(wingSize).Translated(offset);
+                Vector2 offset = new Vector2(-offsetX, mFlyData.WingSize);
+                Rect wingRect = mFlySlice.Rect[i].Inflated(mFlyData.WingSize).Translated(offset);
                 WingPayload payload = new WingPayload
                 {
                     Rect = wingRect,
