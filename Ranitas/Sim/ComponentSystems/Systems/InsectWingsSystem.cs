@@ -86,6 +86,10 @@ namespace Ranitas.Sim
                 };
                 mRegistry.SetComponent(mWingSlice.Entity[i], newPosition);
 
+                float wingHeight = mFlyData.Height * mFlyData.WingSize * Math.Abs(sin);
+                float wingWidth = mFlyData.Width * mFlyData.WingSize;
+                mRegistry.SetComponent(mWingSlice.Entity[i], new RectShape { Height = wingHeight, Width = wingWidth });
+
                 if (newPosition.Value.Y < 0f)
                 {
                     mRemovalList.Add(mWingSlice.Entity[i]);
