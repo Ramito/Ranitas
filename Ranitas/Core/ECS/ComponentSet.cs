@@ -25,11 +25,6 @@
             PostNewValue?.Invoke(indexID);
         }
 
-        public void AddOrReplace(TValue value, int indexID)
-        {
-            mIndexedSet.AddOrReplace(value, indexID);
-        }
-
         public bool Contains(int indexID)
         {
             return mIndexedSet.Contains(indexID);

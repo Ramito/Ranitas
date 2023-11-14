@@ -84,13 +84,6 @@ namespace Ranitas.Core.ECS
             componentSet.Replace(component, entity.Index);
         }
 
-        public void SetOrAddComponent<TComponent>(Entity entity, TComponent component) where TComponent : struct
-        {
-            Debug.Assert(IsValid(entity));
-            ComponentSet<TComponent> componentSet = GetComponentSet<TComponent>();
-            componentSet.AddOrReplace(component, entity.Index);
-        }
-
         public TComponent GetComponent<TComponent>(Entity entity) where TComponent : struct
         {
             Debug.Assert(IsValid(entity));

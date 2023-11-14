@@ -28,18 +28,6 @@
             mPackedValues[packedIndex] = newValue;
         }
 
-        public void AddOrReplace(TValue value, int indexID)
-        {
-            if (Contains(indexID))
-            {
-                Replace(value, indexID);
-            }
-            else
-            {
-                Add(value, indexID);
-            }
-        }
-
         public TValue GetValue(int indexID)
         {
             int packedIndex = GetPackedIndex(indexID);
