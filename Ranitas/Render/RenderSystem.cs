@@ -107,13 +107,13 @@ namespace Ranitas.Render
             Color to;
             if (lerp >= 0f)
             {
-                from = Color.DeepPink;
+                from = Color.Coral;
                 to = Color.SkyBlue;
             }
             else
             {
                 lerp *= -1;
-                from = Color.DeepPink;
+                from = Color.Coral;
                 to = Color.MidnightBlue;
             }
 
